@@ -1,0 +1,267 @@
+:root[data-theme="dark"] {
+  /* Primary Colors */
+  --primary-50: #e0f2fe;
+  --primary-100: #b3e0fb;
+  --primary-200: #80cbf9;
+  --primary-300: #4db6f7;
+  --primary-400: #26a5f4;
+  --primary-500: #0095f2;  /* Main brand color */
+  --primary-600: #0086e0;
+  --primary-700: #0075c7;
+  --primary-800: #0064ae;
+  --primary-900: #004785;
+  
+  /* Secondary Colors (Medical Blues) */
+  --secondary-50: #e8f5e8;
+  --secondary-100: #c8e6c9;
+  --secondary-200: #a5d6a7;
+  --secondary-300: #81c784;
+  --secondary-400: #66bb6a;
+  --secondary-500: #4caf50;  /* Success/Healthy color */
+  --secondary-600: #43a047;
+  --secondary-700: #388e3c;
+  --secondary-800: #2e7d32;
+  --secondary-900: #1b5e20;
+  
+  /* Status Colors */
+  --success-50: #e8f5e8;
+  --success-100: #c8e6c9;
+  --success-500: #4caf50;  /* Confirmed appointments */
+  --success-700: #388e3c;
+  
+  --warning-50: #fff8e1;
+  --warning-100: #ffecb3;
+  --warning-500: #ffc107;  /* Pending/Rescheduled */
+  --warning-700: #ff8f00;
+  
+  --error-50: #ffebee;
+  --error-100: #ffcdd2;
+  --error-500: #f44336;    /* Cancelled/Emergency */
+  --error-700: #d32f2f;
+  
+  --info-50: #e3f2fd;
+  --info-100: #bbdefb;
+  --info-500: #2196f3;     /* New/Unread */
+  --info-700: #1976d2;
+  
+  /* Neutral Colors */
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #eeeeee;
+  --gray-300: #e0e0e0;
+  --gray-400: #bdbdbd;
+  --gray-500: #9e9e9e;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --gray-900: #212121;
+  
+  /* Background Colors */
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2d2d2d;
+  --bg-card: #1e1e1e;
+  --bg-sidebar: #1a1a1a;
+  --bg-header: #1e1e1e;
+  
+  /* Surface Colors */
+  --surface-01: #1e1e1e;
+  --surface-02: #252525;
+  --surface-03: #2d2d2d;
+  --surface-04: #353535;
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.87);
+  --text-tertiary: rgba(255, 255, 255, 0.6);
+  --text-disabled: rgba(255, 255, 255, 0.38);
+  --text-inverse: #121212;
+  
+  /* Border Colors */
+  --border-light: rgba(255, 255, 255, 0.12);
+  --border-medium: rgba(255, 255, 255, 0.24);
+  --border-heavy: rgba(255, 255, 255, 0.36);
+  
+  /* Shadow Colors */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  
+  /* Medical Specialty Colors */
+  --doctor-general: #4caf50;
+  --doctor-specialist: #2196f3;
+  --doctor-surgeon: #ff9800;
+  --doctor-emergency: #f44336;
+  --nurse: #9c27b0;
+  --therapist: #00bcd4;
+  --technician: #607d8b;
+  
+  /* Appointment Status Colors */
+  --status-scheduled: var(--info-500);
+  --status-confirmed: var(--success-500);
+  --status-in-progress: var(--warning-500);
+  --status-completed: var(--success-700);
+  --status-cancelled: var(--error-500);
+  --status-no-show: var(--error-700);
+  --status-rescheduled: var(--warning-700);
+  
+  /* Priority Colors */
+  --priority-low: var(--success-500);
+  --priority-medium: var(--warning-500);
+  --priority-high: var(--error-500);
+  --priority-emergency: #d50000;
+  
+  /* Interactive States */
+  --hover-overlay: rgba(255, 255, 255, 0.08);
+  --focus-ring: rgba(0, 149, 242, 0.5);
+  --disabled-opacity: 0.38;
+  
+  /* Chart Colors */
+  --chart-01: #4caf50;
+  --chart-02: #2196f3;
+  --chart-03: #ff9800;
+  --chart-04: #f44336;
+  --chart-05: #9c27b0;
+  --chart-06: #00bcd4;
+  --chart-07: #607d8b;
+  
+  /* Semantic Colors */
+  --link-color: var(--primary-400);
+  --link-hover: var(--primary-300);
+  --focus-color: var(--primary-500);
+  --selection-bg: rgba(0, 149, 242, 0.3);
+}
+
+:root[data-theme="light"] {
+  /* Primary Colors */
+  --primary-50: #e3f2fd;
+  --primary-100: #bbdefb;
+  --primary-200: #90caf9;
+  --primary-300: #64b5f6;
+  --primary-400: #42a5f5;
+  --primary-500: #2196f3;  /* Main brand color */
+  --primary-600: #1e88e5;
+  --primary-700: #1976d2;
+  --primary-800: #1565c0;
+  --primary-900: #0d47a1;
+  
+  /* Secondary Colors (Medical Greens) */
+  --secondary-50: #e8f5e8;
+  --secondary-100: #c8e6c9;
+  --secondary-200: #a5d6a7;
+  --secondary-300: #81c784;
+  --secondary-400: #66bb6a;
+  --secondary-500: #4caf50;  /* Success/Healthy color */
+  --secondary-600: #43a047;
+  --secondary-700: #388e3c;
+  --secondary-800: #2e7d32;
+  --secondary-900: #1b5e20;
+  
+  /* Status Colors */
+  --success-50: #e8f5e8;
+  --success-100: #c8e6c9;
+  --success-500: #4caf50;  /* Confirmed appointments */
+  --success-700: #388e3c;
+  
+  --warning-50: #fff8e1;
+  --warning-100: #ffecb3;
+  --warning-500: #ffc107;  /* Pending/Rescheduled */
+  --warning-700: #ff8f00;
+  
+  --error-50: #ffebee;
+  --error-100: #ffcdd2;
+  --error-500: #f44336;    /* Cancelled/Emergency */
+  --error-700: #d32f2f;
+  
+  --info-50: #e3f2fd;
+  --info-100: #bbdefb;
+  --info-500: #2196f3;     /* New/Unread */
+  --info-700: #1976d2;
+  
+  /* Neutral Colors */
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #eeeeee;
+  --gray-300: #e0e0e0;
+  --gray-400: #bdbdbd;
+  --gray-500: #9e9e9e;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --gray-900: #212121;
+  
+  /* Background Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #f1f3f4;
+  --bg-card: #ffffff;
+  --bg-sidebar: #f5f5f5;
+  --bg-header: #ffffff;
+  
+  /* Surface Colors */
+  --surface-01: #ffffff;
+  --surface-02: #fafafa;
+  --surface-03: #f5f5f5;
+  --surface-04: #eeeeee;
+  
+  /* Text Colors */
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --text-tertiary: #9e9e9e;
+  --text-disabled: #bdbdbd;
+  --text-inverse: #ffffff;
+  
+  /* Border Colors */
+  --border-light: rgba(0, 0, 0, 0.12);
+  --border-medium: rgba(0, 0, 0, 0.24);
+  --border-heavy: rgba(0, 0, 0, 0.36);
+  
+  /* Shadow Colors */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Medical Specialty Colors */
+  --doctor-general: #4caf50;
+  --doctor-specialist: #2196f3;
+  --doctor-surgeon: #ff9800;
+  --doctor-emergency: #f44336;
+  --nurse: #9c27b0;
+  --therapist: #00bcd4;
+  --technician: #607d8b;
+  
+  /* Appointment Status Colors */
+  --status-scheduled: var(--info-500);
+  --status-confirmed: var(--success-500);
+  --status-in-progress: var(--warning-500);
+  --status-completed: var(--success-700);
+  --status-cancelled: var(--error-500);
+  --status-no-show: var(--error-700);
+  --status-rescheduled: var(--warning-700);
+  
+  /* Priority Colors */
+  --priority-low: var(--success-500);
+  --priority-medium: var(--warning-500);
+  --priority-high: var(--error-500);
+  --priority-emergency: #d50000;
+  
+  /* Interactive States */
+  --hover-overlay: rgba(0, 0, 0, 0.04);
+  --focus-ring: rgba(33, 150, 243, 0.4);
+  --disabled-opacity: 0.38;
+  
+  /* Chart Colors */
+  --chart-01: #4caf50;
+  --chart-02: #2196f3;
+  --chart-03: #ff9800;
+  --chart-04: #f44336;
+  --chart-05: #9c27b0;
+  --chart-06: #00bcd4;
+  --chart-07: #607d8b;
+  
+  /* Semantic Colors */
+  --link-color: var(--primary-600);
+  --link-hover: var(--primary-700);
+  --focus-color: var(--primary-500);
+  --selection-bg: rgba(33, 150, 243, 0.2);
+}
