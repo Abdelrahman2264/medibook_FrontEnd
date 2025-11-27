@@ -4,7 +4,7 @@ import { AboutComponent } from './components/about/about.component';
 import { ContactComponent } from './components/contact us/contact.component'; 
 import { PatientListComponent } from './components/patient/patient-list.component';
 import { SettingsComponent } from './components/settings/settings.component';
-
+import {HomeComponent} from './components/Home/home.component';
 
 export const routes: Routes = [
   {
@@ -18,6 +18,10 @@ export const routes: Routes = [
   {
     path: 'contact',
     component: ContactComponent
+  },
+  {
+    path: 'home',
+    component: HomeComponent
   },
   {
     path: 'doctors',

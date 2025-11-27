@@ -45,7 +45,7 @@ body {
   --bs-btn-active-color: #fff;
   --bs-btn-active-bg: var(--primary-700);
   --bs-btn-active-border-color: var(--primary-700);
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: var(--primary-600);
   --bs-btn-disabled-bg: transparent;
   --bs-btn-disabled-border-color: var(--primary-600);
@@ -81,14 +81,14 @@ body {
   --bs-btn-active-color: #fff;
   --bs-btn-active-bg: var(--secondary-700);
   --bs-btn-active-border-color: var(--secondary-700);
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: var(--secondary-600);
   --bs-btn-disabled-bg: transparent;
   --bs-btn-disabled-border-color: var(--secondary-600);
   --bs-gradient: none;
 }
 
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   /* Primary Colors */
   --primary-50: #f3edf9;
   --primary-100: #e7dbf3;
@@ -124,7 +124,7 @@ body {
   --secondary-700: #4d60b7;
   --secondary-800: #38468a;
   --secondary-900: #252e5c;
-
+  --bs-secondary: var(--secondary-600);
   --secondary-50-rgb: 240, 243, 254;
   --secondary-100-rgb: 220, 228, 253;
   --secondary-200-rgb: 185, 201, 251;
@@ -135,8 +135,7 @@ body {
   --secondary-700-rgb: 77, 96, 183;
   --secondary-800-rgb: 56, 70, 138;
   --secondary-900-rgb: 37, 46, 92;
-
-
+  --bs-secondary-rgb: var(--secondary-600-rgb);
 
   /* Status Colors */
   --success-50: #e8f5e8;
@@ -203,10 +202,8 @@ body {
 
   /* Shadow Colors */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4),
-    0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5),
-    0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
 
   /* Medical Specialty Colors */
   --doctor-general: #4caf50;
@@ -253,7 +250,7 @@ body {
   --selection-bg: rgba(0, 149, 242, 0.3);
 }
 
-:root[data-theme="light"] {
+:root[data-theme='light'] {
   /* Primary Colors */
   --primary-50: #f3edf9;
   --primary-100: #e7dbf3;
@@ -300,9 +297,6 @@ body {
   --secondary-800-rgb: 56, 70, 138;
   --secondary-900-rgb: 37, 46, 92;
   --bs-secondary-rgb: var(--secondary-600-rgb);
-
-
-
 
   /* Status Colors */
   --success-50: #e8f5e8;
@@ -416,4 +410,3 @@ body {
   --focus-color: var(--primary-500);
   --selection-bg: rgba(33, 150, 243, 0.2);
 }
-  

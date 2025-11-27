@@ -1,243 +1,731 @@
 @keyframes about-section {
-   0% {
-      content: " |";
-   }
+  0% {
+    content: ' |';
+  }
 
-   3% {
-      content: "|";
-   }
+  3% {
+    content: '|';
+  }
 
-   5% {
-      content: "e|";
-   }
+  5% {
+    content: 'e|';
+  }
 
-   7% {
-      content: "ed|";
-   }
+  7% {
+    content: 'ed|';
+  }
 
-   10% {
-      content: "edi|";
-   }
+  10% {
+    content: 'edi|';
+  }
 
-   13% {
-      content: "ediB|";
-   }
+  13% {
+    content: 'ediB|';
+  }
 
-   15% {
-      content: "ediBo|";
-   }
+  15% {
+    content: 'ediBo|';
+  }
 
-   17% {
-      content: "ediBoo|";
-   }
+  17% {
+    content: 'ediBoo|';
+  }
 
-   20% {
-      content: "ediBook|";
-   }
+  20% {
+    content: 'ediBook|';
+  }
 
-   24% {
-      content: "ediBoo|";
-   }
+  24% {
+    content: 'ediBoo|';
+  }
 
-   25% {
-      content: "ediBo|";
-   }
+  25% {
+    content: 'ediBo|';
+  }
 
-   27% {
-      content: "ediB|";
-   }
+  27% {
+    content: 'ediB|';
+  }
 
-   30% {
-      content: "edi|";
-   }
+  30% {
+    content: 'edi|';
+  }
 
-   32% {
-      content: "ed|";
-   }
+  32% {
+    content: 'ed|';
+  }
 
-   35% {
-      content: "e|";
-   }
+  35% {
+    content: 'e|';
+  }
 
-   37% {
-      content: "|";
-   }
+  37% {
+    content: '|';
+  }
 
-   40% {
-      content: "e|";
-   }
+  40% {
+    content: 'e|';
+  }
 
-   42% {
-      content: "ed|";
-   }
+  42% {
+    content: 'ed|';
+  }
 
-   45% {
-      content: "edi|";
-   }
+  45% {
+    content: 'edi|';
+  }
 
-   47% {
-      content: "edi|";
-   }
+  47% {
+    content: 'edi|';
+  }
 
-   55% {
-      content: "ediB|";
-   }
+  55% {
+    content: 'ediB|';
+  }
 
-   57% {
-      content: "ediBo|";
-   }
+  57% {
+    content: 'ediBo|';
+  }
 
-   60% {
-      content: "ediBoo|";
-   }
+  60% {
+    content: 'ediBoo|';
+  }
 
-   62% {
-      content: "ediBook|";
-   }
+  62% {
+    content: 'ediBook|';
+  }
 
-   65% {
-      content: "ediBoo|";
-   }
+  65% {
+    content: 'ediBoo|';
+  }
 
-   67% {
-      content: "ediBo|";
-   }
+  67% {
+    content: 'ediBo|';
+  }
 
-   70% {
-      content: "ediB|";
-   }
+  70% {
+    content: 'ediB|';
+  }
 
-   72% {
-      content: "edi|";
-   }
+  72% {
+    content: 'edi|';
+  }
 
-   75% {
-      content: "ed|";
-   }
+  75% {
+    content: 'ed|';
+  }
 
-   77% {
-      content: "e|";
-   }
+  77% {
+    content: 'e|';
+  }
 
-   80% {
-      content: "|";
-   }
+  80% {
+    content: '|';
+  }
 
-   82% {
-      content: "e|";
-   }
+  82% {
+    content: 'e|';
+  }
 
-   85% {
-      content: "ed|";
-   }
+  85% {
+    content: 'ed|';
+  }
 
-   87% {
-      content: "edi|";
-   }
+  87% {
+    content: 'edi|';
+  }
 
-   90% {
-      content: "ediB|";
-   }
+  90% {
+    content: 'ediB|';
+  }
 
-   92% {
-      content: "ediBo|";
-   }
+  92% {
+    content: 'ediBo|';
+  }
 
-   95% {
-      content: "ediBoo|";
-   }
+  95% {
+    content: 'ediBoo|';
+  }
 
-   97% {
-      content: "ediBook|";
-   }
+  97% {
+    content: 'ediBook|';
+  }
 
-   100% {
-      content: "ediBooK|";
-   }
+  100% {
+    content: 'ediBooK|';
+  }
 }
 
 @keyframes us-section {
-   0% {
-      content: " |";
-   }
+  0% {
+    content: ' |';
+  }
 
-   3% {
-      content: " U|";
-   }
+  3% {
+    content: ' U|';
+  }
 
-   5% {
-      content: " Us|";
-   }
+  5% {
+    content: ' Us|';
+  }
 
-   10% {
-      content: " Us|";
-   }
+  10% {
+    content: ' Us|';
+  }
 
-   15% {
-      content: " Us|";
-   }
+  15% {
+    content: ' Us|';
+  }
 
-   20% {
-      content: " U|";
-   }
+  20% {
+    content: ' U|';
+  }
 
-   25% {
-      content: " |";
-   }
+  25% {
+    content: ' |';
+  }
 
-   30% {
-      content: " |";
-   }
+  30% {
+    content: ' |';
+  }
 
-   35% {
-      content: " U|";
-   }
+  35% {
+    content: ' U|';
+  }
 
-   40% {
-      content: " Us|";
-   }
+  40% {
+    content: ' Us|';
+  }
 
-   50% {
-      content: " Us|";
-   }
+  50% {
+    content: ' Us|';
+  }
 
-   55% {
-      content: " U|";
-   }
+  55% {
+    content: ' U|';
+  }
 
-   60% {
-      content: " |";
-   }
+  60% {
+    content: ' |';
+  }
 
-   65% {
-      content: " U|";
-   }
+  65% {
+    content: ' U|';
+  }
 
-   70% {
-      content: " Us|";
-   }
+  70% {
+    content: ' Us|';
+  }
 
-   75% {
-      content: " Us|";
-   }
+  75% {
+    content: ' Us|';
+  }
 
-   80% {
-      content: " Us|";
-   }
+  80% {
+    content: ' Us|';
+  }
 
-   85% {
-      content: " U|";
-   }
+  85% {
+    content: ' U|';
+  }
 
-   90% {
-      content: " |";
-   }
+  90% {
+    content: ' |';
+  }
 
-   95% {
-      content: " U|";
-   }
+  95% {
+    content: ' U|';
+  }
 
-   100% {
-      content: " Us|";
-   }
+  100% {
+    content: ' Us|';
+  }
+}
+@keyframes smooth-typing-final {
+    0% {
+        content: "|";
+    }
+
+    0.5% {
+        content: "T|";
+    }
+
+    1% {
+        content: "To|";
+    }
+
+    1.5% {
+        content: "To |";
+    }
+
+    2% {
+        content: "To O|";
+    }
+
+    2.5% {
+        content: "To Ou|";
+    }
+
+    3% {
+        content: "To Our|";
+    }
+
+    3.5% {
+        content: "To Our |";
+    }
+
+    4% {
+        content: "To Our M|";
+    }
+
+    4.5% {
+        content: "To Our Me|";
+    }
+
+    5% {
+        content: "To Our Med|";
+    }
+
+    5.5% {
+        content: "To Our Medi|";
+    }
+
+    6% {
+        content: "To Our Medic|";
+    }
+
+    6.5% {
+        content: "To Our Medica|";
+    }
+
+    7% {
+        content: "To Our Medical|";
+    }
+
+    7.5% {
+        content: "To Our Medical |";
+    }
+
+    8% {
+        content: "To Our Medical C|";
+    }
+
+    8.5% {
+        content: "To Our Medical Cl|";
+    }
+
+    9% {
+        content: "To Our Medical Cli|";
+    }
+
+    9.5% {
+        content: "To Our Medical Clin|";
+    }
+
+    10% {
+        content: "To Our Medical Clini|";
+    }
+
+    10.5% {
+        content: "To Our Medical Clinic|";
+    }
+
+   
+    15% {
+        content: "To Our Medical Clinic|";
+    }
+    15.5% {
+        content: "To Our Medical Clini|";
+    }
+
+    16% {
+        content: "To Our Medical Clin|";
+    }
+
+    16.5% {
+        content: "To Our Medical Cli|";
+    }
+
+    17% {
+        content: "To Our Medical Cl|";
+    }
+
+    17.5% {
+        content: "To Our Medical C|";
+    }
+
+    18% {
+        content: "To Our Medical |";
+    }
+
+    18.5% {
+        content: "To Our Medical|";
+    }
+
+    19% {
+        content: "To Our Medica|";
+    }
+
+    19.5% {
+        content: "To Our Medic|";
+    }
+
+    20% {
+        content: "To Our Medi|";
+    }
+
+    20.5% {
+        content: "To Our Med|";
+    }
+
+    21% {
+        content: "To Our Me|";
+    }
+
+    21.5% {
+        content: "To Our M|";
+    }
+
+    22% {
+        content: "To Our |";
+    }
+
+    22.5% {
+        content: "To Our|";
+    }
+
+    23% {
+        content: "To Ou|";
+    }
+
+    23.5% {
+        content: "To O|";
+    }
+
+    24% {
+        content: "To |";
+    }
+
+    24.5% {
+        content: "To|";
+    }
+
+    25% {
+        content: "T|";
+    }
+
+    25.5% {
+        content: "|";
+    } 
+
+    
+    30% {
+        content: "|";
+    } 
+    30.5% {
+        content: "T|";
+    }
+
+    31% {
+        content: "To|";
+    }
+
+    31.5% {
+        content: "To |";
+    }
+
+    32% {
+        content: "To O|";
+    }
+
+    32.5% {
+        content: "To Ou|";
+    }
+
+    33% {
+        content: "To Our|";
+    }
+
+    33.5% {
+        content: "To Our |";
+    }
+
+    34% {
+        content: "To Our M|";
+    }
+
+    34.5% {
+        content: "To Our Me|";
+    }
+
+    35% {
+        content: "To Our Med|";
+    }
+
+    35.5% {
+        content: "To Our Medi|";
+    }
+
+    36% {
+        content: "To Our Medic|";
+    }
+
+    36.5% {
+        content: "To Our Medica|";
+    }
+
+    37% {
+        content: "To Our Medical|";
+    }
+
+    37.5% {
+        content: "To Our Medical |";
+    }
+
+    38% {
+        content: "To Our Medical C|";
+    }
+
+    38.5% {
+        content: "To Our Medical Cl|";
+    }
+
+    39% {
+        content: "To Our Medical Cli|";
+    }
+
+    39.5% {
+        content: "To Our Medical Clin|";
+    }
+
+    40% {
+        content: "To Our Medical Clini|";
+    }
+
+    40.5% {
+        content: "To Our Medical Clinic|";
+    }
+
+    45% {
+        content: "To Our Medical Clinic|";
+    } 
+    45.5% {
+        content: "To Our Medical Clini|";
+    }
+
+    46% {
+        content: "To Our Medical Clin|";
+    }
+
+    46.5% {
+        content: "To Our Medical Cli|";
+    }
+
+    47% {
+        content: "To Our Medical Cl|";
+    }
+
+    47.5% {
+        content: "To Our Medical C|";
+    }
+
+    48% {
+        content: "To Our Medical |";
+    }
+
+    48.5% {
+        content: "To Our Medical|";
+    }
+
+    49% {
+        content: "To Our Medica|";
+    }
+
+    49.5% {
+        content: "To Our Medic|";
+    }
+
+    50% {
+        content: "To Our Medi|";
+    }
+
+    50.5% {
+        content: "To Our Med|";
+    }
+
+    51% {
+        content: "To Our Me|";
+    }
+
+    51.5% {
+        content: "To Our M|";
+    }
+
+    52% {
+        content: "To Our |";
+    }
+
+    52.5% {
+        content: "To Our|";
+    }
+
+    53% {
+        content: "To Ou|";
+    }
+
+    53.5% {
+        content: "To O|";
+    }
+
+    54% {
+        content: "To |";
+    }
+
+    54.5% {
+        content: "To|";
+    }
+
+    55% {
+        content: "T|";
+    }
+
+    55.5% {
+        content: "|";
+    } 
+     
+    60% {
+        content: "|";
+    } 
+    60.5% {
+        content: "T|";
+    }
+
+    61% {
+        content: "To|";
+    }
+
+    61.5% {
+        content: "To |";
+    }
+
+    62% {
+        content: "To O|";
+    }
+
+    62.5% {
+        content: "To Ou|";
+    }
+
+    63% {
+        content: "To Our|";
+    }
+
+    63.5% {
+        content: "To Our |";
+    }
+
+    64% {
+        content: "To Our M|";
+    }
+
+    64.5% {
+        content: "To Our Me|";
+    }
+
+    65% {
+        content: "To Our Med|";
+    }
+
+    65.5% {
+        content: "To Our Medi|";
+    }
+
+    66% {
+        content: "To Our Medic|";
+    }
+
+    66.5% {
+        content: "To Our Medica|";
+    }
+
+    67% {
+        content: "To Our Medical|";
+    }
+
+    67.5% {
+        content: "To Our Medical |";
+    }
+
+    68% {
+        content: "To Our Medical C|";
+    }
+
+    68.5% {
+        content: "To Our Medical Cl|";
+    }
+
+    69% {
+        content: "To Our Medical Cli|";
+    }
+
+    69.5% {
+        content: "To Our Medical Clin|";
+    }
+
+    70% {
+        content: "To Our Medical Clini|";
+    }
+
+    70.5% {
+        content: "To Our Medical Clinic|";
+    }
+
+   
+    75% {
+        content: "To Our Medical Clinic|";
+    }
+
+    80% {
+        content: "To Our Medical Clinic";
+    } 
+
+    82% {
+        content: "To Our Medical Clinic ";
+    } 
+
+    84% {
+        content: "To Our Medical Clinic";
+    }
+
+    86% {
+        content: "To Our Medical Clinic ";
+    }
+
+    88% {
+        content: "To Our Medical Clinic";
+    }
+
+    90% {
+        content: "To Our Medical Clinic ";
+    }
+
+    92% {
+        content: "To Our Medical Clinic";
+    }
+
+    94% {
+        content: "To Our Medical Clinic ";
+    }
+
+    96% {
+        content: "To Our Medical Clinic";
+    }
+
+    98% {
+        content: "To Our Medical Clinic ";
+    }
+
+    100% {
+        content: "To Our Medical Clinic|";
+    } 
 }
