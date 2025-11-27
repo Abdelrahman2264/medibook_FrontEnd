@@ -1,0 +1,47 @@
+<div class="patient-info">
+  <h2>Patient Details and schedule</h2>
+  <p><strong>Name:</strong> {{ patient.name }}</p>
+  <p><strong>Age:</strong> {{ patient.age }}</p>
+  <p><strong>Gender:</strong> {{ patient.gender }}</p>
+</div>
+
+
+
+<!-- جدول المواعيد -->
+<table class="appointments-table">
+  <thead>
+    <tr>
+      <th>Doctor Name</th>
+      <th>Specialty</th>
+      <th>Clinic Fee</th>
+      <th>Day</th>
+      <th>Time</th>
+      <th>Session</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let appointment of appointments">
+      <td>{{ appointment.doctor }}</td>
+      <td>{{ appointment.specialty }}</td>
+      <td>{{ appointment.fee }}</td>
+      <td>{{ appointment.day }}</td>
+      <td>{{ appointment.time }}</td>
+      <td>{{ appointment.session }}</td>
+      <td>
+        <button class="cancel-btn" (click)="showConfirm(appointment)">Cancel</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<div class="modal" *ngIf="confirmMessage">
+  <div class="modal-content">
+    <p>{{ confirmMessage }}</p>
+    <div class="modal-actions">
+      <button class="yes-btn" (click)="confirmCancel()">Yes</button>
+      <button class="no-btn" (click)="cancelConfirm()">No</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,268 @@
+<div class="settings-container">
+  <!-- Back button -->
+  <div class="back-navigation">
+    <button class="btn-back" (click)="backToPatients()">
+      <span class="icon">←</span> Back to Patients
+    </button>
+  </div>
+
+  <!-- Header -->
+  <div class="settings-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1><span class="icon">⚙️</span> Settings</h1>
+        <p>Manage system and account settings</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar">
+          {{userProfile.name.charAt(0)}}
+        </div>
+        <div class="user-info">
+          <strong>{{userProfile.name}}</strong>
+          <span>{{userProfile.specialty}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-content">
+    <!-- Sidebar -->
+    <div class="settings-sidebar">
+      <ul class="settings-menu">
+        <li *ngFor="let tab of settingsTabs" 
+            class="menu-item" 
+            [class.active]="activeTab === tab.id"
+            (click)="setActiveTab(tab.id)">
+          <span class="icon">{{tab.icon}}</span>
+          <span class="menu-text">{{tab.name}}</span>
+        </li>
+      </ul>
+      
+      <!-- Save all button -->
+      <div class="save-all-section">
+        <button class="btn-save-all" (click)="saveAllSettings()">
+          <span class="icon">💾</span>
+          Save All Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="settings-main">
+      <!-- General Settings -->
+      <div *ngIf="activeTab === 'general'" class="tab-content">
+        <div class="tab-header">
+          <h2><span class="icon">⚙️</span> General Settings</h2>
+          <button class="btn-save" (click)="saveGeneralSettings()">Save Changes</button>
+        </div>
+        
+        <div class="settings-grid">
+          <div class="setting-card">
+            <label class="setting-label">Language</label>
+            <select class="setting-input" [(ngModel)]="settings.general.language">
+              <option *ngFor="let lang of languages" [value]="lang.value">{{lang.label}}</option>
+            </select>
+          </div>
+
+          <div class="setting-card">
+            <label class="setting-label">Timezone</label>
+            <select class="setting-input" [(ngModel)]="settings.general.timezone">
+              <option *ngFor="let tz of timezones" [value]="tz.value">{{tz.label}}</option>
+            </select>
+          </div>
+
+          <div class="setting-card">
+            <label class="setting-label">Date Format</label>
+            <select class="setting-input" [(ngModel)]="settings.general.dateFormat">
+              <option value="dd/MM/yyyy">Day/Month/Year (25/11/2024)</option>
+              <option value="MM/dd/yyyy">Month/Day/Year (11/25/2024)</option>
+              <option value="yyyy-MM-dd">Year-Month-Day (2024-11-25)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Settings -->
+      <div *ngIf="activeTab === 'account'" class="tab-content">
+        <div class="tab-header">
+          <h2><span class="icon">👤</span> Account Settings</h2>
+          <button class="btn-save" (click)="saveAccountSettings()">Save Changes</button>
+        </div>
+        
+        <div class="settings-grid">
+          <div class="setting-card">
+            <label class="setting-label">Full Name</label>
+            <input type="text" class="setting-input" [(ngModel)]="userProfile.name">
+          </div>
+
+          <div class="setting-card">
+            <label class="setting-label">Email</label>
+            <input type="email" class="setting-input" [(ngModel)]="settings.account.email">
+          </div>
+
+          <div class="setting-card">
+            <label class="setting-label">Phone Number</label>
+            <input type="tel" class="setting-input" [(ngModel)]="settings.account.phone">
+          </div>
+
+          <div class="setting-card">
+            <label class="setting-label">Specialty</label>
+            <input type="text" class="setting-input" [(ngModel)]="userProfile.specialty">
+          </div>
+
+          <div class="setting-card">
+            <label class="setting-label">Department</label>
+            <input type="text" class="setting-input" [(ngModel)]="userProfile.department">
+          </div>
+
+          <div class="setting-card full-width">
+            <label class="setting-label">Password</label>
+            <div class="password-actions">
+              <button class="btn-change-password" (click)="changePassword()">Change Password</button>
+              <button class="btn-reset-password" (click)="resetPassword()">Reset Password</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div *ngIf="activeTab === 'notifications'" class="tab-content">
+        <div class="tab-header">
+          <h2><span class="icon">🔔</span> Notifications</h2>
+          <button class="btn-save" (click)="saveNotificationSettings()">Save Changes</button>
+        </div>
+        
+        <div class="settings-grid">
+          <div class="setting-card toggle-card">
+            <div class="toggle-content">
+              <div class="toggle-info">
+                <label class="setting-label">Email Notifications</label>
+                <p class="setting-description">Receive notifications via email</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="settings.notifications.emailNotifications">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-card toggle-card">
+            <div class="toggle-content">
+              <div class="toggle-info">
+                <label class="setting-label">Push Notifications</label>
+                <p class="setting-description">In-app notifications</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="settings.notifications.pushNotifications">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-card toggle-card">
+            <div class="toggle-content">
+              <div class="toggle-info">
+                <label class="setting-label">SMS Notifications</label>
+                <p class="setting-description">Notifications via SMS</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="settings.notifications.smsNotifications">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-card toggle-card">
+            <div class="toggle-content">
+              <div class="toggle-info">
+                <label class="setting-label">Appointment Reminders</label>
+                <p class="setting-description">Patient appointment reminders</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="settings.notifications.appointmentReminders">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Privacy -->
+      <div *ngIf="activeTab === 'privacy'" class="tab-content">
+        <div class="tab-header">
+          <h2><span class="icon">🔒</span> Privacy</h2>
+          <button class="btn-save" (click)="savePrivacySettings()">Save Changes</button>
+        </div>
+        
+        <div class="settings-grid">
+          <div class="setting-card">
+            <label class="setting-label">Profile Visibility</label>
+            <select class="setting-input" [(ngModel)]="settings.privacy.profileVisibility">
+              <option value="public">Public (Everyone can see)</option>
+              <option value="private">Private (Members only)</option>
+              <option value="hidden">Hidden (Only me)</option>
+            </select>
+          </div>
+
+          <div class="setting-card toggle-card">
+            <div class="toggle-content">
+              <div class="toggle-info">
+                <label class="setting-label">Show Online Status</label>
+                <p class="setting-description">Show if you're online or not</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="settings.privacy.showOnlineStatus">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-card toggle-card">
+            <div class="toggle-content">
+              <div class="toggle-info">
+                <label class="setting-label">Allow Messages</label>
+                <p class="setting-description">Allow members to send messages</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="settings.privacy.allowMessages">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appearance -->
+      <div *ngIf="activeTab === 'appearance'" class="tab-content">
+        <div class="tab-header">
+          <h2><span class="icon">🎨</span> Appearance</h2>
+          <button class="btn-save" (click)="saveAppearanceSettings()">Save Changes</button>
+        </div>
+        
+        <div class="settings-grid">
+          <div class="setting-card">
+            <label class="setting-label">Theme</label>
+            <select class="setting-input" [(ngModel)]="settings.appearance.theme">
+              <option *ngFor="let theme of themes" [value]="theme.value">{{theme.label}}</option>
+            </select>
+          </div>
+
+          <div class="setting-card">
+            <label class="setting-label">Font Size</label>
+            <select class="setting-input" [(ngModel)]="settings.appearance.fontSize">
+              <option *ngFor="let size of fontSizes" [value]="size.value">{{size.label}}</option>
+            </select>
+          </div>
+
+          <div class="setting-card">
+            <label class="setting-label">Text Direction</label>
+            <select class="setting-input" [(ngModel)]="settings.appearance.direction">
+              <option value="ltr">Left to Right</option>
+              <option value="rtl">Right to Left</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

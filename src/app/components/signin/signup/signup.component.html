@@ -1,0 +1,320 @@
+<div class="signup-page">
+  <div class="signup-container row flex-column flex-md-row rounded-5">
+    <div class="signup-left col-md-4">
+      <div class="illustration">
+        <div class="medical-icon">👨‍⚕️</div>
+        <h2>Join MediBook Today</h2>
+        <p>Create your account and start managing your healthcare journey</p>
+        <div class="features">
+          <div class="feature">
+            <span class="feature-icon">✅</span>
+            <span>Book appointments easily</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">✅</span>
+            <span>Access medical history</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">✅</span>
+            <span>Connect with top doctors</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="signup-right col-md-8">
+      <div class="signup-form-container">
+        <div class="form-header">
+          <h1>Create Account</h1>
+          <p>Fill in your details to get started</p>
+          <div class="step-indicator" *ngIf="currentStep > 1">
+            <span>Step {{ currentStep }} of {{ totalSteps }}</span>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="error-message" style="white-space: pre-line">
+          <i class="fas fa-exclamation-circle"></i>
+          <div>{{ errorMessage }}</div>
+        </div>
+
+        <!-- Step 1: User Information Form -->
+        <form
+          class="signup-form"
+          (ngSubmit)="onStep1Submit($event)"
+          *ngIf="currentStep === 1"
+          #signupForm="ngForm"
+        >
+          <div class="row">
+            <div class="form-group col-6">
+              <label for="firstName">First Name</label>
+              <div class="input-container">
+                <i class="fas fa-user input-icon"></i>
+                <input
+                  type="text"
+                  id="firstName"
+                  placeholder="Enter your first name"
+                  [(ngModel)]="userData.firstName"
+                  name="firstName"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group col-6">
+              <label for="lastName">Last Name</label>
+              <div class="input-container">
+                <i class="fas fa-user input-icon"></i>
+                <input
+                  type="text"
+                  id="lastName"
+                  placeholder="Enter your last name"
+                  [(ngModel)]="userData.lastName"
+                  name="lastName"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group col-6">
+              <label for="email">Email Address</label>
+              <div class="input-container">
+                <i class="fas fa-envelope input-icon"></i>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Enter your email"
+                  [(ngModel)]="userData.email"
+                  name="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group col-6">
+              <label for="mobilePhone">Mobile Phone</label>
+              <div class="input-container">
+                <i class="fas fa-phone input-icon"></i>
+                <input
+                  type="tel"
+                  id="mobilePhone"
+                  placeholder="Enter your phone number"
+                  [(ngModel)]="userData.mobilePhone"
+                  name="mobilePhone"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group col-6">
+              <label for="password">Password</label>
+              <div class="input-container">
+                <i class="fas fa-lock input-icon"></i>
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  id="password"
+                  placeholder="Create a password"
+                  [(ngModel)]="userData.password"
+                  name="password"
+                  required
+                />
+                <button type="button" class="password-toggle" (click)="togglePassword()">
+                  <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
+              <div class="password-strength">
+                <div class="strength-bar">
+                  <div class="strength-fill" [class]="getPasswordStrength()"></div>
+                </div>
+                <span class="strength-text">{{ getPasswordStrengthText() }}</span>
+              </div>
+            </div>
+
+            <div class="form-group col-6">
+              <label for="confirmPassword">Confirm Password</label>
+              <div class="input-container">
+                <i class="fas fa-lock input-icon"></i>
+                <input
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  id="confirmPassword"
+                  placeholder="Confirm your password"
+                  [(ngModel)]="userData.confirmPassword"
+                  name="confirmPassword"
+                  required
+                />
+                <button type="button" class="password-toggle" (click)="toggleConfirmPassword()">
+                  <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
+              <div *ngIf="userData.confirmPassword && !passwordsMatch()" class="error-message">
+                Passwords do not match
+              </div>
+            </div>
+            <div class="form-group col-12">
+              <label for="dateOfBirth">Date of Birth</label>
+              <div class="input-container">
+                <i class="fas fa-calendar input-icon"></i>
+                <input
+                  type="date"
+                  id="dateOfBirth"
+                  [(ngModel)]="userData.dateOfBirth"
+                  name="dateOfBirth"
+                  class="date-input"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Image -->
+          <div class="form-group">
+            <label class="pro-label" for="profileImage">Profile Image (Optional)</label>
+            <div class="image-upload-container">
+              <input
+                type="file"
+                id="profileImage"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                class="file"
+              />
+              <div class="image-preview" *ngIf="profileImagePreview">
+                <img [src]="profileImagePreview" alt="Preview" />
+              </div>
+              <div class="image-placeholder" *ngIf="!profileImagePreview">
+                <i class="fas fa-user-circle"></i>
+                <p>No image selected</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gender and Marital Status -->
+          <div class="d-flex flex-row justify-content-evenly">
+            <div class="form-group text-center">
+              <label class="fs-6 fw-medium text-light-emphasis">Gender</label>
+              <div class="radio-group">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="male"
+                  [(ngModel)]="userData.gender"
+                  class="btn-check"
+                  id="male"
+                  required
+                />
+                <label
+                  class="btn btn-outline-secondary fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="male"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i class="icon1 fa-solid fa-mars fa-beat fa-stack-1x fa-sm fa-inverse"></i>
+                  </span>
+                  <span class="fs-6">Male</span>
+                </label>
+                <input
+                  type="radio"
+                  name="gender"
+                  value="female"
+                  [(ngModel)]="userData.gender"
+                  class="btn-check"
+                  id="female"
+                  required
+                />
+                <label
+                  class="btn btn-outline-primary fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="female"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i class="icon2 fa-solid fa-venus fa-beat fa-stack-1x fa-sm fa-inverse"></i>
+                  </span>
+                  <span class="fs-6">Female</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group text-center">
+              <label class="fs-6 fw-medium text-light-emphasis">Marital Status</label>
+              <div class="radio-group">
+                <input
+                  type="radio"
+                  name="mitrialStatus"
+                  value="single"
+                  [(ngModel)]="userData.mitrialStatus"
+                  class="btn-check"
+                  id="Sg"
+                  required
+                />
+                <label
+                  class="btn btn-outline-secondary fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="Sg"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i class="icon1 fa-solid fa-user fa-beat fa-stack-1x fa-sm fa-inverse"></i>
+                  </span>
+                  <span class="fs-6">Single</span>
+                </label>
+                <input
+                  type="radio"
+                  name="mitrialStatus"
+                  value="married"
+                  [(ngModel)]="userData.mitrialStatus"
+                  class="btn-check"
+                  id="Mg"
+                  required
+                />
+                <label
+                  class="btn btn-outline-primary fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="Mg"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i
+                      class="icon2 fa-solid fa-people-arrows fa-beat fa-stack-1x fa-sm fa-inverse"
+                    ></i>
+                  </span>
+                  <span class="fs-6">Married</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Terms and Conditions -->
+          <div class="form-options">
+            <label class="checkbox-container">
+              <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" required />
+              <span class="checkmark"></span>
+              I accept the terms and conditions
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            class="signup-btn"
+            [disabled]="isLoading || !acceptTerms || !passwordsMatch()"
+          >
+            <span *ngIf="!isLoading">Continue</span>
+            <div *ngIf="isLoading" class="loading-spinner"></div>
+          </button>
+
+          <div class="signin-link">
+            Already have an account? <a routerLink="/signin" class="link">Sign In</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Verification Modal Component -->
+<!-- Debug: showVerificationModal = {{ showVerificationModal }} -->
+<app-verification-modal
+  [isVisible]="showVerificationModal"
+  [email]="userData.email"
+  [isVerifying]="isVerifying"
+  [verificationError]="verificationError"
+  (close)="closeVerificationModal()"
+  (verify)="verifyCode($event)"
+  (resend)="resendCode()"
+></app-verification-modal>

@@ -1,0 +1,242 @@
+/* Verification Modal Overlay */
+.verification-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Verification Modal Content */
+.verification-modal-content {
+  background: white;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease-out;
+  position: relative;
+  z-index: 100000;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Verification Modal Header */
+.verification-modal-header {
+  padding: 25px 30px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.verification-modal-header h2 {
+  margin: 0;
+  color: #764ba2;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.verification-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.verification-close-btn:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+/* Verification Modal Body */
+.verification-modal-body {
+  padding: 30px;
+}
+
+.verification-modal-body p {
+  margin-bottom: 10px;
+  color: #666;
+  text-align: center;
+}
+
+.verification-sub-text {
+  font-size: 0.9rem;
+  color: #999;
+  margin-bottom: 25px;
+}
+
+/* Verification Input */
+.verification-input-container {
+  margin: 25px 0;
+}
+
+.verification-input {
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 1.5rem;
+  text-align: center;
+  letter-spacing: 8px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.verification-input:focus {
+  border-color: #764ba2;
+  box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+}
+
+/* Verification Error Message */
+.verification-error-message {
+  color: #ff4757;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  padding: 15px;
+  background-color: #fee;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid #fcc;
+  max-height: 200px;
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+
+.verification-error-message i {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.verification-error-message div {
+  flex: 1;
+  line-height: 1.5;
+}
+
+/* Verification Modal Actions */
+.verification-modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.verification-btn-primary,
+.verification-btn-secondary {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+}
+
+.verification-btn-primary {
+  background: #764ba2;
+  color: white;
+}
+
+.verification-btn-primary:hover:not(:disabled) {
+  background: #5a3780;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+}
+
+.verification-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.verification-btn-secondary {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.verification-btn-secondary:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.verification-btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Verification Loading Spinner */
+.verification-loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .verification-modal-content {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .verification-modal-header {
+    padding: 20px;
+  }
+  
+  .verification-modal-body {
+    padding: 20px;
+  }
+  
+  .verification-input {
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+  }
+}
+

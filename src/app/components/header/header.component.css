@@ -1,0 +1,116 @@
+.navbar {
+   background: linear-gradient(135deg, rgba(var(--secondary-100-rgb), 1) 0%, rgba(var(--primary-100-rgb), 1) 100%);
+}
+
+.wx-max {
+   width: 100%;
+}
+
+.navbar .logo-img {
+   width: 2rem;
+   height: 2rem;
+   box-shadow: 0 0 20px rgb(135, 206, 250);
+   
+}
+.navbar .logo span{
+   
+   background-clip: text;
+   color:transparent;
+   background-image: linear-gradient(135deg,var(--secondary-600),var(--primary-600)70% 100%);
+}
+
+.navbar .navbar-nav {
+   --bs-navbar-color: var(--primary-600);
+   --bs-nav-link-hover-color: var(--primary-900);
+}
+
+.navbar-nav .nav-link.active {
+   --bs-navbar-active-color: var(--primary-800);
+}
+
+
+
+nav button:hover .icon-custom {
+   color: var(--primary-700);
+}
+
+nav .navbar-toggler:hover span i {
+   color: var(--primary-200);
+}
+
+.navbar .nav-item .nav-link {
+   position: relative;
+}
+
+.navbar .nav-item .nav-link::after,
+.navbar .dropdown::after {
+   content: "";
+   position: absolute;
+   left: 8px;
+   right: 100%;
+   bottom: 8px;
+   background-color: var(--primary-800);
+   height: 1.5px;
+   transition: right 0.3s ease;
+}
+
+.navbar .nav-item .nav-link:hover::after,
+.navbar .nav-item .nav-link.active::after,
+.navbar .dropdown:hover::after {
+   left: 8px;
+   right: 8px;
+}
+
+.navbar .dropdown .dropdown-menu {
+   --bs-dropdown-bg: var(--primary-100);
+
+}
+
+.navbar .dropdown .dropdown-menu .dropdown-item:hover {
+   --bs-dropdown-link-hover-bg: var(--primary-300);
+}
+
+.navbar .dropdown .dropdown-menu .dropdown-item:active {
+   --bs-dropdown-link-active-bg: var(--primary-400);
+}
+
+nav button.btn {
+   position: relative;
+   font-size: .875rem;
+   overflow: hidden;
+   transition: all 0.3s ease;
+
+}
+
+nav button.btn::after {
+   content: "";
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   transition: .5s all;
+   transition-delay: .05s;
+   transform: translateX(-100%);
+   background: linear-gradient(90deg,
+         transparent, rgba(255, 255, 255, 0.4) 35% 65%,
+         transparent);
+}
+
+
+nav button.btn:hover::after {
+   transform: translateX(200%);
+}
+
+nav button.btn:hover {
+   transform: translateY(-0.1429rem);
+}
+
+@media (min-width: 992px) {
+   .wx-max {
+      width: max-content;
+   }
+}
+
+/* Primary Button */
+

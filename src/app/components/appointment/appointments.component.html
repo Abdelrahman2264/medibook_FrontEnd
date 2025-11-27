@@ -1,0 +1,110 @@
+<div class="app-container">
+  <!-- البحث والفلاتر -->
+  <div class="search-filter">
+    <input type="text" placeholder="Search by name..." [(ngModel)]="searchName">
+    <label for="specialty">Select Specialty</label>
+    <select id="specialty" [(ngModel)]="filterSpecialty">
+      <option value="">All specialties</option>
+      <option *ngFor="let spec of specialties" [value]="spec">{{ spec }}</option>
+    </select>
+  </div>
+
+  <!-- الكروت -->
+  <div class="doctor-cards">
+    <div class="doctor-card" *ngFor="let d of filteredDoctors">
+    <img class="photo" src="/images/doctor.jpg" alt="doctor">
+      <h3 class="name">{{ d.name }}</h3>
+      <p class="spec">{{ d.specialty }}</p>
+
+      <div class="rating">
+        <ng-container *ngFor="let filled of starsArray(d.rating)">
+          <span class="star" [class.filled]="filled">★</span>
+        </ng-container>
+      </div>
+
+      <div class="actions">
+        <button (click)="openDetails(d)" class="btn btn-primary">Details</button>
+        <button class="btn btn-outline-primary" (click)="openBooking(d)">Book</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال التفاصيل -->
+<div class="modal" *ngIf="selectedDoctor" (click)="closeDetails()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- التعديل الأساسي -->
+    <div class="modal-body">
+      <img class="modal-photo" src="/images/doctor.jpg" alt="doctor">
+      <div class="modal-info">
+        <h2>{{ selectedDoctor.name }}</h2>
+        <p><strong>Specialty:</strong> {{ selectedDoctor.specialty }}</p>
+        <p><strong>Bio:</strong> {{ selectedDoctor.bio }}</p>
+        <p><strong>Certificates:</strong> {{ selectedDoctor.certificates?.join(', ') }}</p>
+        <p><strong>Operations:</strong> {{ selectedDoctor.operations?.join(', ') }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  <!-- مودال الحجز -->
+<div class="modal" *ngIf="showBookingModal">
+  <div class="modal-content booking-modal">
+    <span class="close" (click)="closeBooking()">×</span>
+
+    <h3>Book Appointment</h3>
+
+    <p><strong>Doctor:</strong> {{ bookingDoctor?.name }}</p>
+    <p><strong>Specialty:</strong> {{ bookingDoctor?.specialty }}</p>
+    <p><strong>Price:</strong> {{ bookingDoctor?.price }} EGP</p>
+
+    <!-- التقويم -->
+    <h4>Available Days</h4>
+<div class="calendar">
+  <div 
+    class="day"
+    *ngFor="let date of monthDates"
+    [class.disabled]="!bookingDoctor?.availableDays?.includes(date.dayName)"
+    [class.selected]="bookingDate === date.fullDate"
+    (click)="bookingDoctor?.availableDays?.includes(date.dayName) ? bookingDate = date.fullDate : null"
+  >
+    <div class="day-name">{{ date.dayName }}</div> <!-- اسم اليوم -->
+    <div class="day-number">{{ date.dayNumber }}</div> <!-- رقم اليوم -->
+  </div>
+</div>
+
+
+
+
+    <!-- المواعيد -->
+    <h4>Available Times</h4>
+    <div class="times">
+      <button 
+        *ngFor="let time of bookingDoctor?.availableTimes"
+        class="time-btn"
+        [class.selected]="bookingTime === time"
+        (click)="bookingTime = time"
+      >
+        {{ time }}
+      </button>
+    </div>
+
+    <!-- الأزرار -->
+    <div class="booking-actions">
+      <button class="cancel" (click)="closeBooking()">Cancel</button>
+      <button class="confirm" (click)="confirmBooking()">Confirm Booking</button>
+    </div>
+
+    <!-- رسالة النجاح -->
+    <p *ngIf="showSuccessMessage" class="success-message">Booking Confirmed ✔</p>
+
+  </div>
+</div>
+
+</div>
+
+
+

@@ -1,0 +1,278 @@
+<div class="user-profile-container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- User Profile Summary -->
+    <div class="user-profile-summary">
+      <div class="avatar-container">
+        <img [src]="user.photo" alt="User Photo" class="user-avatar">
+        <div class="online-status active"></div>
+      </div>
+      <h2>{{ user.name }}</h2>
+      <p class="user-role">{{ user.role }}</p>
+      <p class="user-department">{{ user.department }}</p>
+    </div>
+
+    <!-- Today's Date -->
+    <div class="today-date-section">
+      <div class="date-card">
+        <div class="date-day">{{ getCurrentDay() }}</div>
+        <div class="date-full">{{ getCurrentDate() }}</div>
+      </div>
+    </div>
+
+        <!-- Navigation Menu -->
+    <nav class="main-menu">
+  <ul>
+    <li 
+      *ngFor="let item of menuItems" 
+      [class.active]="item.active"
+      (click)="setActiveMenu(item)"
+    >
+      <i [class]="item.icon"></i>
+      <a 
+        *ngIf="item.name === 'Doctors'" 
+        routerLink="/doctors" 
+        style="color: inherit; text-decoration: none; cursor: pointer;"
+      >
+        {{ item.name }}
+      </a>
+      <a 
+        *ngIf="item.name === 'Profile'" 
+        routerLink="/user-profile" 
+        style="color: inherit; text-decoration: none; cursor: pointer;"
+      >
+        {{ item.name }}
+      </a>
+      <a 
+        *ngIf="item.name === 'Nurses'" 
+        routerLink="/nurses" 
+        style="color: inherit; text-decoration: none; cursor: pointer;"
+      >
+        {{ item.name }}
+      </a>
+      <span *ngIf="item.name !== 'Doctors' && item.name !== 'Nurses' && item.name !== 'Profile'">
+        {{ item.name }}
+      </span>
+    </li>
+  </ul>
+</nav>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+      <h3>Quick Stats</h3>
+      <div class="stats-mini">
+        <div class="stat-mini">
+          <i class="fas fa-user-injured"></i>
+          <span>1.2K</span>
+        </div>
+        <div class="stat-mini">
+          <i class="fas fa-calendar-check"></i>
+          <span>156</span>
+        </div>
+        <div class="stat-mini">
+          <i class="fas fa-star"></i>
+          <span>4.9</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <div class="profile-header">
+      <div class="header-title">
+        <h1>User Profile</h1>
+        <p>Manage your personal and professional information</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" (click)="toggleEditMode()" *ngIf="!isEditMode">
+          <i class="fas fa-edit"></i>
+          Edit Profile
+        </button>
+        <div class="edit-actions" *ngIf="isEditMode">
+          <button class="btn-success" (click)="saveProfile()">
+            <i class="fas fa-check"></i>
+            Save Changes
+          </button>
+          <button class="btn-danger" (click)="cancelEdit()">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+        <button class="btn-primary">
+          <i class="fas fa-download"></i>
+          Export Data
+        </button>
+      </div>
+    </div>
+
+    <div class="profile-content">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Personal Information Card -->
+        <div class="info-card">
+          <div class="card-header">
+            <h2><i class="fas fa-user-circle" style="color: #28a745;"></i> Personal Information</h2>
+          </div>
+          <div class="card-body">
+            <div class="photo-section">
+              <div class="photo-container">
+                <img [src]="isEditMode ? editedUser.photo : user.photo" alt="Profile Photo" class="profile-photo-large">
+                <input type="file" id="profilePhotoInput" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+                <button class="photo-edit-btn" (click)="triggerFileInput()" *ngIf="isEditMode">
+                  <i class="fas fa-camera"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-field">
+                <label>Full Name</label>
+                <div *ngIf="!isEditMode" class="info-value">{{ user.name }}</div>
+                <input *ngIf="isEditMode" [(ngModel)]="editedUser.name" class="edit-input">
+              </div>
+
+              <div class="info-field">
+                <label>Email Address</label>
+                <div *ngIf="!isEditMode" class="info-value">{{ user.email }}</div>
+                <input *ngIf="isEditMode" [(ngModel)]="editedUser.email" type="email" class="edit-input">
+              </div>
+
+              <div class="info-field">
+                <label>Phone Number</label>
+                <div *ngIf="!isEditMode" class="info-value">{{ user.phone }}</div>
+                <input *ngIf="isEditMode" [(ngModel)]="editedUser.phone" class="edit-input">
+              </div>
+
+              <div class="info-field">
+                <label>Address</label>
+                <div *ngIf="!isEditMode" class="info-value">{{ user.address }}</div>
+                <textarea *ngIf="isEditMode" [(ngModel)]="editedUser.address" class="edit-textarea"></textarea>
+              </div>
+
+              <div class="info-field">
+                <label>Emergency Contact</label>
+                <div *ngIf="!isEditMode" class="info-value">{{ user.emergencyContact }}</div>
+                <input *ngIf="isEditMode" [(ngModel)]="editedUser.emergencyContact" class="edit-input">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Professional Information Card -->
+        <div class="info-card">
+          <div class="card-header">
+            <h2><i class="fas fa-briefcase" style="color: #28a745;"></i> Professional Information</h2>
+          </div>
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="info-field">
+                <label>Role</label>
+                <div class="info-value">{{ user.role }}</div>
+              </div>
+
+              <div class="info-field">
+                <label>Department</label>
+                <div class="info-value">{{ user.department }}</div>
+              </div>
+
+              <div class="info-field">
+                <label>Join Date</label>
+                <div class="info-value">{{ user.joinDate }}</div>
+              </div>
+
+              <div class="info-field">
+                <label>Status</label>
+                <div class="status-badge" [class.active]="user.status === 'Active'">
+                  {{ user.status }}
+                </div>
+              </div>
+
+              <div class="info-field full-width">
+                <label>Last Login</label>
+                <div class="info-value">{{ user.lastLogin }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Statistics Card -->
+        <div class="stats-card">
+          <h2><i class="fas fa-chart-bar" style="color: #28a745;"></i> Performance Statistics</h2>
+          <div class="stats-grid">
+            <div *ngFor="let stat of stats" class="stat-item" [style.border-left-color]="stat.color">
+              <div class="stat-icon" [style.background]="stat.color + '20'">
+                <i [class]="stat.icon" [style.color]="stat.color"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{ stat.value }}</div>
+                <div class="stat-label">{{ stat.label }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Qualifications Card -->
+        <div class="info-card">
+          <div class="card-header">
+            <h2><i class="fas fa-graduation-cap" style="color: #28a745;"></i> Qualifications & Education</h2>
+          </div>
+          <div class="card-body">
+            <div class="qualifications-list">
+              <div *ngFor="let qualification of user.qualifications" class="qualification-item">
+                <i class="fas fa-certificate"></i>
+                {{ qualification }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skills & Languages Card -->
+        <div class="skills-languages-card">
+          <div class="skills-section">
+            <h3><i class="fas fa-tools" style="color: #28a745;"></i> Professional Skills</h3>
+            <div class="skills-list">
+              <span *ngFor="let skill of user.skills" class="skill-tag">
+                {{ skill }}
+              </span>
+            </div>
+          </div>
+
+          <div class="languages-section">
+            <h3><i class="fas fa-language" style="color: #28a745;"></i> Languages</h3>
+            <div class="languages-list">
+              <span *ngFor="let language of user.languages" class="language-tag">
+                {{ language }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activities Card -->
+        <div class="info-card">
+          <div class="card-header">
+            <h2><i class="fas fa-history" style="color: #28a745;"></i> Recent Activities</h2>
+          </div>
+          <div class="card-body">
+            <div class="activities-list">
+              <div *ngFor="let activity of recentActivities" class="activity-item">
+                <div class="activity-icon" [style.background]="getActivityColor(activity.type) + '20'">
+                  <i [class]="activity.icon" [style.color]="getActivityColor(activity.type)"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-action">{{ activity.action }}</div>
+                  <div class="activity-patient">{{ activity.patient }}</div>
+                  <div class="activity-time">{{ activity.time }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

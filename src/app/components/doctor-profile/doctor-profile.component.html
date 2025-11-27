@@ -1,0 +1,163 @@
+<div class="profile-page" *ngIf="doctor">
+  <!-- Header Navigation -->
+  <div class="profile-header">
+    <button class="back-btn" routerLink="/doctors">
+      <i class="fas fa-arrow-left"></i>
+      Back to Doctors List
+    </button>
+    <div class="header-actions">
+      <button class="print-btn">
+        <i class="fas fa-print"></i>
+        Print Profile
+      </button>
+      <button class="share-btn">
+        <i class="fas fa-share-alt"></i>
+        Share
+      </button>
+    </div>
+  </div>
+
+  <div class="profile-container">
+    <!-- Left Section - Profile Card -->
+    <div class="left-section">
+      <div class="profile-card">
+        <div class="profile-photo-container">
+          <img
+            [src]="doctor.photo"
+            class="profile-photo"
+            alt="Doctor Photo"
+          />
+          <div class="online-status" [class.active]="doctor.active">
+            <i class="fas fa-circle"></i>
+            {{ doctor.active ? 'Active' : 'Inactive' }}
+          </div>
+        </div>
+
+        <div class="profile-basic-info">
+          <h1>{{ doctor.name }}</h1>
+          <div class="specialty-badge">
+            <i [class]="getSpecialtyIcon(doctor.specialty)"></i>
+            {{ doctor.specialty }}
+          </div>
+          
+          <!-- Rating -->
+          <div class="rating-section">
+            <div class="stars">
+              <span *ngFor="let star of getStars(doctor.rating)" class="star">
+                <i class="fas fa-star"></i>
+              </span>
+              <span class="rating-text">({{ doctor.rating }})</span>
+            </div>
+            <div class="patients-count">
+              <i class="fas fa-user-friends"></i>
+              {{ doctor.patients.toLocaleString() }} Patients
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button
+            class="status-btn"
+            [ngClass]="{ active: doctor.active }"
+            (click)="toggleActive()"
+          >
+            <i [class]="doctor.active ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+            {{ doctor.active ? 'Deactivate Doctor' : 'Activate Doctor' }}
+          </button>
+          
+          <button class="appointment-btn">
+            <i class="fas fa-calendar-check"></i>
+            Schedule Appointment
+          </button>
+          
+          <button class="message-btn">
+            <i class="fas fa-comment-medical"></i>
+            Send Message
+          </button>
+        </div>
+      </div>
+
+      <!-- Statistics Card -->
+      <div class="stats-card">
+        <h3>Doctor Statistics</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number">{{ doctor.experience }}</div>
+            <div class="stat-label">Experience</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ doctor.rating }}/5</div>
+            <div class="stat-label">Rating</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ doctor.patients.toLocaleString() }}</div>
+            <div class="stat-label">Patients</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Section - Detailed Information -->
+    <div class="right-section">
+      <!-- Personal Information -->
+      <div class="info-card">
+        <div class="card-header">
+          <h2><i class="fas fa-user-md"></i> Professional Information</h2>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <label><i class="fas fa-envelope" style="color: #28a745;"></i> Email</label>
+            <p>{{ doctor.email }}</p>
+          </div>
+          <div class="info-item">
+            <label><i class="fas fa-phone" style="color: #28a745;"></i> Phone</label>
+            <p>{{ doctor.phone }}</p>
+          </div>
+          <div class="info-item">
+            <label><i class="fas fa-graduation-cap" style="color: #28a745;"></i> Education</label>
+            <p>{{ doctor.education }}</p>
+          </div>
+          <div class="info-item">
+            <label><i class="fas fa-language" style="color: #28a745;"></i> Languages</label>
+            <div class="languages-list">
+              <span *ngFor="let lang of doctor.languages" class="language-tag">
+                {{ lang }}
+              </span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <label><i class="fas fa-clock" style="color: #28a745;"></i> Availability</label>
+            <p>{{ doctor.availability }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Doctor -->
+      <div class="info-card">
+        <div class="card-header">
+          <h2><i class="fas fa-info-circle"></i> About Doctor</h2>
+        </div>
+        <div class="bio-content">
+          <p>{{ doctor.bio }}</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="edit-btn primary">
+          <i class="fas fa-edit"></i>
+          Edit Doctor Information
+        </button>
+        <button class="edit-btn secondary">
+          <i class="fas fa-file-medical"></i>
+          View Medical Records
+        </button>
+        <button class="edit-btn secondary">
+          <i class="fas fa-chart-line"></i>
+          Performance Analytics
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

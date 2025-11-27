@@ -1,0 +1,177 @@
+<div class="doctors-page-container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Doctor Profile -->
+    <div class="doctor-profile">
+      <div class="avatar">
+        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Dr. Smart">
+      </div>
+      <h2>Dr. Smart</h2>
+      <p>Welcome back!</p>
+    </div>
+
+    <!-- Today's Date -->
+    <div class="today-date-section">
+      <div class="date-card">
+        <div class="date-day">{{ todayDay }}</div>
+        <div class="date-full">{{ todayDate }}</div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="main-menu">
+  <ul>
+    <li 
+      *ngFor="let item of menuItems" 
+      [class.active]="item.active"
+      (click)="setActiveMenu(item)"
+    >
+      <i [class]="item.icon"></i>
+      <a 
+        *ngIf="item.name === 'Doctors'" 
+        routerLink="/doctors" 
+        style="color: inherit; text-decoration: none; cursor: pointer;"
+      >
+        {{ item.name }}
+      </a>
+      <a 
+        *ngIf="item.name === 'Profile'" 
+        routerLink="/user-profile" 
+        style="color: inherit; text-decoration: none; cursor: pointer;"
+      >
+        {{ item.name }}
+      </a>
+      <a 
+        *ngIf="item.name === 'Nurses'" 
+        routerLink="/nurses" 
+        style="color: inherit; text-decoration: none; cursor: pointer;"
+      >
+        {{ item.name }}
+      </a>
+      <span *ngIf="item.name !== 'Doctors' && item.name !== 'Nurses' && item.name !== 'Profile'">
+        {{ item.name }}
+      </span>
+    </li>
+  </ul>
+</nav>
+</div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="doctor-list-page">
+      <!-- Title -->
+      <div class="page-title-bar">
+        <h1 class="page-title">Doctors List</h1>
+      </div>
+
+      <!-- Top Stats Cards -->
+      <div class="top-cards-container">
+        <div class="top-card light-purple">
+          <h3>Total Doctors</h3>
+          <p>{{ doctors.length }}</p>
+        </div>
+        <div class="top-card light-gray">
+          <h3>Active Doctors</h3>
+          <p>{{ countActive() }}</p>
+        </div>
+        <div class="top-card light-purple">
+          <h3>Inactive Doctors</h3>
+          <p>{{ countInactive() }}</p>
+        </div>
+        <div class="top-card light-gray">
+          <h3>Specialties</h3>
+          <p>{{ specialties.length }}</p>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-container">
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Search by name..." class="search-input" />
+        <i class="fa fa-search search-icon"></i>
+      </div>
+
+      <!-- Filters & Sort -->
+      <div class="controls">
+        <select [(ngModel)]="selectedSpecialty" class="filter-select">
+          <option value="">Filter by Specialties</option>
+          <option *ngFor="let s of specialties" [value]="s">{{ s }}</option>
+        </select>
+
+        <select [(ngModel)]="selectedState" class="filter-select">
+          <option value="">Filter by State</option>
+          <option *ngFor="let st of states" [value]="st">{{ st }}</option>
+        </select>
+
+        <button (click)="sortByName()" class="sort-btn">
+          Sort by Name <i class="fa fa-sort-alpha-down"></i>
+        </button>
+
+        <!-- زر Clear All الجديد -->
+        <button (click)="clearAllFilters()" class="clear-all-btn">
+          Clear All <i class="fas fa-times-circle"></i>
+        </button>
+      </div>
+
+      <!-- Results Bar -->
+      <div class="results-bar">
+        <div class="results-info">
+          <i class="fas fa-user-md"></i>
+          Showing <span class="highlight">{{filteredDoctors().length}}</span> of 
+          <span class="total">{{doctors.length}}</span> doctors
+        </div>
+      </div>
+      
+      <!-- Doctor Cards Container -->
+      <div class="cards-container">
+        <div
+          class="doctor-card"
+          *ngFor="let doctor of filteredDoctors(); let i = index"
+          [style.background-color]="getCardColor(doctor.specialty, i)"
+        >
+          <img [src]="doctor.photo || 'https://via.placeholder.com/150'" alt="{{ doctor.name }}" class="doctor-photo" />
+          <div class="doctor-info">
+
+          <div class="status-badge" [class.active]="doctor.active">
+            <i [class]="doctor.active ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+            {{ doctor.active ? 'Active' : 'Inactive' }}
+          </div> 
+            <h3>{{ doctor.name }}</h3>
+            <p><i class="fa fa-id-badge"></i> ID: {{ doctor.id }}</p>
+            <p><i class="{{ getSpecialtyIcon(doctor.specialty) }}"></i> Specialty: {{ doctor.specialty }}</p>
+            <p><i class="fa fa-envelope"></i> {{ doctor.email }}</p>
+            <p><i class="fa fa-phone"></i> {{ doctor.phone }}</p>
+          </div>
+
+      
+          <div class="doctor-actions">
+            <button class="view-btn" [routerLink]="['/doctors', doctor.id]">View Profile</button>
+            <button class="activate-btn" [ngClass]="{ active: doctor.active }" (click)="toggleActive(doctor)">
+              {{ doctor.active ? 'Deactivate' : 'Activate' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner Advertisement -->
+      <div class="banner-advertisement">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h2>🚀 Special Promotion!</h2>
+            <p>Get exclusive access to premium features and enhance your medical practice</p>
+            <div class="banner-features">
+              <span><i class="fas fa-check"></i> Advanced Analytics</span>
+              <span><i class="fas fa-check"></i> Priority Support</span>
+              <span><i class="fas fa-check"></i> Unlimited Storage</span>
+            </div>
+          </div>
+          <div class="banner-offer">
+            <div class="offer-badge">50% OFF</div>
+            <p class="offer-text">First 3 months</p>
+            <button class="banner-cta">Upgrade Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 

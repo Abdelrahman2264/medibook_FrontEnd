@@ -1,0 +1,95 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm",
+
+    "analytics": "889a66af-cdaf-44a4-a808-d58195df3b95",
+
+    "analytics": false
+
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "medibook_FrontEnd": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "extra/images",
+                "output": "images"
+              },
+              {
+                "glob": "**/*",
+                "input": "public"
+
+              }
+            ],
+            "styles": [   
+              
+              "src/CSS/all.min.css",          
+              "src/CSS/bootstrap.min.css",
+              "src/styles.css",
+              "src/CSS/Animations.css"
+              
+            ],
+            "scripts": [
+              "src/js/bootstrap.bundle.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "medibook_FrontEnd:build:production"
+            },
+            "development": {
+              "buildTarget": "medibook_FrontEnd:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    }
+  }
+}

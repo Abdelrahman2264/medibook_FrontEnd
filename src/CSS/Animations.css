@@ -1,0 +1,243 @@
+@keyframes about-section {
+   0% {
+      content: " |";
+   }
+
+   3% {
+      content: "|";
+   }
+
+   5% {
+      content: "e|";
+   }
+
+   7% {
+      content: "ed|";
+   }
+
+   10% {
+      content: "edi|";
+   }
+
+   13% {
+      content: "ediB|";
+   }
+
+   15% {
+      content: "ediBo|";
+   }
+
+   17% {
+      content: "ediBoo|";
+   }
+
+   20% {
+      content: "ediBook|";
+   }
+
+   24% {
+      content: "ediBoo|";
+   }
+
+   25% {
+      content: "ediBo|";
+   }
+
+   27% {
+      content: "ediB|";
+   }
+
+   30% {
+      content: "edi|";
+   }
+
+   32% {
+      content: "ed|";
+   }
+
+   35% {
+      content: "e|";
+   }
+
+   37% {
+      content: "|";
+   }
+
+   40% {
+      content: "e|";
+   }
+
+   42% {
+      content: "ed|";
+   }
+
+   45% {
+      content: "edi|";
+   }
+
+   47% {
+      content: "edi|";
+   }
+
+   55% {
+      content: "ediB|";
+   }
+
+   57% {
+      content: "ediBo|";
+   }
+
+   60% {
+      content: "ediBoo|";
+   }
+
+   62% {
+      content: "ediBook|";
+   }
+
+   65% {
+      content: "ediBoo|";
+   }
+
+   67% {
+      content: "ediBo|";
+   }
+
+   70% {
+      content: "ediB|";
+   }
+
+   72% {
+      content: "edi|";
+   }
+
+   75% {
+      content: "ed|";
+   }
+
+   77% {
+      content: "e|";
+   }
+
+   80% {
+      content: "|";
+   }
+
+   82% {
+      content: "e|";
+   }
+
+   85% {
+      content: "ed|";
+   }
+
+   87% {
+      content: "edi|";
+   }
+
+   90% {
+      content: "ediB|";
+   }
+
+   92% {
+      content: "ediBo|";
+   }
+
+   95% {
+      content: "ediBoo|";
+   }
+
+   97% {
+      content: "ediBook|";
+   }
+
+   100% {
+      content: "ediBooK|";
+   }
+}
+
+@keyframes us-section {
+   0% {
+      content: " |";
+   }
+
+   3% {
+      content: " U|";
+   }
+
+   5% {
+      content: " Us|";
+   }
+
+   10% {
+      content: " Us|";
+   }
+
+   15% {
+      content: " Us|";
+   }
+
+   20% {
+      content: " U|";
+   }
+
+   25% {
+      content: " |";
+   }
+
+   30% {
+      content: " |";
+   }
+
+   35% {
+      content: " U|";
+   }
+
+   40% {
+      content: " Us|";
+   }
+
+   50% {
+      content: " Us|";
+   }
+
+   55% {
+      content: " U|";
+   }
+
+   60% {
+      content: " |";
+   }
+
+   65% {
+      content: " U|";
+   }
+
+   70% {
+      content: " Us|";
+   }
+
+   75% {
+      content: " Us|";
+   }
+
+   80% {
+      content: " Us|";
+   }
+
+   85% {
+      content: " U|";
+   }
+
+   90% {
+      content: " |";
+   }
+
+   95% {
+      content: " U|";
+   }
+
+   100% {
+      content: " Us|";
+   }
+}
