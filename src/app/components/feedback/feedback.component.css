@@ -1,0 +1,165 @@
+.feedback-container {
+  max-width: 800px;
+  margin: 0 auto; /* في النص */
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.feedback-title {
+  text-align: center;
+  color: #007BFF; /* أزرق */
+  font-size: 32px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.feedback-description {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 30px;
+  color: #000000;
+}
+
+.patient-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* عمودين */
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.patient-info input,
+.patient-info select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.recommend-question {
+  margin-bottom: 30px;
+}
+
+.recommend-question p {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.recommend-options label {
+  margin-right: 20px;
+  font-size: 14px;
+}
+.recommend-options input[type="radio"] {
+  width: 20px;    /* حجم الدائرة */
+  height: 20px;   /* حجم الدائرة */
+  margin-right: 8px;  /* المسافة بين الدائرة والنص */
+  vertical-align: middle;
+  accent-color: #007BFF; /* اللون الأزرق للدائرة */
+}
+
+.satisfaction-section p {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.satisfaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.satisfaction-table th,
+.satisfaction-table td {
+  text-align: center;
+  padding: 10px;
+  border: none; /* الإطارات مخفية */
+  
+}
+
+.satisfaction-table td:first-child {
+  text-align: left; /* الجمل على الشمال */
+  font-weight: normal;
+  text-align: center;
+}
+
+.feedback-text {
+  margin-bottom: 30px;
+}
+
+.feedback-text label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.feedback-text textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background-color: #007BFF;
+  color: white;
+  font-size: 25px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Overlay يغطي كل الشاشة */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4); /* رمادي شفاف */
+  z-index: 1000; /* تحت الرسالة مباشرة */
+}
+
+/* الرسالة فوق الـ overlay */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #4BB543; /* أخضر للنجاح */
+  color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  font-size: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  z-index: 1001; /* فوق الخلفية الرمادية */
+  text-align: center;
+}
+/* تكبير دواير الجدول */
+.satisfaction-table input[type="radio"] {
+  width: 20px;    /* حجم الدائرة */
+  height: 20px;   /* حجم الدائرة */
+  margin: 0 auto; /* توسيط الدائرة داخل الخلية */
+  accent-color: #007BFF; /* لون أزرق */
+
+}
+
+/* جعل نصوص الجمل بولد */
+.satisfaction-table td:first-child {
+  font-weight: bold;
+  text-align: center; /* يبقى على الشمال */
+
+}
+
+
+

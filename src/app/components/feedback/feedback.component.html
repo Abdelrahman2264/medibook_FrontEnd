@@ -1,0 +1,68 @@
+<div class="feedback-container">
+
+  <h1 class="feedback-title">Patient Feedback Form</h1>
+  <p class="feedback-description">
+    Thank you for choosing our clinic for your medical needs. Please provide feedback on your visit so we can continue improving our services. We appreciate your time!
+  </p>
+
+  <div class="patient-info">
+    <input type="text" placeholder="Name" [(ngModel)]="name" />
+    <input type="email" placeholder="Email" [(ngModel)]="email" />
+    <input type="tel" placeholder="Phone" [(ngModel)]="phone" />
+    <select [(ngModel)]="gender">
+      <option value="" disabled selected>Gender</option>
+      <option value="Female">Female</option>
+      <option value="Male">Male</option>
+      <option value="Other">Other</option>
+    </select>
+    <input type="date" [(ngModel)]="dob" />
+  </div>
+
+<div class="recommend-question">
+  <p>How likely are you to recommend us to your friends and family?</p>
+  <div class="recommend-options">
+    <label><input type="radio" name="recommend" value="Never" [(ngModel)]="recommend"/> Never</label>
+    <label><input type="radio" name="recommend" value="Not very likely" [(ngModel)]="recommend"/> Not very likely</label>
+    <label><input type="radio" name="recommend" value="Somewhat likely" [(ngModel)]="recommend"/> Somewhat likely</label>
+    <label><input type="radio" name="recommend" value="Likely" [(ngModel)]="recommend"/> Likely</label>
+    <label><input type="radio" name="recommend" value="Very likely" [(ngModel)]="recommend"/> Very likely</label>
+  </div>
+</div>
+
+
+  <div class="satisfaction-section">
+    <p>Please rate your satisfaction with the the hospital and provided service by rating the following statements:</p>
+    <table class="satisfaction-table">
+      <tr>
+        <th></th>
+        <th>Very Dissatisfied</th>
+        <th>Dissatisfied</th>
+        <th>Neutral</th>
+        <th>Satisfied</th>
+        <th>Very Satisfied</th>
+      </tr>
+      <tr *ngFor="let item of satisfactionItems; let i = index">
+        <td>{{item}}</td>
+        <td><input type="radio" name="q{{i}}" value="Very Dissatisfied" [(ngModel)]="ratings[i]"/></td>
+        <td><input type="radio" name="q{{i}}" value="Dissatisfied" [(ngModel)]="ratings[i]"/></td>
+        <td><input type="radio" name="q{{i}}" value="Neutral" [(ngModel)]="ratings[i]"/></td>
+        <td><input type="radio" name="q{{i}}" value="Satisfied" [(ngModel)]="ratings[i]"/></td>
+        <td><input type="radio" name="q{{i}}" value="Very Satisfied" [(ngModel)]="ratings[i]"/></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="feedback-text">
+    <label for="improve">Tell us how we can improve:</label>
+    <textarea id="improve" rows="5" [(ngModel)]="improveText" placeholder="Your feedback..."></textarea>
+  </div>
+
+  <button class="submit-btn" (click)="submitFeedback()">Submit</button>
+</div>
+
+<div class="popup-overlay" *ngIf="showPopup"></div>
+
+
+<div class="popup" *ngIf="showPopup">
+  ✅ Thank you for your feedback! We appreciate your time.
+</div>

@@ -78,5 +78,16 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'appointments',
     pathMatch: 'full'
-  }
+  },{
+  path: 'table',
+  loadComponent: () =>
+    import('./components/table/table.component').then(m => m.TableComponent)
+},
+{
+  path: 'feedback',
+  loadComponent: () =>
+    import('./components/feedback/feedback.component').then(m => m.FeedbackComponent)
+}
+
+
 ];
