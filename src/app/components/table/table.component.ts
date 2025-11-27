@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';  // 👈 مهم لـ *ngFor و *ngIf
+import { FeedbackComponent } from '../feedback/feedback.component'; // عدلي المسار حسب مكان الفيدباك
+
 
 @Component({
   selector: 'app-table',
-    standalone: true,       // لازم لو الكومبوننت Standalone
-  imports: [CommonModule], // 👈 هنا تضيف CommonModule
+  standalone: true,       // لازم لو الكومبوننت Standalone
+  imports: [CommonModule, FeedbackComponent], // ⚡ ضيفي FeedbackComponent هنا
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css']
 })
+
 export class TableComponent {
 
   patient = {
