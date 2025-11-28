@@ -1,0 +1,22 @@
+<div class="lists-container">
+  <div class="lists-header">
+    <h1>Lists</h1>
+    <p>Manage all your lists in one place</p>
+  </div>
+
+  <div class="lists-grid">
+    <div *ngFor="let list of lists" class="list-card">
+      <div class="list-icon">
+        <i [class]="list.icon"></i>
+      </div>
+      <div class="list-content">
+        <h3>{{ list.name }}</h3>
+        <p class="list-count">{{ list.count }} items</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

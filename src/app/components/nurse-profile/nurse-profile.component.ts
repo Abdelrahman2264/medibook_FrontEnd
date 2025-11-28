@@ -1,171 +1,299 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgIf, NgClass } from '@angular/common';
-import { RouterModule } from '@angular/router';
+// nurse-profile.component.ts - ENHANCED VERSION
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface Nurse {
-  id: number;
-  name: string;
-  department: string;
-  email: string;
-  phone: string;
-  active: boolean;
-  photo: string;
-  experience: string;
-  shift: string;
-  education: string;
-  languages: string[];
-  certifications: string[];
-  bio: string;
-  rating: number;
-  patients: number;
-}
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { NursesService } from '../../services/nurses.service';
+import { Nurse, UpdateNurseDto } from '../../models/nurse.model';
+import { NurseFormModalComponent } from '../Shared/nurse-form-modal/nurse-form-modal.component';
+import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-nurse-profile',
   templateUrl: './nurse-profile.component.html',
   styleUrls: ['./nurse-profile.component.css'],
-  imports: [NgIf, NgClass, RouterModule, CommonModule]
+  imports: [CommonModule, RouterModule, ConfirmationModalComponent, NurseFormModalComponent]
 })
-export class NurseProfile {
-  nurse: Nurse | undefined;
+export class NurseProfile implements OnInit {
+  nurse: Nurse | null = null;
+  isLoading: boolean = true;
+  errorMessage: string = '';
+  
+  // Modal states
+  showEditModal: boolean = false;
+  
+  // Confirmation modal states
+  showConfirmationModal: boolean = false;
+  confirmationConfig: any = {};
+  pendingAction: () => void = () => {};
 
-  nursesList: Nurse[] = [
-    { 
-      id: 1, 
-      name: 'Nurse Hala Mohamed', 
-      department: 'Emergency', 
-      email: 'hala.mohamed@example.com', 
-      phone: '01011111111', 
-      active: true, 
-      photo: 'https://randomuser.me/api/portraits/women/12.jpg',
-      experience: '8 years',
-      shift: 'Day Shift (7:00 AM - 3:00 PM)',
-      education: 'BSN - Cairo University',
-      languages: ['Arabic', 'English'],
-      certifications: ['ACLS', 'PALS', 'BLS'],
-      bio: 'Experienced emergency nurse with 8+ years in trauma care and emergency response. Specialized in critical care and patient stabilization.',
-      rating: 4.8,
-      patients: 1250
-    },
-    { 
-      id: 2, 
-      name: 'Nurse Mona Ahmed', 
-      department: 'ICU', 
-      email: 'mona.ahmed@example.com', 
-      phone: '01022222222', 
-      active: false, 
-      photo: 'https://randomuser.me/api/portraits/women/33.jpg',
-      experience: '5 years',
-      shift: 'Night Shift (11:00 PM - 7:00 AM)',
-      education: 'BSN - Alexandria University',
-      languages: ['Arabic', 'English', 'French'],
-      certifications: ['CCRN', 'BLS', 'ACLS'],
-      bio: 'ICU specialist with 5 years of experience in intensive care unit management and critical patient monitoring.',
-      rating: 4.6,
-      patients: 890
-    },
-    { 
-      id: 3, 
-      name: 'Nurse Samir Hassan', 
-      department: 'Surgery', 
-      email: 'samir.hassan@example.com', 
-      phone: '01033333333', 
-      active: true, 
-      photo: 'https://randomuser.me/api/portraits/men/22.jpg',
-      experience: '7 years',
-      shift: 'Day Shift (7:00 AM - 3:00 PM)',
-      education: 'BSN - Ain Shams University',
-      languages: ['Arabic', 'English'],
-      certifications: ['CNOR', 'BLS', 'ACLS'],
-      bio: 'Operating room nurse with extensive experience in surgical procedures, sterile techniques, and post-operative care.',
-      rating: 4.7,
-      patients: 2100
-    },
-    { 
-      id: 4, 
-      name: 'Nurse Yara Mahmoud', 
-      department: 'Pediatrics', 
-      email: 'yara.mahmoud@example.com', 
-      phone: '01044444444', 
-      active: true, 
-      photo: 'https://randomuser.me/api/portraits/women/44.jpg',
-      experience: '6 years',
-      shift: 'Rotating Shift',
-      education: 'BSN Pediatrics - Mansoura University',
-      languages: ['Arabic', 'English'],
-      certifications: ['PALS', 'BLS', 'Pediatric Nursing'],
-      bio: 'Pediatric nurse specialist with 6 years of experience in child healthcare, vaccination, and developmental pediatrics.',
-      rating: 4.9,
-      patients: 1800
-    },
-    { 
-      id: 5, 
-      name: 'Nurse Rania Ali', 
-      department: 'Cardiology', 
-      email: 'rania.ali@example.com', 
-      phone: '01055555555', 
-      active: true, 
-      photo: 'https://randomuser.me/api/portraits/women/55.jpg',
-      experience: '10 years',
-      shift: 'Day Shift (7:00 AM - 3:00 PM)',
-      education: 'MSN Cardiology - Cairo University',
-      languages: ['Arabic', 'English'],
-      certifications: ['ACLS', 'BLS', 'Cardiac Nursing'],
-      bio: 'Cardiac care nurse with decade of experience in cardiovascular diseases, ECG monitoring, and cardiac rehabilitation.',
-      rating: 4.8,
-      patients: 2750
-    },
-    { 
-      id: 6, 
-      name: 'Nurse Omar Khaled', 
-      department: 'Maternity', 
-      email: 'omar.khaled@example.com', 
-      phone: '01066666666', 
-      active: false, 
-      photo: 'https://randomuser.me/api/portraits/men/66.jpg',
-      experience: '4 years',
-      shift: 'Night Shift (11:00 PM - 7:00 AM)',
-      education: 'BSN - Zagazig University',
-      languages: ['Arabic', 'English'],
-      certifications: ['NRP', 'BLS', 'Maternal Nursing'],
-      bio: 'Maternity ward nurse specialized in labor and delivery, postpartum care, and newborn assessment.',
-      rating: 4.5,
-      patients: 950
-    }
-  ];
-
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private nursesService: NursesService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    let id = Number(this.route.snapshot.paramMap.get('id'));
-    this.nurse = this.nursesList.find(n => n.id === id);
+    console.log('🔄 NurseProfileComponent initialized');
+    this.loadNurse();
   }
 
+  // Force update method
+  forceUpdate() {
+    console.log('🔄 Force updating nurse profile...');
+    this.cdr.detectChanges();
+    console.log('✅ Force update completed');
+  }
+
+  loadNurse() {
+    console.log('🔄 Loading nurse profile...');
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.nurse = null;
+    
+    // Force update to show loading state immediately
+    this.forceUpdate();
+
+    const id = this.route.snapshot.paramMap.get('id');
+    
+    if (id && !isNaN(Number(id))) {
+      const numericId = Number(id);
+      console.log('📋 Fetching nurse with ID:', numericId);
+      
+      this.nursesService.getNurseById(numericId).subscribe({
+        next: (nurse: Nurse) => {
+          console.log('✅ Nurse data received:', {
+            nurseId: nurse.nurseId,
+            userId: nurse.userId,
+            fullName: nurse.fullName,
+            fullNurse: nurse
+          });
+          
+          if (!nurse.nurseId || nurse.nurseId === 0) {
+            console.error('❌ ERROR: Received nurse with invalid ID:', nurse);
+            this.errorMessage = 'Error: Received invalid nurse data from server.';
+            this.isLoading = false;
+            this.nurse = null;
+            this.forceUpdate();
+            return;
+          }
+          
+          this.nurse = nurse;
+          this.isLoading = false;
+          this.errorMessage = '';
+          
+          // Force update after data is set
+          this.forceUpdate();
+          console.log('✅ Profile loaded successfully');
+        },
+        error: (error: any) => {
+          console.error('❌ Error loading nurse:', error);
+          this.isLoading = false;
+          this.nurse = null;
+          this.errorMessage = this.getErrorMessage(error);
+          
+          // Force update after error
+          this.forceUpdate();
+        }
+      });
+    } else {
+      console.error('❌ Invalid nurse ID:', id);
+      this.errorMessage = 'Invalid nurse ID provided.';
+      this.isLoading = false;
+      this.forceUpdate();
+    }
+  }
+
+  private getErrorMessage(error: any): string {
+    if (error.status === 404) {
+      return 'Nurse not found. The requested profile does not exist.';
+    } else if (error.status === 0) {
+      return 'Unable to connect to the server. Please check your internet connection.';
+    } else if (error.status === 500) {
+      return 'Server error. Please try again later.';
+    } else {
+      return 'An unexpected error occurred while loading the nurse profile.';
+    }
+  }
+
+  // Edit modal functions
+  editNurse() {
+    if (!this.nurse) {
+      console.error('❌ Cannot open edit modal: nurse is null');
+      return;
+    }
+    
+    console.log('✏️ Opening edit modal for:', this.nurse.fullName);
+    
+    // Ensure nurse data is loaded before opening modal
+    if (this.isLoading) {
+      console.warn('⚠️ Nurse data is still loading, waiting...');
+      // Wait for data to load
+      const checkInterval = setInterval(() => {
+        if (!this.isLoading && this.nurse) {
+          clearInterval(checkInterval);
+          this.showEditModal = true;
+          this.forceUpdate();
+          console.log('✅ Modal opened after data loaded');
+        }
+      }, 100);
+      return;
+    }
+    
+    // Force update to ensure nurse is set
+    this.forceUpdate();
+    
+    // Small delay to ensure data is set before opening modal
+    setTimeout(() => {
+      this.showEditModal = true;
+      this.forceUpdate();
+      console.log('✅ Modal opened with nurse data:', {
+        nurseId: this.nurse?.nurseId,
+        fullName: this.nurse?.fullName
+      });
+    }, 50);
+  }
+
+  closeEditModal() {
+    console.log('❌ Closing edit modal');
+    this.showEditModal = false;
+    this.forceUpdate();
+  }
+
+  onSaveNurse(nurseData: UpdateNurseDto) {
+    if (!this.nurse) {
+      console.error('❌ Cannot save: nurse is null');
+      return;
+    }
+
+    // Validate nurseId before update
+    if (!this.nurse.nurseId || this.nurse.nurseId === 0) {
+      console.error('❌ ERROR: Cannot update - nurseId is invalid:', this.nurse);
+      alert('Error: Invalid nurse ID. Cannot update this nurse.');
+      return;
+    }
+
+    console.log('💾 Saving nurse updates:', {
+      nurseId: this.nurse.nurseId,
+      updateData: nurseData
+    });
+    
+    this.isLoading = true;
+    this.forceUpdate();
+
+    this.nursesService.updateNurse(this.nurse.nurseId, nurseData).subscribe({
+      next: (response: any) => {
+        console.log('✅ Nurse updated successfully');
+        this.loadNurse(); // Reload to get updated data
+        this.closeEditModal();
+      },
+      error: (error: any) => {
+        console.error('❌ Error updating nurse:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to update nurse. Please try again.');
+      }
+    });
+  }
+
+  // Activation/Deactivation
   toggleActive() {
-    if (this.nurse) {
-      this.nurse.active = !this.nurse.active;
+    if (!this.nurse) return;
+
+    const newActiveState = !this.nurse.isActive;
+    const action = newActiveState ? 'activate' : 'deactivate';
+    
+    console.log('🔄 Toggling active state:', {
+      nurse: this.nurse.fullName,
+      currentState: this.nurse.isActive,
+      newState: newActiveState
+    });
+
+    this.confirmationConfig = {
+      title: `${newActiveState ? 'Activate' : 'Deactivate'} Nurse`,
+      message: `Are you sure you want to ${action} <strong>${this.nurse.fullName}</strong>?`,
+      icon: newActiveState ? 'fas fa-user-check' : 'fas fa-user-slash',
+      iconColor: newActiveState ? '#28a745' : '#dc3545',
+      confirmText: newActiveState ? 'Activate' : 'Deactivate',
+      cancelText: 'Cancel',
+      confirmButtonClass: newActiveState ? 'btn-success' : 'btn-confirm'
+    };
+
+    this.pendingAction = () => this.executeToggleActive(newActiveState);
+    this.showConfirmationModal = true;
+    this.forceUpdate();
+  }
+
+  private executeToggleActive(newActiveState: boolean) {
+    if (!this.nurse) return;
+
+    const action = newActiveState ? 'activate' : 'deactivate';
+    
+    console.log('🚀 Executing toggle active:', {
+      userId: this.nurse.userId,
+      action: action
+    });
+
+    this.isLoading = true;
+    this.forceUpdate();
+
+    const apiCall$ = newActiveState 
+      ? this.nursesService.activateUser(this.nurse.userId)
+      : this.nursesService.deactivateUser(this.nurse.userId);
+
+    apiCall$.subscribe({
+      next: (response: any) => {
+        console.log(`✅ ${action} successful`);
+        this.loadNurse(); // Reload to get fresh data
+      },
+      error: (error: any) => {
+        console.error(`❌ ${action} failed:`, error);
+        this.isLoading = false;
+        this.forceUpdate();
+        
+        let errorMessage = `Failed to ${action} ${this.nurse?.fullName}. `;
+        
+        if (error.status === 0) {
+          errorMessage += 'Network error: Cannot connect to server.';
+        } else if (error.status === 404) {
+          errorMessage += 'Endpoint not found.';
+        } else if (error.status === 405) {
+          errorMessage += 'Method not allowed.';
+        } else if (error.status === 401) {
+          errorMessage += 'Unauthorized.';
+        } else {
+          errorMessage += 'Please try again.';
+        }
+        
+        alert(errorMessage);
+      }
+    });
+  }
+
+  // Confirmation modal handlers
+  onConfirmAction() {
+    console.log('✅ Confirmation confirmed');
+    this.showConfirmationModal = false;
+    if (this.pendingAction) {
+      this.pendingAction();
     }
+    this.forceUpdate();
   }
 
-  getStars(rating: number): number[] {
-    return Array(5).fill(0).map((_, i) => i < Math.floor(rating) ? 1 : 0);
+  onCancelAction() {
+    console.log('❌ Confirmation cancelled');
+    this.showConfirmationModal = false;
+    this.pendingAction = () => {};
+    this.forceUpdate();
   }
 
-  getDepartmentIcon(department: string): string {
-    switch (department.toLowerCase()) {
-      case 'emergency': return 'fas fa-ambulance';
-      case 'icu': return 'fas fa-procedures';
-      case 'pediatrics': return 'fas fa-baby';
-      case 'surgery': return 'fas fa-syringe';
-      case 'cardiology': return 'fas fa-heartbeat';
-      case 'maternity': return 'fas fa-baby-carriage';
-      default: return 'fas fa-user-nurse';
-    }
-  }
-
-  navigateToNursesList() {
+  goBack() {
+    console.log('↩️ Going back to nurses list');
     this.router.navigate(['/nurses']);
+  }
+
+  retryLoad() {
+    console.log('🔄 Retrying load...');
+    this.loadNurse();
   }
 }

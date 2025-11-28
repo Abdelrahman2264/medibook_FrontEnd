@@ -1,92 +1,13 @@
 <div class="nurses-page-container">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <!-- Doctor Profile -->
-    <div class="doctor-profile">
-      <div class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Dr. Smart">
-      </div>
-      <h2>Dr. Smart</h2>
-      <p>Welcome back!</p>
-    </div>
-
-    <!-- Today's Date -->
-    <div class="today-date-section">
-      <div class="date-card">
-        <div class="date-day">{{ todayDay }}</div>
-        <div class="date-full">{{ todayDate }}</div>
-      </div>
-    </div>
-
-    <!-- Navigation Menu -->
-    <nav class="main-menu">
-  <ul>
-    <li 
-      *ngFor="let item of menuItems" 
-      [class.active]="item.active"
-      (click)="setActiveMenu(item)"
-    >
-      <i [class]="item.icon"></i>
-      <a 
-        *ngIf="item.name === 'Doctors'" 
-        routerLink="/doctors" 
-        style="color: inherit; text-decoration: none; cursor: pointer;"
-      >
-        {{ item.name }}
-      </a>
-      <a 
-        *ngIf="item.name === 'Profile'" 
-        routerLink="/user-profile" 
-        style="color: inherit; text-decoration: none; cursor: pointer;"
-      >
-        {{ item.name }}
-      </a>
-      <a 
-        *ngIf="item.name === 'Nurses'" 
-        routerLink="/nurses" 
-        style="color: inherit; text-decoration: none; cursor: pointer;"
-      >
-        {{ item.name }}
-      </a>
-      <span *ngIf="item.name !== 'Doctors' && item.name !== 'Nurses' && item.name !== 'Profile'">
-        {{ item.name }}
-      </span>
-    </li>
-  </ul>
-</nav>
-
-    <!-- Discount Card -->
-    <div class="discount-card">
-      <div class="discount-badge">
-        <span class="discount-percent">25% OFF</span>
-      </div>
-      <div class="discount-content">
-        <h3>Nursing Supplies</h3>
-        <p>Get 25% discount on nursing equipment and supplies</p>
-        <div class="discount-details">
-          <div class="discount-feature">
-            <i class="fas fa-syringe"></i>
-            <span>Medical Equipment</span>
-          </div>
-          <div class="discount-feature">
-            <i class="fas fa-hand-holding-medical"></i>
-            <span>Nursing Tools</span>
-          </div>
-        </div>
-        <button class="claim-btn">
-          <i class="fas fa-shopping-cart"></i>
-          Shop Now
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- Main Content -->
   <div class="main-content">
-    <div class="nurses-page">
+    <div class="nurse-list-page">
       <!-- Title -->
       <div class="page-title-bar">
         <h1 class="page-title">Nurses List</h1>
+        <button class="add-nurse-btn" (click)="openCreateModal()">
+          <i class="fas fa-plus"></i> Add New Nurse
+        </button>
       </div>
 
       <!-- Top Stats Cards -->
@@ -103,104 +24,128 @@
           <h3>Inactive Nurses</h3>
           <p>{{ countInactive() }}</p>
         </div>
-        <div class="top-card light-gray">
-          <h3>Departments</h3>
-          <p>{{ departments.length }}</p>
-        </div>
       </div>
 
       <!-- Search -->
       <div class="search-container">
         <input 
           type="text" 
+          [(ngModel)]="searchTerm" 
           placeholder="Search by name..." 
-          [(ngModel)]="searchTerm"
-          class="search-input"
+          class="search-input" 
+          (input)="forceUpdate()"
         />
         <i class="fa fa-search search-icon"></i>
       </div>
-<!-- Filters & Sort -->
-      <div class="controls">
-        <select [(ngModel)]="selectedDepartment" class="filter-select">
-          <option value="">Filter by Department</option>
-          <option *ngFor="let dep of departments" [value]="dep">{{ dep }}</option>
-        </select>
 
-        <select [(ngModel)]="selectedStatus" class="filter-select">
-          <option value="">Filter by Status</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
+      <!-- Filters & Sort -->
+      <div class="controls">
+        <select [(ngModel)]="selectedState" class="filter-select" (change)="forceUpdate()">
+          <option value="">Filter by State</option>
+          <option *ngFor="let st of states" [value]="st">{{ st }}</option>
         </select>
 
         <button (click)="sortByName()" class="sort-btn">
           Sort by Name <i class="fa fa-sort-alpha-down"></i>
         </button>
 
-        <!-- زر Clear All الجديد -->
         <button (click)="clearAllFilters()" class="clear-all-btn">
           Clear All <i class="fas fa-times-circle"></i>
         </button>
       </div>
 
-      <!-- Results Bar -->
-      <div class="results-bar">
-        <div class="results-info">
-          <i class="fas fa-user-md"></i>
-          Showing <span class="highlight">{{filteredNurses().length}}</span> of 
-          <span class="total">{{nurses.length}}</span> nurses
+      <!-- Loading State -->
+      <div *ngIf="isLoading && nurses.length === 0" class="loading-container">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin fa-3x"></i>
+          <p>Loading nurses...</p>
+          <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
       </div>
 
-      <!-- Nurses Cards Container -->
-      <div class="cards-container">
-        <div 
+      <!-- Error Message -->
+      <div *ngIf="errorMessage && !isLoading" class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+        <button (click)="loadNurses()" class="btn btn-retry" style="margin-left: 10px;">
+          <i class="fas fa-redo"></i> Retry
+        </button>
+      </div>
+
+      <!-- Results Bar -->
+      <div class="results-bar" *ngIf="!isLoading && nurses.length > 0">
+        <div class="results-info">
+          <i class="fas fa-user-nurse"></i>
+          Showing <span class="highlight">{{filteredNurses().length}}</span> of 
+          <span class="total">{{nurses.length}}</span> nurses
+        </div>
+        <div class="results-actions">
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && nurses.length === 0" class="empty-state">
+        <div class="empty-state-content">
+          <i class="fas fa-user-nurse fa-4x"></i>
+          <h2>No Nurses Found</h2>
+          <p>There are no nurses in the system yet.</p>
+          <button class="add-nurse-btn" (click)="openCreateModal()">
+            <i class="fas fa-plus"></i> Add First Nurse
+          </button>
+        </div>
+      </div>
+
+      <!-- Nurse Cards Container -->
+      <div class="cards-container" *ngIf="!isLoading && nurses.length > 0">
+        <div
           class="nurse-card"
           *ngFor="let nurse of filteredNurses(); let i = index"
-          [style.background-color]="getCardColor(nurse.department, i)"
-          [ngClass]="'department-' + nurse.department.toLowerCase()"
+          [style.background-color]="getCardColor(i)"
         >
-          <!-- Status Badge -->
-          <div class="status-badge" [class.active]="nurse.active">
-            <i [class]="nurse.active ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
-            {{ nurse.active ? 'Active' : 'Inactive' }}
+          <div class="nurse-photo-wrapper">
+            <img 
+              [src]="nurse.photoUrl || 'assets/images/nurse-placeholder.png'" 
+              [alt]="nurse.fullName" 
+              class="nurse-photo"
+              (error)="$event.target.src='assets/images/nurse-placeholder.png'"
+            />
+            <div class="status-badge" [class.active]="nurse.isActive">
+              <i [class]="nurse.isActive ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+              {{ nurse.isActive ? 'Active' : 'Inactive' }}
+            </div>
           </div>
-
-          <img 
-            [src]="nurse.photo || 'https://via.placeholder.com/150'"
-            class="nurse-photo"
-            alt="{{ nurse.name }}"
-          />
-
+          
           <div class="nurse-info">
-            <h3>{{ nurse.name }}</h3>
-            <p><i class="fa fa-id-badge"></i> ID: {{ nurse.id }}</p>
-            <p><i [class]="getDepartmentIcon(nurse.department)"></i> Department: {{ nurse.department }}</p>
-            <p><i class="fa fa-envelope"></i> {{ nurse.email }}</p>
-            <p><i class="fa fa-phone"></i> {{ nurse.phone }}</p>
-          </div>
-
-          <!-- Additional Information -->
-          <div class="additional-info" *ngIf="nurse.experience || nurse.shift">
-            <p *ngIf="nurse.experience">
-              <i class="fas fa-briefcase"></i> Experience: {{ nurse.experience }}
+            <h3>{{ nurse.fullName || 'N/A' }}</h3>
+            <p *ngIf="nurse.nurseId"><i class="fa fa-id-badge"></i> ID: {{ nurse.nurseId }}</p>
+            <p *ngIf="nurse.email">
+              <i class="fa fa-envelope"></i> {{ nurse.email }}
             </p>
-            <p *ngIf="nurse.shift">
-              <i class="fas fa-clock"></i> Shift: {{ nurse.shift }}
+            <p *ngIf="nurse.mobilePhone">
+              <i class="fa fa-phone"></i> {{ nurse.mobilePhone }}
+            </p>
+            <p *ngIf="nurse.gender">
+              <i class="fas fa-venus-mars"></i> {{ nurse.gender }}
+            </p>
+            <p *ngIf="nurse.bio" class="bio-preview">
+              <i class="fas fa-info-circle"></i> {{ nurse.bio.length > 50 ? (nurse.bio.substring(0, 50) + '...') : nurse.bio }}
             </p>
           </div>
 
           <div class="nurse-actions">
-            <button class="view-btn" [routerLink]="['/nurses', nurse.id]">
-              <i class="fas fa-eye"></i>
-              View Profile
+            <button class="view-btn" [routerLink]="['/nurses', nurse.nurseId]">
+              <i class="fas fa-eye"></i> View Profile
             </button>
-            <button 
-              class="status-btn"
-              [ngClass]="{ active: nurse.active }"
-              (click)="toggleStatus(nurse)"
-            >
-              <i [class]="nurse.active ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
-              {{ nurse.active ? 'Deactivate' : 'Activate' }}
+            <button class="edit-btn" (click)="openEditModal(nurse)">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="activate-btn" [ngClass]="{ active: nurse.isActive }" (click)="toggleActive(nurse)">
+              <i [class]="nurse.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+              {{ nurse.isActive ? 'Deactivate' : 'Activate' }}
             </button>
           </div>
         </div>
@@ -227,4 +172,29 @@
       </div>
     </div>
   </div>
+
+  <!-- Nurse Form Modal -->
+  <app-nurse-form-modal
+    [isVisible]="showNurseModal"
+    [isEditMode]="isEditMode"
+    [selectedNurse]="selectedNurse"
+    [isLoading]="isLoading"
+    (close)="closeModal()"
+    (save)="onSaveNurse($event)"
+  >
+  </app-nurse-form-modal>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal
+    [isVisible]="showConfirmationModal"
+    [title]="confirmationConfig.title"
+    [message]="confirmationConfig.message"
+    [icon]="confirmationConfig.icon"
+    [iconColor]="confirmationConfig.iconColor"
+    [confirmText]="confirmationConfig.confirmText"
+    [cancelText]="confirmationConfig.cancelText"
+    [confirmButtonClass]="confirmationConfig.confirmButtonClass"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
 </div>

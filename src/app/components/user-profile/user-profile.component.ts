@@ -61,19 +61,6 @@ export class UserProfile {
   isEditMode = false;
   editedUser: User = { ...this.user };
 
-  // Sidebar menu
-  menuItems = [
-    { name: 'Dashboard', icon: 'fas fa-chart-line', active: false },
-    { name: 'Patients', icon: 'fas fa-user-injured', active: false },
-    { name: 'Doctors', icon: 'fas fa-user-md', active: false },
-    { name: 'Nurses', icon: 'fas fa-user-nurse', active: false },
-    { name: 'Schedule', icon: 'fas fa-calendar-alt', active: false },
-    { name: 'Documents', icon: 'fas fa-file-medical', active: false },
-    { name: 'Profile', icon: 'fas fa-user', active: true },
-    { name: 'Settings', icon: 'fas fa-cog', active: false },
-    { name: 'Support', icon: 'fas fa-headset', active: false }
-  ];
-
   // Statistics
   stats = [
     { label: 'Patients Treated', value: '1,247', icon: 'fas fa-user-injured', color: '#1e90ff' },
@@ -144,10 +131,6 @@ export class UserProfile {
     }
   }
 
-  setActiveMenu(item: any) {
-    this.menuItems.forEach(menuItem => menuItem.active = false);
-    item.active = true;
-  }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];

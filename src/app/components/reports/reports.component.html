@@ -1,0 +1,26 @@
+<div class="reports-container">
+  <div class="reports-header">
+    <h1>Reports</h1>
+    <p>View and manage all system reports</p>
+  </div>
+
+  <div class="reports-list">
+    <div *ngFor="let report of reports" class="report-card">
+      <div class="report-icon">
+        <i class="fas fa-file-alt"></i>
+      </div>
+      <div class="report-content">
+        <h3>{{ report.title }}</h3>
+        <p class="report-type">{{ report.type }} Report</p>
+        <p class="report-date">{{ report.date }}</p>
+      </div>
+      <div class="report-status" [class]="'status-' + report.status.toLowerCase().replace(' ', '-')">
+        {{ report.status }}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

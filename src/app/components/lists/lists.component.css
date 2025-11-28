@@ -1,0 +1,74 @@
+.lists-container {
+  padding: 30px;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.lists-header {
+  margin-bottom: 30px;
+}
+
+.lists-header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.lists-header p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.lists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.list-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.list-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.list-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.list-content {
+  flex: 1;
+}
+
+.list-content h3 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.list-count {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+
+
+

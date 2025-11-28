@@ -1,0 +1,181 @@
+<div class="rooms-page-container">
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="room-list-page">
+      <!-- Title -->
+      <div class="page-title-bar">
+        <h1 class="page-title">Rooms Management</h1>
+        <button class="add-room-btn" (click)="openCreateModal()">
+          <i class="fas fa-plus"></i> Add New Room
+        </button>
+      </div>
+
+      <!-- Top Stats Cards -->
+      <div class="top-cards-container">
+        <div class="top-card light-blue">
+          <h3>Total Rooms</h3>
+          <p>{{ rooms.length }}</p>
+        </div>
+        <div class="top-card light-green">
+          <h3>Active Rooms</h3>
+          <p>{{ countActive() }}</p>
+        </div>
+        <div class="top-card light-orange">
+          <h3>Inactive Rooms</h3>
+          <p>{{ countInactive() }}</p>
+        </div>
+        <div class="top-card light-purple">
+          <h3>Room Types</h3>
+          <p>{{ roomTypes.length }}</p>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="controls-container">
+        <div class="search-container">
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            placeholder="Search by room name or type..." 
+            class="search-input" 
+            (input)="forceUpdate()"
+          />
+          <i class="fa fa-search search-icon"></i>
+        </div>
+
+        <div class="filter-controls">
+          <select [(ngModel)]="selectedStatus" class="filter-select" (change)="forceUpdate()">
+            <option value="">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+
+          <select [(ngModel)]="selectedType" class="filter-select" (change)="forceUpdate()">
+            <option value="">All Types</option>
+            <option *ngFor="let type of roomTypes" [value]="type">{{ type }}</option>
+          </select>
+
+          <button (click)="sortByName()" class="sort-btn">
+            <i class="fa fa-sort-alpha-down"></i> Sort by Name
+          </button>
+
+          <button (click)="sortByType()" class="sort-btn">
+            <i class="fa fa-sort"></i> Sort by Type
+          </button>
+
+          <button (click)="clearAllFilters()" class="clear-all-btn">
+            <i class="fas fa-times-circle"></i> Clear Filters
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading && rooms.length === 0" class="loading-container">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin fa-3x"></i>
+          <p>Loading rooms...</p>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage && !isLoading" class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+        <button (click)="loadRooms()" class="btn btn-retry" style="margin-left: 10px;">
+          <i class="fas fa-redo"></i> Retry
+        </button>
+      </div>
+
+      <!-- Results Bar -->
+      <div class="results-bar" *ngIf="!isLoading && rooms.length > 0">
+        <div class="results-info">
+          <i class="fas fa-door-open"></i>
+          Showing <span class="highlight">{{filteredRooms().length}}</span> of 
+          <span class="total">{{rooms.length}}</span> rooms
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && rooms.length === 0" class="empty-state">
+        <div class="empty-state-content">
+          <i class="fas fa-door-closed fa-4x"></i>
+          <h2>No Rooms Found</h2>
+          <p>There are no rooms in the system yet.</p>
+          <button class="add-room-btn" (click)="openCreateModal()">
+            <i class="fas fa-plus"></i> Add First Room
+          </button>
+        </div>
+      </div>
+
+      <!-- Room Cards Container -->
+      <div class="cards-container" *ngIf="!isLoading && rooms.length > 0">
+        <div
+          class="room-card"
+          *ngFor="let room of filteredRooms(); let i = index"
+          [style.background-color]="getCardColor(i)"
+        >
+          <div class="room-header">
+            <div class="room-icon" [style.background-color]="room.typeColor">
+              <i [class]="room.typeIcon"></i>
+            </div>
+            <div class="room-status">
+              <span [class]="getStatusBadgeClass(room.isActive)">
+                <i [class]="room.isActive ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+                {{ room.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="room-info">
+            <h3 class="room-name">{{ room.roomName }}</h3>
+            <p class="room-id"><i class="fa fa-hashtag"></i> ID: {{ room.roomId }}</p>
+            <p class="room-type">
+              <i [class]="room.typeIcon" [style.color]="room.typeColor"></i> 
+              {{ room.roomType }}
+            </p>
+            <p class="room-created">
+              <i class="fas fa-calendar-plus"></i> Created: {{ formatDate(room.createDate) }}
+            </p>
+          </div>
+
+          <div class="room-actions">
+            <button class="edit-btn" (click)="openEditModal(room)">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="activate-btn" [ngClass]="{ active: room.isActive }" (click)="toggleActive(room)" [disabled]="pendingRoomIds.has(room.roomId)">
+              <i *ngIf="!pendingRoomIds.has(room.roomId)" [class]="room.isActive ? 'fas fa-toggle-off' : 'fas fa-toggle-on'"></i>
+              <i *ngIf="pendingRoomIds.has(room.roomId)" class="fas fa-spinner fa-spin"></i>
+              <span *ngIf="!pendingRoomIds.has(room.roomId)">{{ room.isActive ? 'Deactivate' : 'Activate' }}</span>
+              <span *ngIf="pendingRoomIds.has(room.roomId)">Updating...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Room Form Modal -->
+  <app-room-form-modal
+    [isVisible]="showRoomModal"
+    [isEditMode]="isEditMode"
+    [selectedRoom]="selectedRoom"
+    [isLoading]="isLoading"
+    (close)="closeModal()"
+    (save)="onSaveRoom($event)"
+  >
+  </app-room-form-modal>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal
+    [isVisible]="showConfirmationModal"
+    [title]="confirmationConfig.title"
+    [message]="confirmationConfig.message"
+    [icon]="confirmationConfig.icon"
+    [iconColor]="confirmationConfig.iconColor"
+    [confirmText]="confirmationConfig.confirmText"
+    [cancelText]="confirmationConfig.cancelText"
+    [confirmButtonClass]="confirmationConfig.confirmButtonClass"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
+</div>

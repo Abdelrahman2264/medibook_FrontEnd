@@ -1,0 +1,157 @@
+.dashboard-container {
+  padding: 30px;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.dashboard-header {
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.dashboard-header p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.activities-section {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.activities-section h2 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+  background: #e9ecef;
+  transform: translateX(5px);
+}
+
+.activity-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.icon-checkin {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+.icon-report {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.icon-room {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-action {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 3px;
+}
+
+.activity-patient {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.activity-time {
+  color: #868e96;
+  font-size: 0.8rem;
+}
+
+
+
+

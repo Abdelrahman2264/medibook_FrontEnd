@@ -1,0 +1,48 @@
+<div class="sidebar">
+  <!-- User Profile Summary -->
+  <div class="user-profile-summary">
+    <div class="avatar-container">
+      <img [src]="getUserPhoto()" alt="User Photo" class="user-avatar">
+      <div class="online-status active"></div>
+    </div>
+    <h2>{{ getUserName() }}</h2>
+    <p class="user-role">{{ getUserRole() }}</p>
+  </div>
+
+  <!-- Today's Date -->
+  <div class="today-date-section">
+    <div class="date-card">
+      <div class="date-day">{{ getCurrentDay() }}</div>
+      <div class="date-full">{{ getCurrentDate() }}</div>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="main-menu">
+    <ul>
+      <li 
+        *ngFor="let item of menuItems" 
+        [class.active]="item.active"
+        (click)="setActiveMenu(item)"
+      >
+        <i [class]="item.icon"></i>
+        <a 
+          *ngIf="item.name !== 'Signout'" 
+          [routerLink]="item.route"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{exact: item.route === '/dashboard'}"
+          style="color: inherit; text-decoration: none; cursor: pointer;"
+        >
+          {{ item.name }}
+        </a>
+        <span *ngIf="item.name === 'Signout'" style="cursor: pointer;">
+          {{ item.name }}
+        </span>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+
+
+

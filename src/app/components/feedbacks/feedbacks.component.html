@@ -1,0 +1,27 @@
+<div class="feedbacks-container">
+  <div class="feedbacks-header">
+    <h1>Feedbacks</h1>
+    <p>View patient feedbacks and reviews</p>
+  </div>
+
+  <div class="feedbacks-list">
+    <div *ngFor="let feedback of feedbacks" class="feedback-card">
+      <div class="feedback-header">
+        <div class="feedback-patient">
+          <h3>{{ feedback.patient }}</h3>
+          <div class="feedback-rating">
+            <i *ngFor="let star of [1,2,3,4,5]" 
+               [class]="star <= feedback.rating ? 'fas fa-star' : 'far fa-star'"
+               [style.color]="star <= feedback.rating ? '#ffc107' : '#ddd'"></i>
+          </div>
+        </div>
+        <span class="feedback-date">{{ feedback.date }}</span>
+      </div>
+      <p class="feedback-comment">{{ feedback.comment }}</p>
+    </div>
+  </div>
+</div>
+
+
+
+

@@ -1,207 +1,150 @@
-<div class="profile-page" *ngIf="nurse">
-  <!-- Header Navigation -->
-  <div class="profile-header">
-    <button class="back-btn" (click)="navigateToNursesList()">
-      <i class="fas fa-arrow-left"></i>
-      Back to Nurses List
-    </button>
-    <div class="header-actions">
-      <button class="print-btn">
-        <i class="fas fa-print"></i>
-        Print Profile
-      </button>
-      <button class="share-btn">
-        <i class="fas fa-share-alt"></i>
-        Share
-      </button>
+<div class="nurse-profile-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin fa-3x"></i>
+      <p>Loading nurse profile...</p>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </div>
   </div>
 
-  <div class="profile-container">
-    <!-- Left Section - Profile Card -->
-    <div class="left-section">
-      <div class="profile-card" [ngClass]="'department-' + nurse.department.toLowerCase()">
-        <div class="profile-photo-container">
-          <img
-            [src]="nurse.photo"
-            class="profile-photo"
-            alt="Nurse Photo"
-          />
-          <div class="online-status" [class.active]="nurse.active">
-            <i class="fas fa-circle"></i>
-            {{ nurse.active ? 'Active' : 'Inactive' }}
-          </div>
-        </div>
-
-        <div class="profile-basic-info">
-          <h1>{{ nurse.name }}</h1>
-          <div class="department-badge">
-            <i [class]="getDepartmentIcon(nurse.department)"></i>
-            {{ nurse.department }} Nurse
-            <span class="nursing-badge">RN</span>
-          </div>
-          
-          <!-- Rating -->
-          <div class="rating-section">
-            <div class="stars">
-              <span *ngFor="let star of getStars(nurse.rating)" class="star">
-                <i class="fas fa-star"></i>
-              </span>
-              <span class="rating-text">({{ nurse.rating }})</span>
-            </div>
-            <div class="patients-count">
-              <i class="fas fa-user-friends"></i>
-              {{ nurse.patients.toLocaleString() }} Patients
-            </div>
-          </div>
-
-          <!-- Shift Status -->
-          <div class="shift-status">
-            <i class="fas fa-clock"></i>
-            {{ nurse.shift }}
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-          <button
-            class="status-btn"
-            [ngClass]="{ active: nurse.active }"
-            (click)="toggleActive()"
-          >
-            <i [class]="nurse.active ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
-            {{ nurse.active ? 'Dectivate' : 'Activate' }}
-          </button>
-          
-          <button class="schedule-btn">
-            <i class="fas fa-calendar-alt"></i>
-            View Schedule
-          </button>
-          
-          <button class="message-btn">
-            <i class="fas fa-comment-medical"></i>
-            Send Message
-          </button>
-        </div>
-
-        <!-- Emergency Contact -->
-        <div class="emergency-contact">
-          <h4><i class="fas fa-phone-alt"></i> Direct Line</h4>
-          <p>{{ nurse.phone }}</p>
-        </div>
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading && !nurse" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>Error Loading Profile</h3>
+      <p>{{ errorMessage }}</p>
+      <div class="error-actions">
+        <button class="btn btn-primary" (click)="retryLoad()">
+          <i class="fas fa-redo"></i> Try Again
+        </button>
+        <button class="btn btn-secondary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Back to Nurses List
+        </button>
       </div>
+    </div>
+  </div>
 
-      <!-- Statistics Card -->
-      <div class="stats-card">
-        <h3><i class="fas fa-chart-bar"></i> Nursing Statistics</h3>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-number">{{ nurse.experience }}</div>
-            <div class="stat-label">Experience</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">{{ nurse.rating }}/5</div>
-            <div class="stat-label">Rating</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">{{ nurse.patients.toLocaleString() }}</div>
-            <div class="stat-label">Patients</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Certifications Card -->
-      <div class="certifications-card">
-        <h3><i class="fas fa-award"></i> Certifications</h3>
-        <div class="certifications-list">
-          <div *ngFor="let cert of nurse.certifications" class="certification-item">
-            <i class="fas fa-certificate"></i>
-            {{ cert }}
-          </div>
-        </div>
+  <!-- Nurse Profile Content -->
+  <div *ngIf="nurse && !isLoading" class="profile-content">
+    <!-- Header Section -->
+    <div class="profile-header">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Nurses
+      </button>
+      <div class="header-actions">
+        <button class="btn btn-edit" (click)="editNurse()">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+        <button 
+          class="btn" 
+          [class.btn-activate]="!nurse.isActive" 
+          [class.btn-deactivate]="nurse.isActive" 
+          (click)="toggleActive()">
+          <i [class]="nurse.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+          {{ nurse.isActive ? 'Deactivate' : 'Activate' }}
+        </button>
       </div>
     </div>
 
-    <!-- Right Section - Detailed Information -->
-    <div class="right-section">
-      <!-- Professional Information -->
-      <div class="info-card">
-        <div class="card-header">
-          <h2><i class="fas fa-user-nurse medical-icon"></i> Professional Information</h2>
+    <!-- Main Profile Card -->
+    <div class="profile-card">
+      <div class="profile-header-section">
+        <div class="profile-image-container">
+          <img 
+            [src]="nurse.photoUrl || 'assets/images/nurse-placeholder.png'" 
+            [alt]="nurse.fullName" 
+            class="profile-image"
+            (error)="$event.target.src='assets/images/nurse-placeholder.png'"
+          />
+          <div [class]="nurse.isActive ? 'status-badge active' : 'status-badge inactive'">
+            <i [class]="nurse.isActive ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+            {{ nurse.isActive ? 'Active' : 'Inactive' }}
+          </div>
         </div>
-        <div class="info-grid">
-          <div class="info-item">
-            <label><i class="fas fa-envelope" style="color: #1e90ff;"></i> Email</label>
-            <p>{{ nurse.email }}</p>
-          </div>
-          <div class="info-item">
-            <label><i class="fas fa-phone" style="color: #28a745;"></i> Phone</label>
-            <p>{{ nurse.phone }}</p>
-          </div>
-          <div class="info-item">
-            <label><i class="fas fa-graduation-cap" style="color: #1e90ff;"></i> Education</label>
-            <p>{{ nurse.education }}</p>
-          </div>
-          <div class="info-item">
-            <label><i class="fas fa-language" style="color: #28a745;"></i> Languages</label>
-            <div class="languages-list">
-              <span *ngFor="let lang of nurse.languages" class="language-tag">
-                {{ lang }}
-              </span>
-            </div>
-          </div>
-          <div class="info-item full-width">
-            <label><i class="fas fa-clock" style="color: #1e90ff;"></i> Current Shift</label>
-            <p>{{ nurse.shift }}</p>
-          </div>
-          <div class="info-item full-width">
-            <label><i class="fas fa-briefcase" style="color: #28a745;"></i> Experience</label>
-            <p>{{ nurse.experience }} in {{ nurse.department }}</p>
+        
+        <div class="profile-basic-info">
+          <h1 class="nurse-name">{{ nurse.fullName }}</h1>
+          
+          <div class="nurse-id">
+            <i class="fas fa-id-card"></i>
+            <span>ID: {{ nurse.nurseId }}</span>
           </div>
         </div>
       </div>
 
-      <!-- About Nurse -->
-      <div class="info-card">
-        <div class="card-header">
-          <h2><i class="fas fa-stethoscope medical-icon"></i> Professional Background</h2>
-        </div>
-        <div class="bio-content">
-          <p>{{ nurse.bio }}</p>
-        </div>
-      </div>
-
-      <!-- Skills & Specializations -->
-      <div class="info-card">
-        <div class="card-header">
-          <h2><i class="fas fa-tasks medical-icon"></i> Nursing Skills</h2>
-        </div>
-        <div class="skills-grid">
-          <div class="skill-category">
-            <h4>Clinical Skills</h4>
-            <div class="skills-list">
-              <span class="skill-tag">Patient Assessment</span>
-              <span class="skill-tag">Medication Administration</span>
-              <span class="skill-tag">IV Therapy</span>
-              <span class="skill-tag">Wound Care</span>
-              <span class="skill-tag">Emergency Response</span>
+      <!-- Details Sections -->
+      <div class="profile-details">
+        <!-- Contact Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-address-card"></i> Contact Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <label>Email</label>
+                <p>{{ nurse.email }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-phone"></i>
+              <div>
+                <label>Mobile Phone</label>
+                <p>{{ nurse.mobilePhone || 'Not provided' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-venus-mars"></i>
+              <div>
+                <label>Gender</label>
+                <p>{{ nurse.gender || 'Not specified' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-birthday-cake"></i>
+              <div>
+                <label>Date of Birth</label>
+                <p>{{ (nurse.dateOfBirth | date: 'mediumDate') || 'Not specified' }}</p>
+              </div>
             </div>
           </div>
-          <div class="skill-category">
-            <h4>Department Specific</h4>
-            <div class="skills-list">
-              <span *ngIf="nurse.department === 'Emergency'" class="skill-tag">Trauma Care</span>
-              <span *ngIf="nurse.department === 'Emergency'" class="skill-tag">Triage</span>
-              <span *ngIf="nurse.department === 'ICU'" class="skill-tag">Ventilator Management</span>
-              <span *ngIf="nurse.department === 'ICU'" class="skill-tag">Hemodynamic Monitoring</span>
-              <span *ngIf="nurse.department === 'Pediatrics'" class="skill-tag">Pediatric Assessment</span>
-              <span *ngIf="nurse.department === 'Pediatrics'" class="skill-tag">Vaccination</span>
-              <span *ngIf="nurse.department === 'Surgery'" class="skill-tag">Sterile Technique</span>
-              <span *ngIf="nurse.department === 'Surgery'" class="skill-tag">Surgical Assistance</span>
-              <span *ngIf="nurse.department === 'Cardiology'" class="skill-tag">ECG Monitoring</span>
-              <span *ngIf="nurse.department === 'Cardiology'" class="skill-tag">Cardiac Care</span>
-              <span *ngIf="nurse.department === 'Maternity'" class="skill-tag">Labor Support</span>
-              <span *ngIf="nurse.department === 'Maternity'" class="skill-tag">Postpartum Care</span>
+        </div>
+
+        <!-- Biography -->
+        <div *ngIf="nurse.bio" class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i> Biography
+          </h3>
+          <div class="bio-content">
+            <p>{{ nurse.bio }}</p>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i> Additional Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i class="fas fa-calendar-plus"></i>
+              <div>
+                <label>Member Since</label>
+                <p>{{ nurse.createDate ? (nurse.createDate | date: 'mediumDate') : 'Not specified' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-user"></i>
+              <div>
+                <label>User ID</label>
+                <p>{{ nurse.userId || 'N/A' }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -209,19 +152,46 @@
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="edit-btn primary">
-          <i class="fas fa-edit"></i>
-          Edit Nurse Profile
+        <button class="btn btn-primary" (click)="editNurse()">
+          <i class="fas fa-edit"></i> Edit Profile
         </button>
-        <button class="edit-btn secondary">
-          <i class="fas fa-file-medical"></i>
-          Nursing Records
+        <button 
+          class="btn" 
+          [class.btn-success]="!nurse.isActive" 
+          [class.btn-warning]="nurse.isActive" 
+          (click)="toggleActive()">
+          <i [class]="nurse.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+          {{ nurse.isActive ? 'Deactivate Account' : 'Activate Account' }}
         </button>
-        <button class="edit-btn secondary">
-          <i class="fas fa-chart-line"></i>
-          Performance Report
+        <button class="btn btn-secondary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Back to List
         </button>
       </div>
     </div>
   </div>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal
+    [isVisible]="showConfirmationModal"
+    [title]="confirmationConfig.title"
+    [message]="confirmationConfig.message"
+    [icon]="confirmationConfig.icon"
+    [iconColor]="confirmationConfig.iconColor"
+    [confirmText]="confirmationConfig.confirmText"
+    [cancelText]="confirmationConfig.cancelText"
+    [confirmButtonClass]="confirmationConfig.confirmButtonClass"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
+
+  <!-- Nurse Form Modal -->
+  <app-nurse-form-modal
+    [isVisible]="showEditModal"
+    [isEditMode]="true"
+    [selectedNurse]="nurse"
+    [isLoading]="isLoading"
+    (close)="closeEditModal()"
+    (save)="onSaveNurse($event)"
+  >
+  </app-nurse-form-modal>
 </div>

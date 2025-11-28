@@ -1,0 +1,289 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="onClose()">
+  <div class="modal-content" (click)="onModalClick($event)">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Edit Nurse' : 'Add New Nurse' }}</h2>
+      <button class="close-btn" (click)="onClose()" [disabled]="isLoading">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
+      
+      <form (ngSubmit)="onSubmit()" #nurseFormRef="ngForm">
+        <!-- CREATE MODE: Show all fields -->
+        <ng-container *ngIf="!isEditMode">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [(ngModel)]="nurseForm.firstName" 
+                name="firstName"
+                class="form-control"
+                placeholder="John"
+                required
+                [disabled]="isLoading"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>Last Name <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [(ngModel)]="nurseForm.lastName" 
+                name="lastName"
+                class="form-control"
+                placeholder="Doe"
+                required
+                [disabled]="isLoading"
+              />
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Email <span class="required">*</span></label>
+            <input 
+              type="email" 
+              [(ngModel)]="nurseForm.email" 
+              name="email"
+              class="form-control"
+              placeholder="nurse@example.com"
+              required
+              [disabled]="isLoading"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label>Password <span class="required">*</span></label>
+            <input 
+              type="password" 
+              [(ngModel)]="nurseForm.password" 
+              name="password"
+              class="form-control"
+              placeholder="Enter password"
+              required
+              [disabled]="isLoading"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label>Mobile Phone</label>
+            <input 
+              type="tel" 
+              [(ngModel)]="nurseForm.mobilePhone" 
+              name="mobilePhone"
+              class="form-control"
+              placeholder="01012345678"
+              [disabled]="isLoading"
+            />
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Gender</label>
+              <select 
+                [(ngModel)]="nurseForm.gender" 
+                name="gender"
+                class="form-control"
+                [disabled]="isLoading"
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Marital Status</label>
+              <select 
+                [(ngModel)]="nurseForm.mitrialStatus" 
+                name="mitrialStatus"
+                class="form-control"
+                [disabled]="isLoading"
+              >
+                <option value="">Select Status</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Widowed">Widowed</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input 
+              type="date" 
+              [(ngModel)]="nurseForm.dateOfBirth" 
+              name="dateOfBirth"
+              class="form-control"
+              [disabled]="isLoading"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label>Bio</label>
+            <textarea 
+              [(ngModel)]="nurseForm.bio" 
+              name="bio"
+              class="form-control"
+              rows="3"
+              placeholder="Nurse's biography and background..."
+              [disabled]="isLoading"
+            ></textarea>
+          </div>
+          
+          <!-- Profile Image Upload -->
+          <div class="form-group">
+            <label>Profile Image (Optional)</label>
+            <div class="image-upload-container">
+              <input
+                type="file"
+                id="profileImage"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                class="file-input"
+                [disabled]="isLoading"
+              />
+              <div class="image-preview" *ngIf="profileImagePreview">
+                <img [src]="profileImagePreview" alt="Preview" />
+                <button 
+                  type="button" 
+                  class="remove-image-btn" 
+                  (click)="removeImage()"
+                  [disabled]="isLoading"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="image-placeholder" *ngIf="!profileImagePreview">
+                <i class="fas fa-user-circle"></i>
+                <p>No image selected</p>
+                <label for="profileImage" class="upload-label" [class.disabled]="isLoading">
+                  Choose Image
+                </label>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- EDIT MODE: Show only editable fields -->
+        <ng-container *ngIf="isEditMode">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [(ngModel)]="nurseForm.firstName" 
+                name="firstName"
+                class="form-control"
+                placeholder="John"
+                required
+                [disabled]="isLoading"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>Last Name <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [(ngModel)]="nurseForm.lastName" 
+                name="lastName"
+                class="form-control"
+                placeholder="Doe"
+                required
+                [disabled]="isLoading"
+              />
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Mobile Phone</label>
+            <input 
+              type="tel" 
+              [(ngModel)]="nurseForm.mobilePhone" 
+              name="mobilePhone"
+              class="form-control"
+              placeholder="01012345678"
+              [disabled]="isLoading"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label>Marital Status</label>
+            <select 
+              [(ngModel)]="nurseForm.mitrialStatus" 
+              name="mitrialStatus"
+              class="form-control"
+              [disabled]="isLoading"
+            >
+              <option value="">Select Status</option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Divorced">Divorced</option>
+              <option value="Widowed">Widowed</option>
+            </select>
+          </div>
+          
+          <!-- Profile Image Upload -->
+          <div class="form-group">
+            <label>Profile Image (Optional)</label>
+            <div class="image-upload-container">
+              <input
+                type="file"
+                id="profileImageEdit"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                class="file-input"
+                [disabled]="isLoading"
+              />
+              <div class="image-preview" *ngIf="profileImagePreview">
+                <img [src]="profileImagePreview" alt="Preview" />
+                <button 
+                  type="button" 
+                  class="remove-image-btn" 
+                  (click)="removeImage()"
+                  [disabled]="isLoading"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="image-placeholder" *ngIf="!profileImagePreview">
+                <i class="fas fa-user-circle"></i>
+                <p>No image selected</p>
+                <label for="profileImageEdit" class="upload-label" [class.disabled]="isLoading">
+                  Choose Image
+                </label>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        
+        <div class="modal-footer">
+          <button 
+            type="button" 
+            class="btn-cancel" 
+            (click)="onClose()"
+            [disabled]="isLoading"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-save" 
+            [disabled]="isLoading"
+          >
+            <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            {{ isEditMode ? 'Update' : 'Create' }} Nurse
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+

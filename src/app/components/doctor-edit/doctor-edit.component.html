@@ -1,0 +1,196 @@
+<div class="doctor-edit-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin fa-3x"></i>
+      <p>Loading doctor data...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading && !doctor" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>Error Loading Doctor</h3>
+      <p>{{ errorMessage }}</p>
+      <button class="btn btn-primary" (click)="onCancel()">
+        <i class="fas fa-arrow-left"></i> Go Back
+      </button>
+    </div>
+  </div>
+
+  <!-- Edit Form -->
+  <div *ngIf="doctor && !isLoading" class="edit-form-container">
+    <div class="form-header">
+      <h1>
+        <i class="fas fa-edit"></i> Edit Doctor Profile
+      </h1>
+      <button class="btn btn-secondary" (click)="onCancel()" [disabled]="isSaving">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #doctorFormRef="ngForm">
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fas fa-user"></i> Personal Information</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name <span class="required">*</span></label>
+            <input 
+              type="text" 
+              [(ngModel)]="doctorForm.firstName" 
+              name="firstName"
+              class="form-control"
+              placeholder="John"
+              required
+              [disabled]="isSaving"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label>Last Name <span class="required">*</span></label>
+            <input 
+              type="text" 
+              [(ngModel)]="doctorForm.lastName" 
+              name="lastName"
+              class="form-control"
+              placeholder="Doe"
+              required
+              [disabled]="isSaving"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Mobile Phone</label>
+          <input 
+            type="tel" 
+            [(ngModel)]="doctorForm.mobilePhone" 
+            name="mobilePhone"
+            class="form-control"
+            placeholder="01012345678"
+            [disabled]="isSaving"
+          />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fas fa-briefcase"></i> Professional Information</h3>
+        
+        <div class="form-group">
+          <label>Specialization <span class="required">*</span></label>
+          <select 
+            [(ngModel)]="doctorForm.specialization" 
+            name="specialization"
+            class="form-control"
+            required
+            [disabled]="isSaving"
+          >
+            <option value="">Select Specialization</option>
+            <option *ngFor="let specialty of specialties" [value]="specialty">
+              {{ specialty }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Type</label>
+          <input 
+            type="text" 
+            [(ngModel)]="doctorForm.type" 
+            name="type"
+            class="form-control"
+            placeholder="e.g., General Practitioner, Specialist"
+            [disabled]="isSaving"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Experience Years</label>
+          <input 
+            type="number" 
+            [(ngModel)]="doctorForm.experienceYears" 
+            name="experienceYears"
+            class="form-control"
+            placeholder="0"
+            min="0"
+            [disabled]="isSaving"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea 
+            [(ngModel)]="doctorForm.bio" 
+            name="bio"
+            class="form-control"
+            rows="4"
+            placeholder="Doctor's biography and background..."
+            [disabled]="isSaving"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="fas fa-image"></i> Profile Image</h3>
+        
+        <div class="image-upload-container">
+          <input
+            type="file"
+            id="profileImage"
+            accept="image/*"
+            (change)="onFileSelected($event)"
+            class="file-input"
+            [disabled]="isSaving"
+          />
+          <div class="image-preview" *ngIf="profileImagePreview">
+            <img [src]="profileImagePreview" alt="Preview" />
+            <button 
+              type="button" 
+              class="remove-image-btn" 
+              (click)="removeImage()"
+              [disabled]="isSaving"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="image-placeholder" *ngIf="!profileImagePreview">
+            <i class="fas fa-user-circle"></i>
+            <p>No image selected</p>
+            <label for="profileImage" class="upload-label" [class.disabled]="isSaving">
+              Choose Image
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="onCancel()"
+          [disabled]="isSaving"
+        >
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="isSaving"
+        >
+          <i class="fas fa-spinner fa-spin" *ngIf="isSaving"></i>
+          <i class="fas fa-save" *ngIf="!isSaving"></i>
+          {{ isSaving ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+

@@ -1,186 +1,326 @@
-import { Component } from '@angular/core';
+// nurses.component.ts - ENHANCED VERSION
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-interface Nurse {
-  id: number;
-  name: string;
-  department: string;
-  email: string;
-  phone: string;
-  active: boolean;
-  photo?: string;
-  experience?: string;
-  shift?: string;
-}
+import { NursesService } from '../../services/nurses.service';
+import { Nurse, CreateNurseDto, UpdateNurseDto } from '../../models/nurse.model';
+import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
+import { NurseFormModalComponent } from '../Shared/nurse-form-modal/nurse-form-modal.component';
 
 @Component({
   selector: 'app-nurses',
   standalone: true,
   templateUrl: './nurses.component.html',
   styleUrls: ['./nurses.component.css'],
-  imports: [CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule, ConfirmationModalComponent, NurseFormModalComponent]
 })
-export class Nurses {
-  searchTerm = '';
-  selectedDepartment = '';
-  selectedStatus = '';
+export class Nurses implements OnInit {
+  searchTerm: string = '';
+  selectedState: string = '';
 
-  departments: string[] = ['Emergency', 'ICU', 'Pediatrics', 'Surgery', 'Cardiology', 'Maternity'];
+  nurses: Nurse[] = [];
+  states: string[] = ['Active', 'Inactive'];
+  
+  // Loading and error states
+  isLoading: boolean = false;
+  errorMessage: string = '';
+  
+  // Modal states
+  showNurseModal: boolean = false;
+  isEditMode: boolean = false;
+  selectedNurse: Nurse | null = null;
+  
+  // Confirmation modal states
+  showConfirmationModal: boolean = false;
+  confirmationConfig: any = {};
+  pendingAction: () => void = () => {};
 
-  // Sidebar menu items
-  menuItems = [
-    { name: 'Dashboard', icon: 'fas fa-chart-line', active: false },
-    { name: 'Patients', icon: 'fas fa-user-injured', active: false },
-    { name: 'Doctors', icon: 'fas fa-user-md', active: false },
-    { name: 'Nurses', icon: 'fas fa-user-nurse', active: true },
-    { name: 'Schedule', icon: 'fas fa-calendar-alt', active: false },
-    { name: 'Documents', icon: 'fas fa-file-medical', active: false },
-    { name: 'Profile', icon: 'fas fa-user', active: false },
-    { name: 'Settings', icon: 'fas fa-cog', active: false },
-    { name: 'Support', icon: 'fas fa-headset', active: false }
-  ];
+  constructor(
+    private nursesService: NursesService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  nurses: Nurse[] = [
-    { 
-      id: 1, 
-      name: 'Nurse Hala Mohamed', 
-      department: 'Emergency', 
-      email: 'hala.mohamed@example.com', 
-      phone: '01011111111', 
-      active: true, 
-      photo: 'https://randomuser.me/api/portraits/women/12.jpg',
-      experience: '8 years',
-      shift: 'Day Shift'
-    },
-    { 
-      id: 2, 
-      name: 'Nurse Mona Ahmed', 
-      department: 'ICU', 
-      email: 'mona.ahmed@example.com', 
-      phone: '01022222222', 
-      active: false, 
-      photo: 'https://randomuser.me/api/portraits/women/33.jpg',
-      experience: '5 years',
-      shift: 'Night Shift'
-    },
-    { 
-      id: 3, 
-      name: 'Nurse Samir Hassan', 
-      department: 'Surgery', 
-      email: 'samir.hassan@example.com', 
-      phone: '01033333333', 
-      active: true, 
-      photo: 'https://randomuser.me/api/portraits/men/22.jpg',
-      experience: '7 years',
-      shift: 'Day Shift'
-    },
-    { 
-      id: 4, 
-      name: 'Nurse Yara Mahmoud', 
-      department: 'Pediatrics', 
-      email: 'yara.mahmoud@example.com', 
-      phone: '01044444444', 
-      active: true, 
-      photo: 'https://randomuser.me/api/portraits/women/44.jpg',
-      experience: '6 years',
-      shift: 'Rotating Shift'
-    },
-    { 
-      id: 5, 
-      name: 'Nurse Rania Ali', 
-      department: 'Cardiology', 
-      email: 'rania.ali@example.com', 
-      phone: '01055555555', 
-      active: true, 
-      photo: 'https://randomuser.me/api/portraits/women/55.jpg',
-      experience: '10 years',
-      shift: 'Day Shift'
-    },
-    { 
-      id: 6, 
-      name: 'Nurse Omar Khaled', 
-      department: 'Maternity', 
-      email: 'omar.khaled@example.com', 
-      phone: '01066666666', 
-      active: false, 
-      photo: 'https://randomuser.me/api/portraits/men/66.jpg',
-      experience: '4 years',
-      shift: 'Night Shift'
-    }
-  ];
-
-  // Today's date
-  todayDate: string = '';
-  todayDay: string = '';
-
-  constructor() {
-    this.setTodayDate();
-  }
-
-  setTodayDate() {
-    const today = new Date();
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const dateString = today.toLocaleDateString('en-US', options);
+  ngOnInit() {
+    console.log('🔄 NursesComponent initialized');
+    this.loadNurses();
     
-    const parts = dateString.split(', ');
-    this.todayDay = parts[0];
-    this.todayDate = parts.slice(1).join(', ');
+    // Debug: Check API response structure
+    this.debugApiResponse();
   }
 
-  getCardColor(department: string, index: number): string {
-    // alternating colors for cards
+  // Debug method to check API response
+  debugApiResponse() {
+    this.nursesService.debugNurseApiResponse().subscribe({
+      next: (response) => {
+        console.log('🐛 DEBUG - RAW API RESPONSE:', response);
+        if (response && response.length > 0) {
+          console.log('🐛 DEBUG - First nurse raw data:', response[0]);
+          console.log('🐛 DEBUG - All properties of first nurse:', Object.keys(response[0]));
+          console.log('🐛 DEBUG - First nurse nurseId value:', response[0].nurseId, response[0].NurseId);
+        }
+      },
+      error: (error) => {
+        console.error('🐛 DEBUG - API error:', error);
+      }
+    });
+  }
+
+  // Force update method
+  forceUpdate() {
+    console.log('🔄 Force updating component...');
+    this.cdr.detectChanges();
+    console.log('✅ Force update completed');
+  }
+
+  loadNurses() {
+    console.log('🔄 Loading nurses...');
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    // Force update to show loading state
+    this.forceUpdate();
+
+    this.nursesService.getAllNurses().subscribe({
+      next: (data: Nurse[]) => {
+        console.log('📋 Nurses loaded:', data);
+        // Validate that all nurses have valid IDs
+        const invalidNurses = data.filter(n => !n.nurseId || n.nurseId === 0);
+        if (invalidNurses.length > 0) {
+          console.error('❌ Found nurses with invalid IDs:', invalidNurses);
+          console.error('❌ First invalid nurse raw data:', invalidNurses[0]);
+        }
+        this.nurses = data;
+        this.isLoading = false;
+        
+        // Force update after data is loaded
+        this.forceUpdate();
+      },
+      error: (error: any) => {
+        console.error('❌ Error loading nurses:', error);
+        this.errorMessage = 'Failed to load nurses. Please try again.';
+        this.isLoading = false;
+        
+        // Force update after error
+        this.forceUpdate();
+      }
+    });
+  }
+
+  // Modal functions - ENHANCED
+  openCreateModal() {
+    console.log('📝 Opening create modal');
+    this.isEditMode = false;
+    this.selectedNurse = null;
+    this.showNurseModal = true;
+    
+    // Small delay to ensure modal component is initialized
+    setTimeout(() => {
+      this.forceUpdate();
+    }, 100);
+  }
+
+  openEditModal(nurse: Nurse) {
+    console.log('📝 Opening edit modal for:', {
+      fullName: nurse.fullName,
+      nurseId: nurse.nurseId,
+      userId: nurse.userId,
+      fullNurse: nurse
+    });
+    
+    // Ensure we have the nurse data before opening modal
+    if (!nurse) {
+      console.error('❌ Cannot open edit modal: nurse is null');
+      return;
+    }
+    
+    // Validate nurseId before opening modal
+    if (!nurse.nurseId || nurse.nurseId === 0) {
+      console.error('❌ ERROR: Cannot open edit modal - nurseId is invalid:', nurse);
+      alert('Error: Invalid nurse ID. Cannot edit this nurse.');
+      return;
+    }
+    
+    // Set edit mode and selected nurse first
+    this.isEditMode = true;
+    this.selectedNurse = nurse;
+    
+    // Force update to ensure selectedNurse is set
+    this.forceUpdate();
+    
+    // Small delay to ensure data is set before opening modal
+    setTimeout(() => {
+      this.showNurseModal = true;
+      this.forceUpdate();
+      console.log('✅ Modal opened with nurse data:', {
+        nurseId: this.selectedNurse?.nurseId,
+        fullName: this.selectedNurse?.fullName
+      });
+    }, 50);
+  }
+
+  closeModal() {
+    console.log('❌ Closing modal');
+    this.showNurseModal = false;
+    this.selectedNurse = null;
+    this.forceUpdate();
+  }
+
+  onSaveNurse(nurseData: CreateNurseDto | UpdateNurseDto) {
+    console.log('💾 Saving nurse data:', { 
+      ...nurseData, 
+      password: 'password' in nurseData && nurseData.password ? '[REDACTED]' : 'No Password' 
+    });
+    
+    this.isLoading = true;
+    this.forceUpdate();
+
+    if (this.isEditMode && this.selectedNurse) {
+      // Validate nurseId before update
+      if (!this.selectedNurse.nurseId || this.selectedNurse.nurseId === 0) {
+        console.error('❌ ERROR: Cannot update - nurseId is invalid:', this.selectedNurse);
+        alert('Error: Invalid nurse ID. Cannot update this nurse.');
+        this.isLoading = false;
+        this.forceUpdate();
+        return;
+      }
+      
+      console.log('💾 Updating nurse:', {
+        nurseId: this.selectedNurse.nurseId,
+        updateData: nurseData
+      });
+      
+      // Update nurse - nurseData is UpdateNurseDto
+      this.nursesService.updateNurse(this.selectedNurse.nurseId, nurseData as UpdateNurseDto).subscribe({
+        next: (response: any) => {
+          console.log('✅ Nurse updated successfully');
+          this.loadNurses(); // This will refresh the list and force update
+          this.closeModal();
+        },
+        error: (error: any) => {
+          console.error('❌ Error updating nurse:', error);
+          this.isLoading = false;
+          this.forceUpdate();
+          alert('Failed to update nurse. Please try again.');
+        }
+      });
+    } else {
+      // Create nurse - nurseData is CreateNurseDto
+      this.nursesService.createNurse(nurseData as CreateNurseDto).subscribe({
+        next: (response: any) => {
+          console.log('✅ Nurse created successfully');
+          this.loadNurses(); // This will refresh the list and force update
+          this.closeModal();
+        },
+        error: (error: any) => {
+          console.error('❌ Error creating nurse:', error);
+          this.isLoading = false;
+          this.forceUpdate();
+          alert('Failed to create nurse. Please try again.');
+        }
+      });
+    }
+  }
+
+  // UI Helper Methods
+  getCardColor(index: number): string {
     return index % 2 === 0 ? '#e6ccff' : '#f2f2f2'; 
   }
 
-  getDepartmentIcon(department: string): string {
-    switch (department.toLowerCase()) {
-      case 'emergency': return 'fas fa-ambulance';
-      case 'icu': return 'fas fa-procedures';
-      case 'pediatrics': return 'fas fa-baby';
-      case 'surgery': return 'fas fa-syringe';
-      case 'cardiology': return 'fas fa-heartbeat';
-      case 'maternity': return 'fas fa-baby-carriage';
-      default: return 'fas fa-user-nurse';
+  filteredNurses(): Nurse[] {
+    const filtered = this.nurses
+      .filter(n => n.fullName?.toLowerCase().includes(this.searchTerm.toLowerCase()))
+      .filter(n => !this.selectedState || n.state === this.selectedState);
+    
+    console.log('🔍 Filtered nurses:', filtered.length);
+    return filtered;
+  }
+
+  sortByName() {
+    console.log('🔤 Sorting nurses by name');
+    this.nurses.sort((a, b) => a.fullName.localeCompare(b.fullName));
+    this.forceUpdate();
+  }
+
+  // Activation/Deactivation
+  toggleActive(nurse: Nurse) {
+    const newActiveState = !nurse.isActive;
+    
+    console.log('🔄 Toggling active state for:', nurse.fullName, 'New state:', newActiveState);
+
+    this.confirmationConfig = {
+      title: `${newActiveState ? 'Activate' : 'Deactivate'} Nurse`,
+      message: `Are you sure you want to ${newActiveState ? 'activate' : 'deactivate'} <strong>${nurse.fullName}</strong>?`,
+      icon: newActiveState ? 'fas fa-user-check' : 'fas fa-user-slash',
+      iconColor: newActiveState ? '#28a745' : '#dc3545',
+      confirmText: newActiveState ? 'Activate' : 'Deactivate',
+      cancelText: 'Cancel',
+      confirmButtonClass: newActiveState ? 'btn-success' : 'btn-confirm'
+    };
+
+    this.pendingAction = () => this.executeToggleActive(nurse, newActiveState);
+    this.showConfirmationModal = true;
+    this.forceUpdate();
+  }
+
+  private executeToggleActive(nurse: Nurse, newActiveState: boolean) {
+    console.log('🚀 Executing toggle active for:', nurse.fullName);
+    
+    const apiCall$ = newActiveState 
+      ? this.nursesService.activateUser(nurse.userId)
+      : this.nursesService.deactivateUser(nurse.userId);
+
+    this.isLoading = true;
+    this.forceUpdate();
+
+    apiCall$.subscribe({
+      next: (response: any) => {
+        console.log('✅ Toggle active successful');
+        this.loadNurses(); // Refresh the list
+      },
+      error: (error: any) => {
+        console.error('❌ Toggle active failed:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to update nurse status. Please try again.');
+      }
+    });
+  }
+
+  // Confirmation modal handlers
+  onConfirmAction() {
+    console.log('✅ Confirmation confirmed');
+    this.showConfirmationModal = false;
+    if (this.pendingAction) {
+      this.pendingAction();
     }
+    this.forceUpdate();
   }
 
-  setActiveMenu(item: any) {
-    this.menuItems.forEach(menuItem => menuItem.active = false);
-    item.active = true;
+  onCancelAction() {
+    console.log('❌ Confirmation cancelled');
+    this.showConfirmationModal = false;
+    this.pendingAction = () => {};
+    this.forceUpdate();
   }
 
+  // Stats and Utilities
   countActive(): number {
-    return this.nurses.filter(n => n.active).length;
+    const count = this.nurses.filter(n => n.isActive).length;
+    console.log('📊 Active nurses count:', count);
+    return count;
   }
 
   countInactive(): number {
-    return this.nurses.filter(n => !n.active).length;
+    const count = this.nurses.filter(n => !n.isActive).length;
+    console.log('📊 Inactive nurses count:', count);
+    return count;
   }
 
-  filteredNurses(): Nurse[] {
-    return this.nurses
-      .filter(n => n.name.toLowerCase().includes(this.searchTerm.toLowerCase()))
-      .filter(n => !this.selectedDepartment || n.department === this.selectedDepartment)
-      .filter(n => !this.selectedStatus || 
-            (this.selectedStatus === 'Active' && n.active) || 
-            (this.selectedStatus === 'Inactive' && !n.active)
-      );
-  }
-
-  sortByName(): void {
-    this.nurses.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  toggleStatus(nurse: Nurse): void {
-    nurse.active = !nurse.active;
-  }
-
-  // أضف هذه الدالة للتصفية
   clearAllFilters() {
-   this.searchTerm = '';
-   this.selectedDepartment = '';
-   this.selectedStatus = '';
+    console.log('🧹 Clearing all filters');
+    this.searchTerm = '';
+    this.selectedState = '';
+    this.forceUpdate();
   }
 }

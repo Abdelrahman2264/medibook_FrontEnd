@@ -5,227 +5,14 @@
 }
 
 .user-profile-container {
-  display: flex;
   min-height: 100vh;
   background-color: #f8f9fa;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Sidebar Styles - محسّن */
-.sidebar {
-  width: 300px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  height: 100vh;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  overflow-y: auto; /* إضافة scroll إذا المحتوى طويل */
-}
-
-/* Scrollbar أنيق ومتناسق */
-.sidebar::-webkit-scrollbar {
-  width: 4px; /* رفيع جداً */
-}
-
-.sidebar::-webkit-scrollbar-track {
-  background: transparent; /* خلفية شفافة */
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3); /* لون فاتح */
-  border-radius: 2px; /* زوايا دائرية بسيطة */
-  transition: all 0.3s ease;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5); /* أفتح عند hover */
-  width: 6px; /* يزيد عرضه قليلاً */
-}
-
-/* Scrollbar للـ main-menu داخلي */
-.main-menu::-webkit-scrollbar {
-  width: 4px; /* أرفع من الخارج */
-}
-
-.main-menu::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-  margin: 5px 0;
-}
-
-.main-menu::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-.main-menu::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-/* تأكد من ظهور كل العناصر */
-.user-profile-summary {
-  text-align: center;
-  margin-bottom: 30px;
-  flex-shrink: 0; /* يمنع الانضغاط */
-}
-
-.avatar-container {
-  position: relative;
-  margin-bottom: 15px;
-}
-
-.user-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  object-fit: cover;
-}
-
-.online-status {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #6c757d;
-  border: 2px solid white;
-}
-
-.online-status.active {
-  background: #378256;
-}
-
-.user-profile-summary h2 {
-  font-size: 1.4rem;
-  margin-bottom: 5px;
-}
-
-.user-role {
-  font-size: 1rem;
-  opacity: 0.9;
-  margin-bottom: 3px;
-}
-
-.user-department {
-  font-size: 0.9rem;
-  opacity: 0.7;
-}
-
-/* Today's Date */
-.today-date-section {
-  margin-bottom: 25px;
-  flex-shrink: 0;
-}
-
-.date-card {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-}
-
-.date-day {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: #ffd93d;
-}
-
-.date-full {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-/* Navigation Menu - محسّن */
-.main-menu {
-  flex: 1; /* يأخذ المساحة المتاحة */
-  min-height: 200px; /* ارتفاع أدنى */
-  max-height: 400px; /* ارتفاع أقصى */
-  overflow-y: auto; /* تمرير إذا طال المحتوى */
-  margin-bottom: 25px;
-  padding-right: 5px; /* مساحة للscroll */
-}
-
-.main-menu ul {
-  list-style: none;
-  height: 100%;
-}
-
-.main-menu li {
-  padding: 12px 15px;
-  margin: 5px 0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-.main-menu li.active,
-.main-menu li:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.main-menu i {
-  width: 20px;
-  text-align: center;
-}
-
-/* Quick Stats - محسّن */
-.quick-stats {
-  margin-top: auto; /* يدفعه للأسفل */
-  flex-shrink: 0;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.quick-stats h3 {
-  font-size: 1.1rem;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.stats-mini {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.stat-mini {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 12px;
-  border-radius: 8px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-}
-
-.stat-mini i {
-  font-size: 1.2rem;
-  margin-bottom: 5px;
-  display: block;
-}
-
-.stat-mini span {
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
 /* Main Content */
 .main-content {
-  flex: 1;
-  margin-left: 300px;
+  width: 100%;
   padding: 30px;
   min-height: 100vh;
 }
@@ -728,42 +515,16 @@
   .profile-content {
     grid-template-columns: 1fr;
   }
-  
-  .sidebar {
-    width: 280px;
-  }
-  
-  .main-content {
-    margin-left: 280px;
-  }
 }
 
 @media (max-width: 1024px) {
-  .sidebar {
-    width: 260px;
-  }
-  
   .main-content {
-    margin-left: 260px;
     padding: 20px;
   }
 }
 
 @media (max-width: 768px) {
-  .user-profile-container {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  
   .main-content {
-    margin-left: 0;
     padding: 20px;
   }
   
@@ -855,9 +616,6 @@
   animation: fadeIn 0.6s ease-out;
 }
 
-.sidebar {
-  animation: slideInLeft 0.5s ease-out;
-}
 
 /* Focus States for Accessibility */
 button:focus, 

@@ -1,0 +1,219 @@
+<div class="patient-profile-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin fa-3x"></i>
+      <p>Loading patient profile...</p>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading && !patient" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>Error Loading Profile</h3>
+      <p>{{ errorMessage }}</p>
+      <div class="error-actions">
+        <button class="btn btn-primary" (click)="retryLoad()">
+          <i class="fas fa-redo"></i> Try Again
+        </button>
+        <button class="btn btn-secondary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Back to Patients List
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Patient Profile Content -->
+  <div *ngIf="patient && !isLoading" class="profile-content">
+    <!-- Header Section -->
+    <div class="profile-header">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Patients
+      </button>
+      <div class="header-actions">
+        <button class="btn btn-edit" (click)="editPatient()">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+        <button 
+          class="btn" 
+          [class.btn-activate]="!patient.isActive" 
+          [class.btn-deactivate]="patient.isActive" 
+          (click)="toggleActive()">
+          <i [class]="patient.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+          {{ patient.isActive ? 'Deactivate' : 'Activate' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Profile Card -->
+    <div class="profile-card">
+      <div class="profile-header-section">
+        <div class="profile-image-container">
+          <img 
+            [src]="patient.profileImage || 'assets/images/patient-placeholder.png'" 
+            [alt]="patient.fullName" 
+            class="profile-image"
+            (error)="$event.target.src='assets/images/patient-placeholder.png'"
+          />
+          <div [class]="getStatusBadgeClass(patient.isActive)">
+            <i [class]="patient.isActive ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+            {{ patient.isActive ? 'Active' : 'Inactive' }}
+          </div>
+        </div>
+        
+        <div class="profile-basic-info">
+          <h1 class="patient-name">{{ patient.fullName }}</h1>
+          
+          <div class="patient-id">
+            <i class="fas fa-id-card"></i>
+            <span>ID: {{ patient.id }}</span>
+          </div>
+
+          <div class="patient-email">
+            <i class="fas fa-envelope"></i>
+            <span>{{ patient.email }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Sections -->
+      <div class="profile-details">
+        <!-- Contact Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-address-card"></i> Contact Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <label>Email</label>
+                <p>{{ patient.email }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-phone"></i>
+              <div>
+                <label>Mobile Phone</label>
+                <p>{{ patient.mobilePhone || 'Not provided' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-user"></i> Personal Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i [class]="getGenderIcon(patient.gender)"></i>
+              <div>
+                <label>Gender</label>
+                <p>{{ patient.gender || 'Not specified' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-heart"></i>
+              <div>
+                <label>Marital Status</label>
+                <p>{{ patient.mitrialStatus || 'Not specified' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-birthday-cake"></i>
+              <div>
+                <label>Date of Birth</label>
+                <p>{{ (patient.dateOfBirth | date: 'mediumDate') || 'Not specified' }}</p>
+              </div>
+            </div>
+            <div class="detail-item" *ngIf="patient.age">
+              <i class="fas fa-calendar-alt"></i>
+              <div>
+                <label>Age</label>
+                <p>{{ patient.age }} years</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i> Account Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i class="fas fa-calendar-plus"></i>
+              <div>
+                <label>Member Since</label>
+                <p>{{ patient.createDate ? (patient.createDate | date: 'mediumDate') : 'Not specified' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-user-check"></i>
+              <div>
+                <label>Account Status</label>
+                <p>
+                  <span [class]="getStatusBadgeClass(patient.isActive)">
+                    {{ patient.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="editPatient()">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+        <button 
+          class="btn" 
+          [class.btn-success]="!patient.isActive" 
+          [class.btn-warning]="patient.isActive" 
+          (click)="toggleActive()">
+          <i [class]="patient.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+          {{ patient.isActive ? 'Deactivate Account' : 'Activate Account' }}
+        </button>
+        <button class="btn btn-secondary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Back to List
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal
+    [isVisible]="showConfirmationModal"
+    [title]="confirmationConfig.title"
+    [message]="confirmationConfig.message"
+    [icon]="confirmationConfig.icon"
+    [iconColor]="confirmationConfig.iconColor"
+    [confirmText]="confirmationConfig.confirmText"
+    [cancelText]="confirmationConfig.cancelText"
+    [confirmButtonClass]="confirmationConfig.confirmButtonClass"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
+
+  <!-- Patient Form Modal -->
+  <app-patient-form-modal
+    [isVisible]="showEditModal"
+    [isEditMode]="true"
+    [selectedPatient]="patient"
+    [isLoading]="isLoading"
+    (close)="closeEditModal()"
+    (save)="onSavePatient($event)"
+  >
+  </app-patient-form-modal>
+</div>

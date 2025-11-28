@@ -1,67 +1,13 @@
 <div class="doctors-page-container">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <!-- Doctor Profile -->
-    <div class="doctor-profile">
-      <div class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Dr. Smart">
-      </div>
-      <h2>Dr. Smart</h2>
-      <p>Welcome back!</p>
-    </div>
-
-    <!-- Today's Date -->
-    <div class="today-date-section">
-      <div class="date-card">
-        <div class="date-day">{{ todayDay }}</div>
-        <div class="date-full">{{ todayDate }}</div>
-      </div>
-    </div>
-
-    <!-- Navigation Menu -->
-    <nav class="main-menu">
-  <ul>
-    <li 
-      *ngFor="let item of menuItems" 
-      [class.active]="item.active"
-      (click)="setActiveMenu(item)"
-    >
-      <i [class]="item.icon"></i>
-      <a 
-        *ngIf="item.name === 'Doctors'" 
-        routerLink="/doctors" 
-        style="color: inherit; text-decoration: none; cursor: pointer;"
-      >
-        {{ item.name }}
-      </a>
-      <a 
-        *ngIf="item.name === 'Profile'" 
-        routerLink="/user-profile" 
-        style="color: inherit; text-decoration: none; cursor: pointer;"
-      >
-        {{ item.name }}
-      </a>
-      <a 
-        *ngIf="item.name === 'Nurses'" 
-        routerLink="/nurses" 
-        style="color: inherit; text-decoration: none; cursor: pointer;"
-      >
-        {{ item.name }}
-      </a>
-      <span *ngIf="item.name !== 'Doctors' && item.name !== 'Nurses' && item.name !== 'Profile'">
-        {{ item.name }}
-      </span>
-    </li>
-  </ul>
-</nav>
-</div>
-
   <!-- Main Content -->
   <div class="main-content">
     <div class="doctor-list-page">
       <!-- Title -->
       <div class="page-title-bar">
         <h1 class="page-title">Doctors List</h1>
+        <button class="add-doctor-btn" (click)="openCreateModal()">
+          <i class="fas fa-plus"></i> Add New Doctor
+        </button>
       </div>
 
       <!-- Top Stats Cards -->
@@ -86,18 +32,24 @@
 
       <!-- Search -->
       <div class="search-container">
-        <input type="text" [(ngModel)]="searchTerm" placeholder="Search by name..." class="search-input" />
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          placeholder="Search by name..." 
+          class="search-input" 
+          (input)="forceUpdate()"
+        />
         <i class="fa fa-search search-icon"></i>
       </div>
 
       <!-- Filters & Sort -->
       <div class="controls">
-        <select [(ngModel)]="selectedSpecialty" class="filter-select">
+        <select [(ngModel)]="selectedSpecialty" class="filter-select" (change)="forceUpdate()">
           <option value="">Filter by Specialties</option>
           <option *ngFor="let s of specialties" [value]="s">{{ s }}</option>
         </select>
 
-        <select [(ngModel)]="selectedState" class="filter-select">
+        <select [(ngModel)]="selectedState" class="filter-select" (change)="forceUpdate()">
           <option value="">Filter by State</option>
           <option *ngFor="let st of states" [value]="st">{{ st }}</option>
         </select>
@@ -106,47 +58,113 @@
           Sort by Name <i class="fa fa-sort-alpha-down"></i>
         </button>
 
-        <!-- زر Clear All الجديد -->
         <button (click)="clearAllFilters()" class="clear-all-btn">
           Clear All <i class="fas fa-times-circle"></i>
         </button>
       </div>
 
+      <!-- Loading State -->
+      <div *ngIf="isLoading && doctors.length === 0" class="loading-container">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin fa-3x"></i>
+          <p>Loading doctors...</p>
+          <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage && !isLoading" class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+        <button (click)="loadDoctors()" class="btn btn-retry" style="margin-left: 10px;">
+          <i class="fas fa-redo"></i> Retry
+        </button>
+      </div>
+
       <!-- Results Bar -->
-      <div class="results-bar">
+      <div class="results-bar" *ngIf="!isLoading && doctors.length > 0">
         <div class="results-info">
           <i class="fas fa-user-md"></i>
           Showing <span class="highlight">{{filteredDoctors().length}}</span> of 
           <span class="total">{{doctors.length}}</span> doctors
         </div>
+        <div class="results-actions">
+        </div>
       </div>
       
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && doctors.length === 0" class="empty-state">
+        <div class="empty-state-content">
+          <i class="fas fa-user-md fa-4x"></i>
+          <h2>No Doctors Found</h2>
+          <p>There are no doctors in the system yet.</p>
+          <button class="add-doctor-btn" (click)="openCreateModal()">
+            <i class="fas fa-plus"></i> Add First Doctor
+          </button>
+        </div>
+      </div>
+
       <!-- Doctor Cards Container -->
-      <div class="cards-container">
+      <div class="cards-container" *ngIf="!isLoading && doctors.length > 0">
         <div
           class="doctor-card"
           *ngFor="let doctor of filteredDoctors(); let i = index"
-          [style.background-color]="getCardColor(doctor.specialty, i)"
+          [style.background-color]="getCardColor(doctor.specialization, i)"
         >
-          <img [src]="doctor.photo || 'https://via.placeholder.com/150'" alt="{{ doctor.name }}" class="doctor-photo" />
+          <div class="doctor-photo-wrapper">
+            <img 
+              [src]="doctor.photoUrl || 'assets/images/doctor-placeholder.png'" 
+              [alt]="doctor.fullName" 
+              class="doctor-photo"
+              (error)="$event.target.src='assets/images/doctor-placeholder.png'"
+            />
+            <div class="status-badge" [class.active]="doctor.isActive">
+              <i [class]="doctor.isActive ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+              {{ doctor.isActive ? 'Active' : 'Inactive' }}
+            </div>
+          </div>
+          
           <div class="doctor-info">
-
-          <div class="status-badge" [class.active]="doctor.active">
-            <i [class]="doctor.active ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
-            {{ doctor.active ? 'Active' : 'Inactive' }}
-          </div> 
-            <h3>{{ doctor.name }}</h3>
-            <p><i class="fa fa-id-badge"></i> ID: {{ doctor.id }}</p>
-            <p><i class="{{ getSpecialtyIcon(doctor.specialty) }}"></i> Specialty: {{ doctor.specialty }}</p>
-            <p><i class="fa fa-envelope"></i> {{ doctor.email }}</p>
-            <p><i class="fa fa-phone"></i> {{ doctor.phone }}</p>
+            <h3>{{ doctor.fullName || 'N/A' }}</h3>
+            <p *ngIf="doctor.doctorId"><i class="fa fa-id-badge"></i> ID: {{ doctor.doctorId }}</p>
+            <p *ngIf="doctor.specialization">
+              <i [class]="getSpecialtyIcon(doctor.specialization)"></i> 
+              Specialization: {{ doctor.specialization }}
+            </p>
+            <p *ngIf="doctor.type">
+              <i class="fas fa-briefcase"></i> Type: {{ doctor.type }}
+            </p>
+            <p *ngIf="doctor.experienceYears !== undefined">
+              <i class="fas fa-calendar-alt"></i> Experience: {{ doctor.experienceYears }} Years
+            </p>
+            <p *ngIf="doctor.email">
+              <i class="fa fa-envelope"></i> {{ doctor.email }}
+            </p>
+            <p *ngIf="doctor.mobilePhone">
+              <i class="fa fa-phone"></i> {{ doctor.mobilePhone }}
+            </p>
+            <p *ngIf="doctor.gender">
+              <i class="fas fa-venus-mars"></i> {{ doctor.gender }}
+            </p>
+            <p *ngIf="doctor.bio" class="bio-preview">
+              <i class="fas fa-info-circle"></i> {{ doctor.bio.length > 50 ? (doctor.bio.substring(0, 50) + '...') : doctor.bio }}
+            </p>
           </div>
 
-      
           <div class="doctor-actions">
-            <button class="view-btn" [routerLink]="['/doctors', doctor.id]">View Profile</button>
-            <button class="activate-btn" [ngClass]="{ active: doctor.active }" (click)="toggleActive(doctor)">
-              {{ doctor.active ? 'Deactivate' : 'Activate' }}
+            <button class="view-btn" [routerLink]="['/doctors', doctor.doctorId]">
+              <i class="fas fa-eye"></i> View Profile
+            </button>
+            <button class="edit-btn" (click)="openEditModal(doctor)">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="activate-btn" [ngClass]="{ active: doctor.isActive }" (click)="toggleActive(doctor)">
+              <i [class]="doctor.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+              {{ doctor.isActive ? 'Deactivate' : 'Activate' }}
             </button>
           </div>
         </div>
@@ -174,4 +192,29 @@
     </div>
   </div>
 
- 
+  <!-- Doctor Form Modal -->
+  <app-doctor-form-modal
+    [isVisible]="showDoctorModal"
+    [isEditMode]="isEditMode"
+    [selectedDoctor]="selectedDoctor"
+    [specialties]="specialties"
+    [isLoading]="isLoading"
+    (close)="closeModal()"
+    (save)="onSaveDoctor($event)"
+  >
+  </app-doctor-form-modal>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal
+    [isVisible]="showConfirmationModal"
+    [title]="confirmationConfig.title"
+    [message]="confirmationConfig.message"
+    [icon]="confirmationConfig.icon"
+    [iconColor]="confirmationConfig.iconColor"
+    [confirmText]="confirmationConfig.confirmText"
+    [cancelText]="confirmationConfig.cancelText"
+    [confirmButtonClass]="confirmationConfig.confirmButtonClass"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
+</div>

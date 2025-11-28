@@ -1,163 +1,245 @@
-<div class="profile-page" *ngIf="doctor">
-  <!-- Header Navigation -->
-  <div class="profile-header">
-    <button class="back-btn" routerLink="/doctors">
-      <i class="fas fa-arrow-left"></i>
-      Back to Doctors List
-    </button>
-    <div class="header-actions">
-      <button class="print-btn">
-        <i class="fas fa-print"></i>
-        Print Profile
-      </button>
-      <button class="share-btn">
-        <i class="fas fa-share-alt"></i>
-        Share
-      </button>
+<div class="doctor-profile-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin fa-3x"></i>
+      <p>Loading doctor profile...</p>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </div>
   </div>
 
-  <div class="profile-container">
-    <!-- Left Section - Profile Card -->
-    <div class="left-section">
-      <div class="profile-card">
-        <div class="profile-photo-container">
-          <img
-            [src]="doctor.photo"
-            class="profile-photo"
-            alt="Doctor Photo"
-          />
-          <div class="online-status" [class.active]="doctor.active">
-            <i class="fas fa-circle"></i>
-            {{ doctor.active ? 'Active' : 'Inactive' }}
-          </div>
-        </div>
-
-        <div class="profile-basic-info">
-          <h1>{{ doctor.name }}</h1>
-          <div class="specialty-badge">
-            <i [class]="getSpecialtyIcon(doctor.specialty)"></i>
-            {{ doctor.specialty }}
-          </div>
-          
-          <!-- Rating -->
-          <div class="rating-section">
-            <div class="stars">
-              <span *ngFor="let star of getStars(doctor.rating)" class="star">
-                <i class="fas fa-star"></i>
-              </span>
-              <span class="rating-text">({{ doctor.rating }})</span>
-            </div>
-            <div class="patients-count">
-              <i class="fas fa-user-friends"></i>
-              {{ doctor.patients.toLocaleString() }} Patients
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-          <button
-            class="status-btn"
-            [ngClass]="{ active: doctor.active }"
-            (click)="toggleActive()"
-          >
-            <i [class]="doctor.active ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
-            {{ doctor.active ? 'Deactivate Doctor' : 'Activate Doctor' }}
-          </button>
-          
-          <button class="appointment-btn">
-            <i class="fas fa-calendar-check"></i>
-            Schedule Appointment
-          </button>
-          
-          <button class="message-btn">
-            <i class="fas fa-comment-medical"></i>
-            Send Message
-          </button>
-        </div>
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading && !doctor" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>Error Loading Profile</h3>
+      <p>{{ errorMessage }}</p>
+      <div class="error-actions">
+        <button class="btn btn-primary" (click)="retryLoad()">
+          <i class="fas fa-redo"></i> Try Again
+        </button>
+        <button class="btn btn-secondary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Back to Doctors List
+        </button>
       </div>
+    </div>
+  </div>
 
-      <!-- Statistics Card -->
-      <div class="stats-card">
-        <h3>Doctor Statistics</h3>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-number">{{ doctor.experience }}</div>
-            <div class="stat-label">Experience</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">{{ doctor.rating }}/5</div>
-            <div class="stat-label">Rating</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">{{ doctor.patients.toLocaleString() }}</div>
-            <div class="stat-label">Patients</div>
-          </div>
-        </div>
+  <!-- Doctor Profile Content -->
+  <div *ngIf="doctor && !isLoading" class="profile-content">
+    <!-- Header Section -->
+    <div class="profile-header">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Doctors
+      </button>
+      <div class="header-actions">
+        <button class="btn btn-edit" (click)="editDoctor()">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+        <button 
+          class="btn" 
+          [class.btn-activate]="!doctor.isActive" 
+          [class.btn-deactivate]="doctor.isActive" 
+          (click)="toggleActive()">
+          <i [class]="doctor.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+          {{ doctor.isActive ? 'Deactivate' : 'Activate' }}
+        </button>
       </div>
     </div>
 
-    <!-- Right Section - Detailed Information -->
-    <div class="right-section">
-      <!-- Personal Information -->
-      <div class="info-card">
-        <div class="card-header">
-          <h2><i class="fas fa-user-md"></i> Professional Information</h2>
+    <!-- Main Profile Card -->
+    <div class="profile-card">
+      <div class="profile-header-section">
+        <div class="profile-image-container">
+          <img 
+            [src]="doctor.photoUrl || 'assets/images/doctor-placeholder.png'" 
+            [alt]="doctor.fullName" 
+            class="profile-image"
+            (error)="$event.target.src='assets/images/doctor-placeholder.png'"
+          />
+          <div [class]="getStatusBadgeClass()">
+            <i [class]="doctor.isActive ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+            {{ doctor.isActive ? 'Active' : 'Inactive' }}
+          </div>
         </div>
-        <div class="info-grid">
-          <div class="info-item">
-            <label><i class="fas fa-envelope" style="color: #28a745;"></i> Email</label>
-            <p>{{ doctor.email }}</p>
-          </div>
-          <div class="info-item">
-            <label><i class="fas fa-phone" style="color: #28a745;"></i> Phone</label>
-            <p>{{ doctor.phone }}</p>
-          </div>
-          <div class="info-item">
-            <label><i class="fas fa-graduation-cap" style="color: #28a745;"></i> Education</label>
-            <p>{{ doctor.education }}</p>
-          </div>
-          <div class="info-item">
-            <label><i class="fas fa-language" style="color: #28a745;"></i> Languages</label>
-            <div class="languages-list">
-              <span *ngFor="let lang of doctor.languages" class="language-tag">
-                {{ lang }}
-              </span>
+        
+        <div class="profile-basic-info">
+          <h1 class="doctor-name">{{ doctor.fullName }}</h1>
+          <p class="doctor-title">{{ doctor.specialization }}</p>
+          <p class="doctor-type">{{ doctor.type }}</p>
+          
+          <div class="rating-experience">
+            <div class="experience">
+              <i class="fas fa-award"></i>
+              <span>{{ getExperienceLevel() }} ({{ doctor.experienceYears }} years experience)</span>
             </div>
-          </div>
-          <div class="info-item full-width">
-            <label><i class="fas fa-clock" style="color: #28a745;"></i> Availability</label>
-            <p>{{ doctor.availability }}</p>
+            <div class="doctor-id">
+              <i class="fas fa-id-card"></i>
+              <span>ID: {{ doctor.doctorId }}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- About Doctor -->
-      <div class="info-card">
-        <div class="card-header">
-          <h2><i class="fas fa-info-circle"></i> About Doctor</h2>
+      <!-- Details Sections -->
+      <div class="profile-details">
+        <!-- Contact Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-address-card"></i> Contact Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <label>Email</label>
+                <p>{{ doctor.email }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-phone"></i>
+              <div>
+                <label>Mobile Phone</label>
+                <p>{{ doctor.mobilePhone || 'Not provided' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-venus-mars"></i>
+              <div>
+                <label>Gender</label>
+                <p>{{ doctor.gender || 'Not specified' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-birthday-cake"></i>
+              <div>
+                <label>Date of Birth</label>
+                <p>{{ (doctor.dateOfBirth | date: 'mediumDate') || 'Not specified' }}</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="bio-content">
-          <p>{{ doctor.bio }}</p>
+
+        <!-- Professional Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-briefcase"></i> Professional Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i [class]="getSpecialtyIcon(doctor.specialization)"></i>
+              <div>
+                <label>Specialization</label>
+                <p>{{ doctor.specialization }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-user-md"></i>
+              <div>
+                <label>Doctor Type</label>
+                <p>{{ doctor.type || 'Not specified' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-calendar-alt"></i>
+              <div>
+                <label>Experience</label>
+                <p>{{ doctor.experienceYears }} years</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-star"></i>
+              <div>
+                <label>Experience Level</label>
+                <p>{{ getExperienceLevel() }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biography -->
+        <div *ngIf="doctor.bio" class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i> Biography
+          </h3>
+          <div class="bio-content">
+            <p>{{ doctor.bio }}</p>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i> Additional Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i class="fas fa-calendar-plus"></i>
+              <div>
+                <label>Member Since</label>
+                <p>{{ doctor.createDate ? (doctor.createDate | date: 'mediumDate') : 'Not specified' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-user"></i>
+              <div>
+                <label>User ID</label>
+                <p>{{ doctor.userId || 'N/A' }}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="edit-btn primary">
-          <i class="fas fa-edit"></i>
-          Edit Doctor Information
+        <button class="btn btn-primary" (click)="editDoctor()">
+          <i class="fas fa-edit"></i> Edit Profile
         </button>
-        <button class="edit-btn secondary">
-          <i class="fas fa-file-medical"></i>
-          View Medical Records
+        <button 
+          class="btn" 
+          [class.btn-success]="!doctor.isActive" 
+          [class.btn-warning]="doctor.isActive" 
+          (click)="toggleActive()">
+          <i [class]="doctor.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+          {{ doctor.isActive ? 'Deactivate Account' : 'Activate Account' }}
         </button>
-        <button class="edit-btn secondary">
-          <i class="fas fa-chart-line"></i>
-          Performance Analytics
+        <button class="btn btn-secondary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Back to List
         </button>
       </div>
     </div>
   </div>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal
+    [isVisible]="showConfirmationModal"
+    [title]="confirmationConfig.title"
+    [message]="confirmationConfig.message"
+    [icon]="confirmationConfig.icon"
+    [iconColor]="confirmationConfig.iconColor"
+    [confirmText]="confirmationConfig.confirmText"
+    [cancelText]="confirmationConfig.cancelText"
+    [confirmButtonClass]="confirmationConfig.confirmButtonClass"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
+
+  <!-- Doctor Form Modal -->
+  <app-doctor-form-modal
+    [isVisible]="showEditModal"
+    [isEditMode]="true"
+    [selectedDoctor]="doctor"
+    [specialties]="doctor ? [doctor.specialization] : []"
+    [isLoading]="isLoading"
+    (close)="closeEditModal()"
+    (save)="onSaveDoctor($event)"
+  >
+  </app-doctor-form-modal>
+
+
 </div>

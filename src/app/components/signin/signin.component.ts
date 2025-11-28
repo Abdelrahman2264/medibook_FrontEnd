@@ -51,8 +51,8 @@ export class SigninComponent {
           if (this.rememberMe) {
             // You can add additional logic here if needed
           }
-          // Redirect to home or dashboard
-          this.router.navigate(['/appointments']);
+          // Redirect to dashboard after login
+          this.router.navigate(['/dashboard']);
         }
       },
       error: (error) => {
@@ -71,7 +71,7 @@ export class SigninComponent {
           if (this.rememberMe) {
             // Additional logic for remember me
           }
-          this.router.navigate(['/appointments']);
+          this.router.navigate(['/dashboard']);
         }
       },
       error: (error) => {

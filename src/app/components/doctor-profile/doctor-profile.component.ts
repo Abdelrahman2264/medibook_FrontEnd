@@ -1,151 +1,310 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { NgIf, NgClass } from '@angular/common';
-import { RouterModule } from '@angular/router';
+// doctor-profile.component.ts - ENHANCED VERSION
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface Doctor {
-  id: number;
-  name: string;
-  specialty: string;
-  email: string;
-  phone: string;
-  photo: string;
-  active: boolean;
-  state: string;
-  bio: string;
-  experience: string;
-  education: string;
-  languages: string[];
-  rating: number;
-  patients: number;
-  availability: string;
-}
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { DoctorsService } from '../../services/doctors.service';
+import { Doctor, UpdateDoctorDto } from '../../models/doctor.model';
+import { DoctorFormModalComponent } from '../Shared/doctor-form-modal/doctor-form-modal.component';
+import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-doctor-profile',
   templateUrl: './doctor-profile.component.html',
   styleUrls: ['./doctor-profile.component.css'],
-  imports: [NgIf, NgClass, RouterModule,CommonModule]
+  imports: [CommonModule, RouterModule, ConfirmationModalComponent, DoctorFormModalComponent]
 })
-export class DoctorProfile {
+export class DoctorProfileComponent implements OnInit {
+  doctor: Doctor | null = null;
+  isLoading: boolean = true;
+  errorMessage: string = '';
+  
+  // Modal states
+  showEditModal: boolean = false;
+  
+  // Confirmation modal states
+  showConfirmationModal: boolean = false;
+  confirmationConfig: any = {};
+  pendingAction: () => void = () => {};
 
-  doctor: Doctor | undefined;
-
-  doctorsList: Doctor[] = [
-    { 
-      id: 1, 
-      name: 'Dr. Ahmed Ali', 
-      specialty: 'Cardiology', 
-      email: 'ahmed.ali@example.com', 
-      phone: '01012345678', 
-      photo: 'https://randomuser.me/api/portraits/men/34.jpg', 
-      active: true, 
-      state: 'Active', 
-      bio: 'Experienced cardiologist with 10+ years of expertise in cardiovascular diseases, interventional cardiology, and preventive heart care.',
-      experience: '12 years',
-      education: 'MD Cardiology - Cairo University',
-      languages: ['Arabic', 'English', 'French'],
-      rating: 4.8,
-      patients: 2450,
-      availability: 'Mon, Wed, Fri: 9:00 AM - 5:00 PM'
-    },
-    { 
-      id: 2, 
-      name: 'Dr. Sara Hassan', 
-      specialty: 'Dermatology', 
-      email: 'sara.hassan@example.com', 
-      phone: '01023456789', 
-      photo: 'https://randomuser.me/api/portraits/women/43.jpg', 
-      active: false, 
-      state: 'Inactive', 
-      bio: 'Dermatology expert specializing in skin diseases, cosmetic dermatology, and laser treatments with international training.',
-      experience: '8 years',
-      education: 'MD Dermatology - Alexandria University',
-      languages: ['Arabic', 'English'],
-      rating: 4.6,
-      patients: 1800,
-      availability: 'Tue, Thu, Sat: 10:00 AM - 6:00 PM'
-    },
-    { 
-      id: 3, 
-      name: 'Dr. Mohamed Farid', 
-      specialty: 'Pediatrics', 
-      email: 'mohamed.farid@example.com', 
-      phone: '01034567890', 
-      photo: 'https://randomuser.me/api/portraits/men/33.jpg', 
-      active: true, 
-      state: 'Active', 
-      bio: 'Pediatric doctor with passion for children health, vaccination programs, and developmental pediatrics.',
-      experience: '15 years',
-      education: 'MD Pediatrics - Ain Shams University',
-      languages: ['Arabic', 'English', 'German'],
-      rating: 4.9,
-      patients: 3200,
-      availability: 'Mon-Fri: 8:00 AM - 4:00 PM'
-    },
-    { 
-      id: 4, 
-      name: 'Dr. Amina Khaled', 
-      specialty: 'Neurology', 
-      email: 'amina.khaled@example.com', 
-      phone: '01045678901', 
-      photo: 'https://randomuser.me/api/portraits/women/44.jpg', 
-      active: true, 
-      state: 'Active', 
-      bio: 'Professional neurologist focusing on brain disorders, epilepsy, stroke management, and neurological rehabilitation.',
-      experience: '11 years',
-      education: 'MD Neurology - Kasr Al Ainy',
-      languages: ['Arabic', 'English'],
-      rating: 4.7,
-      patients: 1950,
-      availability: 'Sun, Tue, Thu: 9:00 AM - 3:00 PM'
-    },
-    { 
-      id: 5, 
-      name: 'Dr. Khaled Saeed', 
-      specialty: 'Orthopedics', 
-      email: 'khaled.saeed@example.com', 
-      phone: '01056789012', 
-      photo: 'https://randomuser.me/api/portraits/men/36.jpg', 
-      active: false, 
-      state: 'Inactive', 
-      bio: 'Experienced orthopedic surgeon with 12+ years in joint replacement, sports injuries, and spinal surgeries.',
-      experience: '12 years',
-      education: 'MD Orthopedics - Al Azhar University',
-      languages: ['Arabic', 'English', 'Spanish'],
-      rating: 4.8,
-      patients: 2750,
-      availability: 'Mon, Wed, Fri: 8:00 AM - 2:00 PM'
-    }
-  ];
-
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private doctorsService: DoctorsService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    let id = Number(this.route.snapshot.paramMap.get('id'));
-    this.doctor = this.doctorsList.find(d => d.id === id);
+    console.log('🔄 DoctorProfileComponent initialized');
+    this.loadDoctor();
   }
 
-  toggleActive() {
-    if (this.doctor) {
-      this.doctor.active = !this.doctor.active;
-      this.doctor.state = this.doctor.active ? 'Active' : 'Inactive';
+  // Force update method
+  forceUpdate() {
+    console.log('🔄 Force updating doctor profile...');
+    this.cdr.detectChanges();
+    console.log('✅ Force update completed');
+  }
+
+  loadDoctor() {
+    console.log('🔄 Loading doctor profile...');
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.doctor = null;
+    
+    // Force update to show loading state immediately
+    this.forceUpdate();
+
+    const id = this.route.snapshot.paramMap.get('id');
+    
+    if (id && !isNaN(Number(id))) {
+      console.log('📋 Fetching doctor with ID:', id);
+      
+      this.doctorsService.getDoctorById(Number(id)).subscribe({
+        next: (doctor: Doctor) => {
+          console.log('✅ Doctor data received:', doctor);
+          this.doctor = doctor;
+          this.isLoading = false;
+          this.errorMessage = '';
+          
+          // Force update after data is set
+          this.forceUpdate();
+          console.log('✅ Profile loaded successfully');
+        },
+        error: (error: any) => {
+          console.error('❌ Error loading doctor:', error);
+          this.isLoading = false;
+          this.doctor = null;
+          this.errorMessage = this.getErrorMessage(error);
+          
+          // Force update after error
+          this.forceUpdate();
+        }
+      });
+    } else {
+      console.error('❌ Invalid doctor ID:', id);
+      this.errorMessage = 'Invalid doctor ID provided.';
+      this.isLoading = false;
+      this.forceUpdate();
     }
   }
 
-  getStars(rating: number): number[] {
-    return Array(5).fill(0).map((_, i) => i < Math.floor(rating) ? 1 : 0);
+  private getErrorMessage(error: any): string {
+    if (error.status === 404) {
+      return 'Doctor not found. The requested profile does not exist.';
+    } else if (error.status === 0) {
+      return 'Unable to connect to the server. Please check your internet connection.';
+    } else if (error.status === 500) {
+      return 'Server error. Please try again later.';
+    } else {
+      return 'An unexpected error occurred while loading the doctor profile.';
+    }
   }
 
-  getSpecialtyIcon(specialty: string): string {
-    switch (specialty.toLowerCase()) {
+
+  // Activation/Deactivation
+  toggleActive() {
+    if (!this.doctor) return;
+
+    const newActiveState = !this.doctor.isActive;
+    const action = newActiveState ? 'activate' : 'deactivate';
+    
+    console.log('🔄 Toggling active state:', {
+      doctor: this.doctor.fullName,
+      currentState: this.doctor.isActive,
+      newState: newActiveState
+    });
+
+    this.confirmationConfig = {
+      title: `${newActiveState ? 'Activate' : 'Deactivate'} Doctor`,
+      message: `Are you sure you want to ${action} <strong>${this.doctor.fullName}</strong>?`,
+      icon: newActiveState ? 'fas fa-user-check' : 'fas fa-user-slash',
+      iconColor: newActiveState ? '#28a745' : '#dc3545',
+      confirmText: newActiveState ? 'Activate' : 'Deactivate',
+      cancelText: 'Cancel',
+      confirmButtonClass: newActiveState ? 'btn-success' : 'btn-confirm'
+    };
+
+    this.pendingAction = () => this.executeToggleActive(newActiveState);
+    this.showConfirmationModal = true;
+    this.forceUpdate();
+  }
+
+  private executeToggleActive(newActiveState: boolean) {
+    if (!this.doctor) return;
+
+    const action = newActiveState ? 'activate' : 'deactivate';
+    
+    console.log('🚀 Executing toggle active:', {
+      userId: this.doctor.userId,
+      action: action
+    });
+
+    this.isLoading = true;
+    this.forceUpdate();
+
+    const apiCall$ = newActiveState 
+      ? this.doctorsService.activateUser(this.doctor.userId)
+      : this.doctorsService.deactivateUser(this.doctor.userId);
+
+    apiCall$.subscribe({
+      next: (response: any) => {
+        console.log(`✅ ${action} successful`);
+        this.loadDoctor(); // Reload to get fresh data
+      },
+      error: (error: any) => {
+        console.error(`❌ ${action} failed:`, error);
+        this.isLoading = false;
+        this.forceUpdate();
+        
+        let errorMessage = `Failed to ${action} ${this.doctor?.fullName}. `;
+        
+        if (error.status === 0) {
+          errorMessage += 'Network error: Cannot connect to server.';
+        } else if (error.status === 404) {
+          errorMessage += 'Endpoint not found.';
+        } else if (error.status === 405) {
+          errorMessage += 'Method not allowed.';
+        } else if (error.status === 401) {
+          errorMessage += 'Unauthorized.';
+        } else {
+          errorMessage += 'Please try again.';
+        }
+        
+        alert(errorMessage);
+      }
+    });
+  }
+
+  // Confirmation modal handlers
+  onConfirmAction() {
+    console.log('✅ Confirmation confirmed');
+    this.showConfirmationModal = false;
+    if (this.pendingAction) {
+      this.pendingAction();
+    }
+    this.forceUpdate();
+  }
+
+  onCancelAction() {
+    console.log('❌ Confirmation cancelled');
+    this.showConfirmationModal = false;
+    this.pendingAction = () => {};
+    this.forceUpdate();
+  }
+
+  editDoctor() {
+    if (!this.doctor) {
+      console.error('❌ Cannot open edit modal: doctor is null');
+      return;
+    }
+    
+    console.log('✏️ Opening edit modal for:', this.doctor.fullName);
+    
+    // Ensure doctor data is loaded before opening modal
+    if (this.isLoading) {
+      console.warn('⚠️ Doctor data is still loading, waiting...');
+      // Wait for data to load
+      const checkInterval = setInterval(() => {
+        if (!this.isLoading && this.doctor) {
+          clearInterval(checkInterval);
+          this.showEditModal = true;
+          this.forceUpdate();
+          console.log('✅ Modal opened after data loaded');
+        }
+      }, 100);
+      return;
+    }
+    
+    // Force update to ensure doctor is set
+    this.forceUpdate();
+    
+    // Small delay to ensure data is set before opening modal
+    setTimeout(() => {
+      this.showEditModal = true;
+      this.forceUpdate();
+      console.log('✅ Modal opened with doctor data:', {
+        doctorId: this.doctor?.doctorId,
+        fullName: this.doctor?.fullName
+      });
+    }, 50);
+  }
+
+  closeEditModal() {
+    console.log('❌ Closing edit modal');
+    this.showEditModal = false;
+    this.forceUpdate();
+  }
+
+  onSaveDoctor(doctorData: UpdateDoctorDto) {
+    if (!this.doctor) return;
+
+    console.log('💾 Saving doctor updates');
+    this.isLoading = true;
+    this.forceUpdate();
+
+    this.doctorsService.updateDoctor(this.doctor.doctorId, doctorData).subscribe({
+      next: (response: any) => {
+        console.log('✅ Doctor updated successfully');
+        this.loadDoctor(); // Reload to get updated data
+        this.closeEditModal();
+      },
+      error: (error: any) => {
+        console.error('❌ Error updating doctor:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to update doctor. Please try again.');
+      }
+    });
+  }
+
+  goBack() {
+    console.log('↩️ Going back to doctors list');
+    this.router.navigate(['/doctors']);
+  }
+
+  retryLoad() {
+    console.log('🔄 Retrying load...');
+    this.loadDoctor();
+  }
+
+  // UI Helper Methods
+  getSpecialtyIcon(specialization: string): string {
+    switch (specialization?.toLowerCase()) {
       case 'cardiology': return 'fas fa-heartbeat';
-      case 'dermatology': return 'fas fa-allergies';
       case 'neurology': return 'fas fa-brain';
       case 'pediatrics': return 'fas fa-baby';
+      case 'dentistry': return 'fas fa-tooth';
       case 'orthopedics': return 'fas fa-bone';
+      case 'dermatology': return 'fas fa-allergies';
       default: return 'fas fa-user-md';
     }
+  }
+
+  getExperienceLevel(): string {
+    if (!this.doctor) return '';
+    
+    const years = this.doctor.experienceYears;
+    if (years <= 2) return 'Junior';
+    if (years <= 5) return 'Mid-level';
+    if (years <= 10) return 'Senior';
+    return 'Expert';
+  }
+
+  getStatusBadgeClass(): string {
+    if (!this.doctor) return '';
+    
+    return this.doctor.isActive ? 'status-badge active' : 'status-badge inactive';
+  }
+
+  // Debug method
+  debugState() {
+    console.log('🔍 Current Doctor Profile State:', {
+      isLoading: this.isLoading,
+      doctor: this.doctor,
+      errorMessage: this.errorMessage,
+      showEditModal: this.showEditModal,
+      showConfirmationModal: this.showConfirmationModal
+    });
+    this.forceUpdate();
   }
 }

@@ -1,0 +1,65 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="onClose()">
+  <div class="modal-content" (click)="onModalClick($event)">
+    <div class="modal-header">
+      <h2>{{ getModalTitle() }}</h2>
+      <button class="close-btn" (click)="onClose()" [disabled]="isLoading">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
+      
+      <form (ngSubmit)="onSubmit()" #roomFormRef="ngForm">
+        <div class="form-group">
+          <label>Room Name <span class="required">*</span></label>
+          <input 
+            type="text" 
+            [(ngModel)]="roomForm.roomName" 
+            name="roomName"
+            class="form-control"
+            placeholder="e.g., Room 101, ICU Room A"
+            required
+            [disabled]="isLoading"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label>Room Type <span class="required">*</span></label>
+          <select 
+            [(ngModel)]="roomForm.roomType" 
+            name="roomType"
+            class="form-control"
+            required
+            [disabled]="isLoading"
+          >
+            <option value="">Select Room Type</option>
+            <option *ngFor="let type of roomTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+        
+        <div class="modal-footer">
+          <button 
+            type="button" 
+            class="btn-cancel" 
+            (click)="onClose()"
+            [disabled]="isLoading"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-save" 
+            [disabled]="isLoading"
+          >
+            <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            {{ getSaveButtonText() }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,12 +1,18 @@
 <main class="main main-spacing overflow-hidden" >
 
-  <!-- Header Component -->
-  <app-header></app-header>
+  <!-- Header Component (for unauthorized/public routes) -->
+  <app-header *ngIf="showHeader"></app-header>
+
+  <!-- Sidebar Component (for authorized routes) -->
+  <app-sidebar *ngIf="showSidebar"></app-sidebar>
 
   <!-- Main Content -->
-  <router-outlet></router-outlet>
+  <div [class.content-with-sidebar]="showSidebar" [class.content-with-header]="showHeader">
+    <router-outlet></router-outlet>
+  </div>
   
-  <app-footer></app-footer>
+  <!-- Footer (only show on public routes) -->
+  <app-footer *ngIf="showHeader"></app-footer>
 
 
 </main>

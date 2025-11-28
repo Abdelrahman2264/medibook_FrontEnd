@@ -1,0 +1,41 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p>Welcome back! Here's what's happening today.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div *ngFor="let stat of stats" class="stat-card" [routerLink]="stat.route">
+      <div class="stat-icon" [style.background-color]="stat.color + '20'" [style.color]="stat.color">
+        <i [class]="stat.icon"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stat.value }}</div>
+        <div class="stat-label">{{ stat.label }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="activities-section">
+    <h2>Recent Activities</h2>
+    <div class="activities-list">
+      <div *ngFor="let activity of recentActivities" class="activity-item">
+        <div class="activity-icon" [class]="'icon-' + activity.type">
+          <i [class]="activity.type === 'appointment' ? 'fas fa-calendar-check' : 
+                      activity.type === 'checkin' ? 'fas fa-check-circle' : 
+                      activity.type === 'report' ? 'fas fa-file-alt' : 
+                      'fas fa-door-open'"></i>
+        </div>
+        <div class="activity-content">
+          <div class="activity-action">{{ activity.action }}</div>
+          <div class="activity-patient">{{ activity.patient }}</div>
+          <div class="activity-time">{{ activity.time }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
