@@ -104,7 +104,7 @@
   display: flex;
   justify-content: center;
   height: 380px;
-  border-radius: 20px;
+  
   overflow: hidden;
 }
 
@@ -112,7 +112,7 @@
   width: 100%;
   
   object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow:var(--shadow-sm);
 }
 
 .carousel-indicators {
@@ -199,11 +199,11 @@
 /* CTA */
 .cta {
   text-align: center;
-  padding: 50px 20px;
+  padding: 20px 20px;
   padding-bottom: 90px;
   background: linear-gradient(135deg, var(--secondary-600), var(--primary-600) 70% 100%);
   color: #fff;
-  margin-top: 40px;
+  
 }
 .cta h2 {
   text-align: center;
@@ -257,6 +257,8 @@ button.btn:hover {
   background: linear-gradient(135deg, var(--secondary-50), var(--primary-50) 70% 100%);
   padding: 100px 0;
   position: relative;
+  
+  
 }
 
 .fav-feedback-section .overlayy {
