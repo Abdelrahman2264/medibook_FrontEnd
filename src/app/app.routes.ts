@@ -4,12 +4,9 @@ import { AboutComponent } from './components/about/about.component';
 import { ContactComponent } from './components/contact us/contact.component'; 
 import { Patients } from './components/patient/patients.component';
 import { SettingsComponent } from './components/settings/settings.component';
-<<<<<<< HEAD
 import {HomeComponent} from './components/Home/home.component';
-=======
 import { authGuard } from './guards/auth.guard';
 
->>>>>>> b5beda4 (Accept merge  keep current changes)
 
 export const routes: Routes = [
   // Public routes (no auth required)
@@ -22,20 +19,19 @@ export const routes: Routes = [
     component: ContactComponent
   },
   {
-<<<<<<< HEAD
     path: 'home',
     component: HomeComponent
   },
   {
     path: 'doctors',
     loadComponent: () =>
-      import('./components/doctors/doctors.component').then(m => m.DoctorsCompomemt)
+      import('./components/doctors/doctors.component').then(m => m.DoctorsComponent)
   },
   {
     path: 'doctors/:id',
     loadComponent: () =>
       import('./components/doctor-profile/doctor-profile.component')
-        .then(m => m.DoctorProfile)
+        .then(m => m.DoctorProfileComponent)
   },
   {
     path: 'nurses',
@@ -55,7 +51,7 @@ export const routes: Routes = [
   },
   { 
     path: 'patients', 
-    component: PatientListComponent 
+    component: Patients 
   },
   { 
     path: 'settings', 
@@ -63,8 +59,6 @@ export const routes: Routes = [
   },
 
   {
-=======
->>>>>>> b5beda4 (Accept merge  keep current changes)
     path: 'signin',
     loadComponent: () =>
       import('./components/signin/signin.component')
