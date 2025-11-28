@@ -5,7 +5,7 @@
 /* Hero Section */
 .hero-section {
     background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
-  color: white;
+  color:var(--text-primary) ;
   padding: 80px 0;
   text-align: center;
 }
@@ -31,7 +31,7 @@
 .hero-subtitle {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
-  color: #e3f2fd;
+  color: var(--gray-50);
 }
 
 .hero-description {
@@ -39,13 +39,13 @@
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
-  color: #e3f2fd;
+  color: var(--gray-50);
 }
 
 /* Mission Section */
 .mission-section {
   padding: 80px 0;
-  background: #f8f9fa;
+  background: var(--bg-secondary);
 }
 
 .mission-grid {
@@ -55,7 +55,7 @@
 }
 
 .mission-card {
-  background: white;
+  background: var(--bg-primary);
   padding: 40px 30px;
   border-radius: 15px;
   text-align: center;
@@ -73,7 +73,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
 
 }
 
@@ -98,13 +98,14 @@
 }
 
 .mission-card p {
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 /* Features Section */
 .features-section {
   padding: 80px 0;
+  background: var(--bg-secondary);
 }
 
 .section-title {
@@ -128,7 +129,7 @@
 .feature-card {
   text-align: center;
   padding: 30px 20px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
   box-shadow: 0 3px 15px rgba(144, 217, 243, 0.2);
   border: 2px solid transparent;
@@ -144,7 +145,7 @@
   left: 0;
   right: 0;
   height: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
 
 }
 
@@ -169,13 +170,13 @@
 }
 
 .feature-card p {
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
 /* Stats Section */
 .stats-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
 
   padding: 60px 0;
   color: white;
@@ -208,7 +209,7 @@
 /* Team Section */
 .team-section {
   padding: 80px 0;
-  background: #f8f9fa;
+  background: var(--bg-secondary);
 }
 
 .team-grid {
@@ -218,7 +219,7 @@
 }
 
 .team-card {
-  background: white;
+  background: var(--bg-primary);
   padding: 40px 20px;
   border-radius: 15px;
   text-align: center;
@@ -236,7 +237,7 @@
   left: 0;
   right: 0;
   height: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+   background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
 
 }
 
@@ -261,7 +262,7 @@
 }
 
 .team-card p {
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 

@@ -1,5 +1,6 @@
 .contact-page {
   min-height: 100vh;
+  
 }
 
 /* Hero Section */
@@ -45,7 +46,7 @@
 /* Contact Main Section */
 .contact-main {
   padding: 80px 0;
-  background: #f8f9fa;
+  background: var(--bg-primary);
 }
 
 .contact-grid {
@@ -67,7 +68,7 @@
 }
 
 .contact-info>p {
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   font-size: 1.1rem;
 }
@@ -83,7 +84,7 @@
   align-items: flex-start;
   gap: 20px;
   padding: 25px;
-  background: white;
+  background:  var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 5px 20px rgba(144, 217, 243, 0.2);
   border: 2px solid transparent;
@@ -124,14 +125,14 @@
 }
 
 .method-content p {
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.5;
   margin: 0;
 }
 
 /* Contact Form */
 .contact-form {
-  background: white;
+  background: var(--bg-primary);
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 5px 20px rgba(144, 217, 243, 0.2);
@@ -168,7 +169,7 @@
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -176,18 +177,18 @@
 .form-group textarea {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border-medium);
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: #f8f9fa;
+  background: var(--bg-secondary);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-600);
-  background: white;
+  background: var(--bg-primary);
   box-shadow: 0 0 0 3px rgba(20, 186, 246, 0.1);
 }
 
@@ -212,7 +213,7 @@
 /* Map Section */
 .map-section {
   padding: 80px 0;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .section-title {
@@ -228,11 +229,11 @@
 }
 
 .map-placeholder {
-  background: linear-gradient(135deg, var(--secondary-50) 0%, var(--primary-50) 100%);
+  background: var(--bg-secondary);
   border-radius: 15px;
   padding: 60px 40px;
   text-align: center;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--border-light);
 }
 
 .map-content {
@@ -257,7 +258,7 @@
 }
 
 .map-content p {
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   line-height: 1.5;
 }

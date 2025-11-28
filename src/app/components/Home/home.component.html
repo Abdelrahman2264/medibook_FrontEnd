@@ -2,18 +2,116 @@
   <section class="hero-section overflow-hidden">
     <div class="overlaye"></div>
     <div class="hero-content">
-      <h1>Welcome </h1>
+      <h1>Welcome</h1>
       <p>Book appointments easily & manage your medical records online</p>
 
       <div class="hero-buttons">
-        <button routerLink="/appointments" class="btn btn-primary rounded-3">Book Appointment</button>
+        <button routerLink="/appointments" class="btn btn-primary rounded-3">
+          Book Appointment
+        </button>
         <button routerLink="/contact" class="btn btn-secondary rounded-3">Contact Us</button>
       </div>
     </div>
   </section>
+  <section class="about-section container">
+    <div class="about-text">
+      <h2 class="section-title mx-auto mx-lg-0">About Our Medical Center</h2>
+      <p class="section-desc">
+        We provide world-class healthcare services with professional doctors, advanced equipment,
+        and a patient-first environment. Our mission is to make your medical journey easier, safer,
+        and more comfortable.
+      </p>
 
+      <button class=" btn btn-primary more-btn " routerLink="/about">Learn More</button>
+    </div>
+
+   
+    <div
+      id="carouselExampleIndicators"
+      class="carousel slide col-lg-6"
+      data-bs-ride="carousel"
+      data-bs-interval="3000"
+    >
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="about-img">
+            <img
+              src="../../../assets/images/premium_photo-1681843126728-04eab730febe.avif"
+              alt="medical center"
+            />
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="about-img">
+            <img
+              src="../../../assets/images/7bf3c1c975574a533b8e26cbfc1125c1.jpeg"
+              alt="medical center"
+            />
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="about-img">
+            <img
+              src="../../../assets/images/medical-technology-concepts-medical-students-use-tablet-search-information-modern-office-1-1024x684.jpg.webp"
+              alt="medical center"
+            />
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="about-img">
+             <img
+              src="../../../assets/images/istockphoto-1988844230-612x612.jpg"
+              alt="medical center"
+            />
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="about-img">
+             <img
+              src="../../../assets/images/0x0.webp"
+              alt="medical center"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="carousel-indicators">
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="0"
+          class="active"
+          aria-current="true"
+          aria-label="Slide 1"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="1"
+          aria-label="Slide 2"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="2"
+          aria-label="Slide 3"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="3"
+          aria-label="Slide 4"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="4"
+          aria-label="Slide 5"
+        ></button>
+      </div>
+    </div>
+  </section>
   <!-- Services Section -->
-  <div class="services container ">
+  <div class="services container">
     <h2 class="section-title mb-4 mx-auto">Our Services</h2>
 
     <div class="services-grid">
@@ -40,36 +138,35 @@
   <!-- CTA -->
   <div class="cta">
     <h2>Join Us and Manage Your Health Easily</h2>
-    <button routerLink="/signup" class="btn shadow-lg ">Create Account</button>
+    <button routerLink="/signup" class="btn shadow-lg">Create Account</button>
   </div>
   <section class="fav-feedback-section">
-  <div class="overlayy">
-    
-    <h2 class="title mx-auto">Top Feedback</h2>
+    <div class="overlayy">
+      <h2 class="title mx-auto">Top Feedback</h2>
 
-    <div class="cardss">
-      <div class="cardd">
-        <h4>Omar Ali</h4>
-        <p>Excellent clinic, fast service and respectful doctors.</p>
-        <span class="stars">⭐ 5</span>
+      <div class="cardss">
+        <div class="cardd">
+          <h4>Omar Ali</h4>
+          <p>Excellent clinic, fast service and respectful doctors.</p>
+          <span class="stars">⭐ 5</span>
+        </div>
+
+        <div class="cardd">
+          <h4>Sara Mahmoud</h4>
+          <p>The appointment system is smooth and very easy to use.</p>
+          <span class="stars">⭐ 4</span>
+        </div>
+
+        <div class="cardd">
+          <h4>Mohamed Adel</h4>
+          <p>The doctor was very professional and helpful.</p>
+          <span class="stars">⭐ 5</span>
+        </div>
       </div>
 
-      <div class="cardd">
-        <h4>Sara Mahmoud</h4>
-        <p>The appointment system is smooth and very easy to use.</p>
-        <span class="stars">⭐ 4</span>
-      </div>
-
-      <div class="cardd">
-        <h4>Mohamed Adel</h4>
-        <p>The doctor was very professional and helpful.</p>
-        <span class="stars">⭐ 5</span>
-      </div>
+      <button routerLink="/feedback" class="btn btn-primary btn-main rounded-3">
+        View All Feedback
+      </button>
     </div>
-
-    <button routerLink="/feedback" class="btn btn-primary btn-main rounded-3">
-      View All Feedback
-    </button>
-  </div>
-</section>
+  </section>
 </div>

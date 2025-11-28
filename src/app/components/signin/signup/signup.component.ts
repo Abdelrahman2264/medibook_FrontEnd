@@ -32,6 +32,7 @@ export class SignupComponent {
     dateOfBirth: ''
   };
   
+  
   // Verification
   verificationCode: string = '';
   generatedCode: string = ''; // Code generated on frontend
