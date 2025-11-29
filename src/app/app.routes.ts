@@ -4,9 +4,10 @@ import { AboutComponent } from './components/about/about.component';
 import { ContactComponent } from './components/contact us/contact.component'; 
 import { Patients } from './components/patient/patients.component';
 import { SettingsComponent } from './components/settings/settings.component';
-import {HomeComponent} from './components/Home/home.component';
+import { BookAppointmentComponent } from './components/book-appointment/book-appointment.component';
+import { AssignAppointmentComponent } from './components/assign-appointment/assign-appointment.component';
+import { HomeComponent } from './components/Home/home.component';
 import { authGuard } from './guards/auth.guard';
-
 
 export const routes: Routes = [
   // Public routes (no auth required)
@@ -22,42 +23,6 @@ export const routes: Routes = [
     path: 'home',
     component: HomeComponent
   },
-  {
-    path: 'doctors',
-    loadComponent: () =>
-      import('./components/doctors/doctors.component').then(m => m.DoctorsComponent)
-  },
-  {
-    path: 'doctors/:id',
-    loadComponent: () =>
-      import('./components/doctor-profile/doctor-profile.component')
-        .then(m => m.DoctorProfileComponent)
-  },
-  {
-    path: 'nurses',
-    loadComponent: () =>
-      import('./components/nurses/nurses.component').then(m => m.Nurses)
-  },
-  {
-    path: 'nurses/:id',
-    loadComponent: () =>
-      import('./components/nurse-profile/nurse-profile.component')
-        .then(m => m.NurseProfile)
-  },
-  {
-    path: 'user-profile',
-    loadComponent: () =>
-      import('./components/user-profile/user-profile.component').then(m => m.UserProfile)
-  },
-  { 
-    path: 'patients', 
-    component: Patients 
-  },
-  { 
-    path: 'settings', 
-    component: SettingsComponent 
-  },
-
   {
     path: 'signin',
     loadComponent: () =>
@@ -80,7 +45,26 @@ export const routes: Routes = [
   },
   {
     path: 'appointments',
-    component: AppointmentsComponent,
+    loadComponent: () =>
+      import('./components/appointment/appointments.component').then(m => m.AppointmentsComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'appointments/:id',
+    loadComponent: () =>
+      import('./components/appointment-details/appointment-details.component').then(m => m.AppointmentDetailsComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'book-appointment',
+    loadComponent: () =>
+      import('./components/book-appointment/book-appointment.component').then(m => m.BookAppointmentComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'assign-appointment/:id',
+    loadComponent: () =>
+      import('./components/assign-appointment/assign-appointment.component').then(m => m.AssignAppointmentComponent),
     canActivate: [authGuard]
   },
   {
@@ -118,7 +102,8 @@ export const routes: Routes = [
   },
   {
     path: 'patients',
-    component: Patients,
+    loadComponent: () =>
+      import('./components/patient/patients.component').then(m => m.Patients),
     canActivate: [authGuard]
   },
   {
@@ -160,7 +145,8 @@ export const routes: Routes = [
   },
   {
     path: 'settings',
-    component: SettingsComponent,
+    loadComponent: () =>
+      import('./components/settings/settings.component').then(m => m.SettingsComponent),
     canActivate: [authGuard]
   },
   {
@@ -177,22 +163,23 @@ export const routes: Routes = [
         .then(m => m.AdminProfile),
     canActivate: [authGuard]
   },
+  {
+    path: 'table',
+    loadComponent: () =>
+      import('./components/table/table.component').then(m => m.TableComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'feedback',
+    loadComponent: () =>
+      import('./components/feedback/feedback.component').then(m => m.FeedbackComponent),
+    canActivate: [authGuard]
+  },
 
   // Default redirect
   {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full'
-  },{
-  path: 'table',
-  loadComponent: () =>
-    import('./components/table/table.component').then(m => m.TableComponent)
-},
-{
-  path: 'feedback',
-  loadComponent: () =>
-    import('./components/feedback/feedback.component').then(m => m.FeedbackComponent)
-}
-
-
+  }
 ];

@@ -36,10 +36,15 @@ export class NursesService {
 
   // Get active nurses - returns mapped Nurse[] from NurseDetailsDto[]
   getActiveNurses(): Observable<Nurse[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/Nurses/active`).pipe(
-      map(dtos => {
-        console.log('📥 Raw active nurses data from API:', dtos);
-        return dtos.map(dto => mapNurseDetailsDtoToNurse(dto));
+    return this.http.get<any>(`${this.baseUrl}/Nurses/active`).pipe(
+      map(response => {
+        console.log('📥 Raw active nurses data from API:', response);
+        const arr = Array.isArray(response) ? response : (response.data ? response.data : response);
+        if (!Array.isArray(arr)) {
+          console.error('❌ Unexpected active nurses response format:', response);
+          return [] as Nurse[];
+        }
+        return arr.map((dto: any) => mapNurseDetailsDtoToNurse(dto));
       })
     );
   }

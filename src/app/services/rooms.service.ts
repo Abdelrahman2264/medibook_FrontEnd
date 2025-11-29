@@ -70,6 +70,39 @@ export class RoomsService {
     );
   }
 
+  // Get all ACTIVE rooms with delay and better error handling
+getAllActiveRooms(): Observable<Room[]> {
+  return this.http.get<any>(`${this.baseUrl}/Rooms/active`).pipe(
+    delay(500), // Add delay for better UX
+    map(response => {
+      console.log('📥 Raw ACTIVE rooms data from API:', response);
+
+      // Handle both array response and wrapped response
+      const roomsArray = Array.isArray(response)
+        ? response
+        : response.data
+        ? response.data
+        : response;
+
+      if (!Array.isArray(roomsArray)) {
+        console.error('❌ Unexpected API response format:', response);
+        throw new Error('Invalid API response format');
+      }
+
+      const mapped = roomsArray.map(dto => {
+        const room = mapRoomDetailsDtoToRoom(dto);
+        console.log('✅ Mapped ACTIVE room:', { roomId: room.roomId, roomName: room.roomName });
+        return room;
+      });
+
+      console.log('📊 Total ACTIVE rooms mapped:', mapped.length);
+      return mapped;
+    }),
+    catchError(error => this.handleError('fetching ACTIVE rooms', error))
+  );
+}
+
+
   // Get active rooms
   getActiveRooms(): Observable<Room[]> {
     return this.http.get<any>(`${this.baseUrl}/Rooms/active`).pipe(

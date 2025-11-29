@@ -1,110 +1,321 @@
-<div class="app-container">
-  <!-- البحث والفلاتر -->
-  <div class="search-filter">
-    <input type="text" placeholder="Search by name..." [(ngModel)]="searchName">
-    <label for="specialty">Select Specialty</label>
-    <select id="specialty" [(ngModel)]="filterSpecialty">
-      <option value="">All specialties</option>
-      <option *ngFor="let spec of specialties" [value]="spec">{{ spec }}</option>
-    </select>
-  </div>
-
-  <!-- الكروت -->
-  <div class="doctor-cards">
-    <div class="doctor-card" *ngFor="let d of filteredDoctors">
-    <img class="photo" src="/images/doctor.jpg" alt="doctor">
-      <h3 class="name">{{ d.name }}</h3>
-      <p class="spec">{{ d.specialty }}</p>
-
-      <div class="rating">
-        <ng-container *ngFor="let filled of starsArray(d.rating)">
-          <span class="star" [class.filled]="filled">★</span>
-        </ng-container>
+<div class="appointments-page-container">
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="appointment-list-page">
+      <!-- Title -->
+      <div class="page-title-bar">
+        <h1 class="page-title">Appointments Management</h1>
+        <button class="add-appointment-btn" (click)="navigateToBookAppointment()">
+          <i class="fas fa-plus"></i> Book New Appointment
+        </button>
       </div>
 
-      <div class="actions">
-        <button (click)="openDetails(d)" class="btn btn-primary">Details</button>
-        <button class="btn btn-outline-primary" (click)="openBooking(d)">Book</button>
+      <!-- Top Stats Cards -->
+      <div class="top-cards-container">
+        <div class="top-card light-purple">
+          <h3>Total Appointments</h3>
+          <p>{{ appointments.length }}</p>
+        </div>
+        <div class="top-card light-blue">
+          <h3>Scheduled</h3>
+          <p>{{ countScheduled() }}</p>
+        </div>
+        <div class="top-card light-orange">
+          <h3>In Progress</h3>
+          <p>{{ countInProgress() }}</p>
+        </div>
+        <div class="top-card light-green">
+          <h3>Completed</h3>
+          <p>{{ countCompleted() }}</p>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-container">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          placeholder="Search by patient or doctor name..." 
+          class="search-input" 
+          (input)="forceUpdate()"
+        />
+        <i class="fa fa-search search-icon"></i>
+      </div>
+
+      <!-- Filters & Sort -->
+      <div class="controls">
+        <select [(ngModel)]="selectedStatus" class="filter-select" (change)="forceUpdate()">
+          <option value="">Filter by Status</option>
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+
+        <select [(ngModel)]="selectedDoctor" class="filter-select" (change)="forceUpdate()">
+          <option value="">Filter by Doctor</option>
+          <option *ngFor="let doctor of doctors" [value]="doctor.fullName">{{ doctor.fullName }}</option>
+        </select>
+
+        <button (click)="clearAllFilters()" class="clear-all-btn">
+          Clear All <i class="fas fa-times-circle"></i>
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading && appointments.length === 0" class="loading-container">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin fa-3x"></i>
+          <p>Loading appointments...</p>
+          <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage && !isLoading" class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+        <button (click)="loadAppointments()" class="btn btn-retry" style="margin-left: 10px;">
+          <i class="fas fa-redo"></i> Retry
+        </button>
+      </div>
+
+      <!-- Results Bar -->
+      <div class="results-bar" *ngIf="!isLoading && appointments.length > 0">
+        <div class="results-info">
+          <i class="fas fa-calendar-check"></i>
+          Showing <span class="highlight">{{filteredAppointments().length}}</span> of 
+          <span class="total">{{appointments.length}}</span> appointments
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && appointments.length === 0" class="empty-state">
+        <div class="empty-state-content">
+          <i class="fas fa-calendar-times fa-4x"></i>
+          <h2>No Appointments Found</h2>
+          <p>There are no appointments scheduled yet.</p>
+          <button class="add-appointment-btn" (click)="navigateToBookAppointment()">
+            <i class="fas fa-plus"></i> Schedule First Appointment
+          </button>
+        </div>
+      </div>
+
+      <!-- Appointments Cards Container -->
+      <div class="cards-container" *ngIf="!isLoading && appointments.length > 0">
+        <div
+          class="appointment-card"
+          *ngFor="let appointment of filteredAppointments(); let i = index"
+          [style.background-color]="getCardColor(appointment.status, i)"
+        >
+          <!-- Status Badge -->
+          <div class="status-badge" [style.background-color]="appointment.statusColor">
+            <i [class]="appointment.statusIcon"></i>
+            {{ appointment.status }}
+          </div>
+          
+          <div class="appointment-info">
+            <!-- Patient Info -->
+            <div class="info-section">
+              <h3><i class="fas fa-user-injured"></i> Patient</h3>
+              <p class="patient-name">{{ appointment.patientName }}</p>
+              <p class="patient-details">{{ appointment.patientInfo }}</p>
+            </div>
+
+            <!-- Doctor Info -->
+            <div class="info-section">
+              <h3><i class="fas fa-user-md"></i> Doctor</h3>
+              <p class="doctor-name">{{ appointment.doctorName }}</p>
+              <p class="doctor-specialty">{{ appointment.doctorSpecialization }}</p>
+            </div>
+
+            <!-- Appointment Details -->
+            <div class="info-section">
+              <h3><i class="fas fa-calendar-alt"></i> Appointment</h3>
+              <p class="appointment-date">
+                <i class="fas fa-calendar-day"></i> {{ appointment.formattedDate }}
+              </p>
+              <p class="appointment-time">
+                <i class="fas fa-clock"></i> {{ appointment.formattedTime }}
+              </p>
+            </div>
+
+            <!-- Assignment Details -->
+            <div class="info-section" *ngIf="appointment.nurseId || appointment.roomId">
+              <h3><i class="fas fa-clipboard-list"></i> Assignment</h3>
+              <p *ngIf="appointment.nurseId">
+                <i class="fas fa-user-nurse"></i> Nurse: {{ appointment.nurseName }}
+              </p>
+              <p *ngIf="appointment.roomId">
+                <i class="fas fa-door-open"></i> Room: {{ appointment.roomName }}
+              </p>
+            </div>
+
+            <!-- Medical Notes -->
+            <div class="info-section" *ngIf="appointment.medicine || appointment.notes">
+              <h3><i class="fas fa-file-medical"></i> Medical Info</h3>
+              <p *ngIf="appointment.medicine" class="medicine">
+                <i class="fas fa-pills"></i> {{ appointment.medicine }}
+              </p>
+              <p *ngIf="appointment.notes" class="notes">
+                <i class="fas fa-sticky-note"></i> {{ appointment.notes }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="appointment-actions">
+            <!-- Assign Button (for scheduled appointments without assignment) -->
+            <button 
+              *ngIf="!appointment.nurseId && !appointment.roomId && appointment.status === 'Scheduled'"
+              class="assign-btn" 
+              (click)="navigateToAssign(appointment)">
+              <i class="fas fa-user-nurse"></i> Assign
+            </button>
+
+            <!-- Close Button (for assigned or in progress appointments) -->
+            <button 
+              *ngIf="['Assigned', 'In Progress'].includes(appointment.status)"
+              class="close-btn" 
+              (click)="confirmClose(appointment)">
+              <i class="fas fa-check-circle"></i> Close
+            </button>
+
+            <!-- Cancel Button (for pending/scheduled appointments) -->
+            <button 
+              *ngIf="['Pending', 'Scheduled'].includes(appointment.status)"
+              class="cancel-btn" 
+              (click)="confirmCancel(appointment)">
+              <i class="fas fa-times-circle"></i> Cancel
+            </button>
+
+            <!-- View Details Button -->
+            <button class="view-btn" (click)="navigateToDetails(appointment)">
+              <i class="fas fa-eye"></i> Details
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner Advertisement -->
+      <div class="banner-advertisement">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h2>🏥 Efficient Appointment Management</h2>
+            <p>Streamline your clinic's scheduling and patient care with our comprehensive appointment system</p>
+            <div class="banner-features">
+              <span><i class="fas fa-check"></i> Real-time Scheduling</span>
+              <span><i class="fas fa-check"></i> Automated Reminders</span>
+              <span><i class="fas fa-check"></i> Staff Assignment</span>
+            </div>
+          </div>
+          <div class="banner-offer">
+            <div class="offer-badge">Smart Clinic</div>
+            <p class="offer-text">Enhanced Patient Care</p>
+            <button class="banner-cta">Learn More</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- مودال التفاصيل -->
-<div class="modal" *ngIf="selectedDoctor" (click)="closeDetails()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <!-- التعديل الأساسي -->
-    <div class="modal-body">
-      <img class="modal-photo" src="/images/doctor.jpg" alt="doctor">
-      <div class="modal-info">
-        <h2>{{ selectedDoctor.name }}</h2>
-        <p><strong>Specialty:</strong> {{ selectedDoctor.specialty }}</p>
-        <p><strong>Bio:</strong> {{ selectedDoctor.bio }}</p>
-        <p><strong>Certificates:</strong> {{ selectedDoctor.certificates?.join(', ') }}</p>
-        <p><strong>Operations:</strong> {{ selectedDoctor.operations?.join(', ') }}</p>
+  <!-- Cancel Appointment Modal -->
+  <div class="modal-overlay" *ngIf="showCancelModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Cancel Appointment</h2>
+        <button class="close-btn" (click)="closeModals()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="appointment-summary">
+          <h4>Appointment Details:</h4>
+          <p><strong>Patient:</strong> {{ selectedAppointment?.patientName }}</p>
+          <p><strong>Doctor:</strong> {{ selectedAppointment?.doctorName }}</p>
+          <p><strong>Date:</strong> {{ selectedAppointment?.formattedDate }} at {{ selectedAppointment?.formattedTime }}</p>
+        </div>
+        
+        <div class="form-group">
+          <label for="cancelReason">Cancellation Reason <span class="required">*</span></label>
+          <textarea 
+            id="cancelReason"
+            [(ngModel)]="cancelReason" 
+            class="form-control" 
+            placeholder="Please provide the reason for cancellation..."
+            rows="4"
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModals()">Cancel</button>
+        <button class="btn-save" (click)="onCancelAppointment()" [disabled]="!cancelReason.trim() || isLoading">
+          <i class="fas fa-times-circle" *ngIf="!isLoading"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+          {{ isLoading ? 'Canceling...' : 'Confirm Cancellation' }}
+        </button>
       </div>
     </div>
   </div>
-</div>
 
+  <!-- Close Appointment Modal -->
+  <div class="modal-overlay" *ngIf="showCloseModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Close Appointment</h2>
+        <button class="close-btn" (click)="closeModals()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="appointment-summary">
+          <h4>Appointment Details:</h4>
+          <p><strong>Patient:</strong> {{ selectedAppointment?.patientName }}</p>
+          <p><strong>Doctor:</strong> {{ selectedAppointment?.doctorName }}</p>
+          <p><strong>Date:</strong> {{ selectedAppointment?.formattedDate }} at {{ selectedAppointment?.formattedTime }}</p>
+        </div>
+        
+        <div class="form-group">
+          <label for="closeMedicine">Medicine Prescribed</label>
+          <textarea 
+            id="closeMedicine"
+            [(ngModel)]="closeMedicine" 
+            class="form-control" 
+            placeholder="Enter medicines prescribed..."
+            rows="3"
+          ></textarea>
+        </div>
 
-
-
-
-  <!-- مودال الحجز -->
-<div class="modal" *ngIf="showBookingModal">
-  <div class="modal-content booking-modal">
-    <span class="close" (click)="closeBooking()">×</span>
-
-    <h3>Book Appointment</h3>
-
-    <p><strong>Doctor:</strong> {{ bookingDoctor?.name }}</p>
-    <p><strong>Specialty:</strong> {{ bookingDoctor?.specialty }}</p>
-    <p><strong>Price:</strong> {{ bookingDoctor?.price }} EGP</p>
-
-    <!-- التقويم -->
-    <h4>Available Days</h4>
-<div class="calendar">
-  <div 
-    class="day"
-    *ngFor="let date of monthDates"
-    [class.disabled]="!bookingDoctor?.availableDays?.includes(date.dayName)"
-    [class.selected]="bookingDate === date.fullDate"
-    (click)="bookingDoctor?.availableDays?.includes(date.dayName) ? bookingDate = date.fullDate : null"
-  >
-    <div class="day-name">{{ date.dayName }}</div> <!-- اسم اليوم -->
-    <div class="day-number">{{ date.dayNumber }}</div> <!-- رقم اليوم -->
-  </div>
-</div>
-
-
-
-
-    <!-- المواعيد -->
-    <h4>Available Times</h4>
-    <div class="times">
-      <button 
-        *ngFor="let time of bookingDoctor?.availableTimes"
-        class="time-btn"
-        [class.selected]="bookingTime === time"
-        (click)="bookingTime = time"
-      >
-        {{ time }}
-      </button>
+        <div class="form-group">
+          <label for="closeNotes">Treatment Notes</label>
+          <textarea 
+            id="closeNotes"
+            [(ngModel)]="closeNotes" 
+            class="form-control" 
+            placeholder="Enter treatment notes and observations..."
+            rows="4"
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModals()">Cancel</button>
+        <button class="btn-save" (click)="onCloseAppointment()" [disabled]="isLoading">
+          <i class="fas fa-check-circle" *ngIf="!isLoading"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+          {{ isLoading ? 'Closing...' : 'Close Appointment' }}
+        </button>
+      </div>
     </div>
-
-    <!-- الأزرار -->
-    <div class="booking-actions">
-      <button class="cancel" (click)="closeBooking()">Cancel</button>
-      <button class="confirm" (click)="confirmBooking()">Confirm Booking</button>
-    </div>
-
-    <!-- رسالة النجاح -->
-    <p *ngIf="showSuccessMessage" class="success-message">Booking Confirmed ✔</p>
-
   </div>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal
+    [isVisible]="showConfirmationModal"
+    [title]="confirmationConfig.title"
+    [message]="confirmationConfig.message"
+    [icon]="confirmationConfig.icon"
+    [iconColor]="confirmationConfig.iconColor"
+    [confirmText]="confirmationConfig.confirmText"
+    [cancelText]="confirmationConfig.cancelText"
+    [confirmButtonClass]="confirmationConfig.confirmButtonClass"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
 </div>
-
-</div>
-
-
-

@@ -1,0 +1,107 @@
+<div class="book-appointment-page">
+  <div class="page-header">
+    <h1>Book New Appointment</h1>
+    <button class="btn-back" (click)="router.navigate(['/appointments'])">
+      <i class="fas fa-arrow-left"></i> Back to Appointments
+    </button>
+  </div>
+
+
+
+  <!-- Loading State -->
+  <div *ngIf="doctorsLoading && doctors.length === 0" class="loading-container">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin fa-3x"></i>
+      <p>Loading doctors...</p>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !doctorsLoading" class="error-message">
+    <i class="fas fa-exclamation-circle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Doctors Grid -->
+  <!--
+    Note:
+    We depend only on doctors.length here so the grid remains visible
+    even if other loading states (like modal actions) are active.
+  -->
+  <div class="doctors-grid" *ngIf="doctors.length > 0">
+    <div class="doctor-card" *ngFor="let doctor of doctors">
+      <div class="doctor-image">
+        <img
+          [src]="getDoctorImageUrl(doctor.photoUrl)"
+          [alt]="doctor.fullName"
+          (error)="handleDoctorImageError($event)"
+        >
+      </div>
+      <div class="doctor-info">
+        <h3>{{ doctor.fullName }}</h3>
+        <p class="specialization">{{ doctor.specialization }}</p>
+        <p class="type">{{ doctor.type }}</p>
+        <p class="experience">{{ doctor.experienceYears }} years experience</p>
+        <p class="bio">{{ doctor.bio }}</p>
+      </div>
+      <div class="doctor-actions">
+        <button class="btn-profile" (click)="viewDoctorProfile(doctor)">
+          <i class="fas fa-user-md"></i> View Profile
+        </button>
+        <button class="btn-book" (click)="bookAppointment(doctor)">
+          <i class="fas fa-calendar-plus"></i> Book Appointment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Doctors Message -->
+  <div *ngIf="!doctorsLoading && doctors.length === 0 && !errorMessage" class="no-data-message">
+    <i class="fas fa-user-md fa-3x"></i>
+    <h3>No Doctors Available</h3>
+    <p>There are currently no doctors available for booking.</p>
+  </div>
+
+  <!-- Booking Modal -->
+  <div class="modal-overlay" *ngIf="showBookingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Book Appointment with Dr. {{ selectedDoctor?.fullName }}</h2>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Select Date:</label>
+          <select [(ngModel)]="selectedDate" class="form-control" [disabled]="availableDatesLoading">
+            <option value="">Choose a date</option>
+            <option *ngFor="let date of availableDates" [value]="date.date">
+              {{ date.date | date:'fullDate' }}
+            </option>
+          </select>
+          <div class="inline-loading" *ngIf="availableDatesLoading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading available slots...</span>
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="selectedDate">
+          <label>Select Time:</label>
+          <select [(ngModel)]="selectedTime" class="form-control" [disabled]="availableDatesLoading">
+            <option value="">Choose a time</option>
+            <option *ngFor="let slot of getAvailableSlotsForSelectedDate()" [value]="slot">
+              {{ slot }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button class="btn-confirm" (click)="confirmBooking()" [disabled]="!selectedDate || !selectedTime || bookingInProgress">
+          <i class="fas fa-calendar-check" *ngIf="!bookingInProgress"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="bookingInProgress"></i>
+          {{ bookingInProgress ? 'Booking...' : 'Confirm Booking' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

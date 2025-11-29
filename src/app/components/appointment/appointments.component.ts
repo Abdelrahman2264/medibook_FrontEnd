@@ -1,140 +1,367 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-interface Doctor {
-  name: string;
-  specialty: string;
-  rating: number;
-  bio?: string;
-  certificates?: string[];
-  operations?: string[];
-  availableDays?: string[];    // الأيام المتاحة للحجز (Mon, Tue...)
-  availableTimes?: string[];   // المواعيد المتاحة لكل يوم
-  price?: number;              // سعر الكشف
-}
+import { Router, RouterModule } from '@angular/router';
+import { AppointmentsService } from '../../services/appointments.service';
+import { DoctorsService } from '../../services/doctors.service';
+import { NursesService } from '../../services/nurses.service';
+import { RoomsService } from '../../services/rooms.service';
+import { Appointment, CreateAppointmentDto, CancelAppointmentDto, AssignAppointmentDto, CloseAppointmentDto } from '../../models/appointment.model';
+import { Doctor } from '../../models/doctor.model';
+import { Nurse } from '../../models/nurse.model';
+import { Room } from '../../models/room.model';
+import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-appointments',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './appointments.component.html',
-  styleUrls: ['./appointments.component.css']
+  styleUrls: ['./appointments.component.css'],
+  imports: [CommonModule, FormsModule, RouterModule, ConfirmationModalComponent]
 })
-export class AppointmentsComponent {
+export class AppointmentsComponent implements OnInit {
+  searchTerm: string = '';
+  selectedStatus: string = '';
+  selectedDoctor: string = '';
+
+  appointments: Appointment[] = [];
+  doctors: Doctor[] = [];
+  statuses: string[] = ['Pending', 'Scheduled', 'Confirmed', 'Assigned', 'In Progress', 'Completed', 'Cancelled'];
   
-  searchName = '';
-  filterSpecialty = '';
-  constructor(private router: Router) {}  // ← هنا
+  // Loading and error states
+  isLoading: boolean = false;
+  errorMessage: string = '';
+  
+  // Modal states
+  showCancelModal: boolean = false;
+  showCloseModal: boolean = false;
+  selectedAppointment: Appointment | null = null;
+  cancelReason: string = '';
+  closeNotes: string = '';
+  closeMedicine: string = '';
+  
+  // Confirmation modal states
+  showConfirmationModal: boolean = false;
+  confirmationConfig: any = {};
+  pendingAction: () => void = () => {};
 
-  doctors: Doctor[] = [
-    { name: 'Dr. Ahmed Ali', specialty: 'General surgery', rating: 4, bio: '10 years experience', certificates: ['MBBS', 'MD Surgery'], operations: ['Appendectomy', 'Cholecystectomy'], availableDays: ['Mon', 'Wed', 'Fri'], availableTimes: ['10:00', '14:00'], price: 200 },
-    { name: 'Dr. Sara Mohamed', specialty: 'Internal medicine', rating: 5, bio: '12 years experience', certificates: ['MBBS', 'MD Internal'], operations: ['Diabetes Management'], availableDays: ['Tue', 'Thu'], availableTimes: ['11:00', '15:00'], price: 250 },
-    { name: 'Dr. Ali Hassan', specialty: 'Pediatrics', rating: 3, bio: '8 years experience', certificates: ['MBBS', 'Pediatrics Diploma'], operations: ['Vaccinations'], availableDays: ['Mon', 'Tue'], availableTimes: ['09:00', '13:00'], price: 180 },
-    { name: 'Dr. Lina Farouk', specialty: 'Dermatology', rating: 5, bio: '9 years experience', certificates: ['MBBS', 'Dermatology Diploma'], operations: ['Skin Treatment'], availableDays: ['Wed', 'Fri'], availableTimes: ['12:00', '16:00'], price: 220 },
-    { name: 'Dr. Omar Tarek', specialty: 'Cardiology', rating: 4, bio: '11 years experience', certificates: ['MBBS', 'Cardiology Diploma'], operations: ['Angioplasty'], availableDays: ['Mon', 'Thu'], availableTimes: ['10:00', '14:00'], price: 300 },
-    { name: 'Dr. Mona Adel', specialty: 'Neurology', rating: 5, bio: '15 years experience', certificates: ['MBBS', 'Neurology Diploma'], operations: ['EEG Analysis'], availableDays: ['Tue', 'Fri'], availableTimes: ['11:00', '15:00'], price: 280 },
-    { name: 'Dr. Khaled Fathy', specialty: 'Orthopedics', rating: 4, bio: '10 years experience', certificates: ['MBBS', 'Orthopedic Diploma'], operations: ['Joint Replacement'], availableDays: ['Wed', 'Thu'], availableTimes: ['09:00', '13:00'], price: 270 },
-    { name: 'Dr. Yasmine Hossam', specialty: 'ENT', rating: 5, bio: '12 years experience', certificates: ['MBBS', 'ENT Diploma'], operations: ['Tonsillectomy'], availableDays: ['Mon', 'Tue'], availableTimes: ['10:00', '14:00'], price: 230 },
-    { name: 'Dr. Samir Nabil', specialty: 'Urology', rating: 3, bio: '7 years experience', certificates: ['MBBS', 'Urology Diploma'], operations: ['Kidney Stone Removal'], availableDays: ['Wed', 'Fri'], availableTimes: ['09:00', '13:00'], price: 250 },
-    { name: 'Dr. Reem Salah', specialty: 'Ophthalmology', rating: 4, bio: '9 years experience', certificates: ['MBBS', 'Ophthalmology Diploma'], operations: ['Cataract Surgery'], availableDays: ['Tue', 'Thu'], availableTimes: ['11:00', '15:00'], price: 210 },
-    { name: 'Dr. Hany Said', specialty: 'Dentistry', rating: 5, bio: '8 years experience', certificates: ['BDS'], operations: ['Root Canal'], availableDays: ['Mon', 'Wed'], availableTimes: ['10:00', '14:00'], price: 200 },
-    { name: 'Dr. Farah Mostafa', specialty: 'Psychiatry', rating: 4, bio: '10 years experience', certificates: ['MBBS', 'Psychiatry Diploma'], operations: ['Counseling'], availableDays: ['Tue', 'Thu'], availableTimes: ['12:00', '16:00'], price: 220 },
-    { name: 'Dr. Tamer Helmy', specialty: 'Dermatology', rating: 5, bio: '11 years experience', certificates: ['MBBS', 'Dermatology Diploma'], operations: ['Laser Treatment'], availableDays: ['Mon', 'Fri'], availableTimes: ['10:00', '14:00'], price: 240 },
-    { name: 'Dr. Dina Magdy', specialty: 'Internal medicine', rating: 4, bio: '9 years experience', certificates: ['MBBS', 'MD Internal'], operations: ['Hypertension Management'], availableDays: ['Wed', 'Thu'], availableTimes: ['11:00', '15:00'], price: 230 },
-    { name: 'Dr. Ahmed Samir', specialty: 'Cardiology', rating: 5, bio: '13 years experience', certificates: ['MBBS', 'Cardiology Diploma'], operations: ['Angiography'], availableDays: ['Tue', 'Fri'], availableTimes: ['12:00', '16:00'], price: 300 },
-  ];
+  constructor(
+    private appointmentsService: AppointmentsService,
+    private doctorsService: DoctorsService,
+    private nursesService: NursesService,
+    private roomsService: RoomsService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  specialties = [
-    'General surgery','Internal medicine','Pediatrics','Dermatology',
-    'Cardiology','Neurology','Orthopedics','ENT','Urology',
-    'Ophthalmology','Dentistry','Psychiatry'
-  ];
-
-  selectedDoctor: Doctor | null = null;  
-  showBookingModal = false;
-  showSuccessMessage = false;
-  bookingDate: string | null = null;
-  bookingTime: string | null = null;
-  bookingDoctor: Doctor | null = null;  
-  monthDates: { dayNumber: number, dayName: string, fullDate: string }[] = [];
-
-  get filteredDoctors() {
-    return this.doctors.filter(d =>
-      d.name.toLowerCase().includes(this.searchName.toLowerCase()) &&
-      (this.filterSpecialty === '' || d.specialty === this.filterSpecialty)
-    );
+  ngOnInit() {
+    console.log('🔄 AppointmentsComponent initialized');
+    this.loadAppointments();
+    this.loadDoctors();
   }
 
-  starsArray(n: number) {
-    return Array.from({ length: 5 }).map((_, i) => i < n);
+  // Force update method
+  forceUpdate() {
+    console.log('🔄 Force updating component...');
+    this.cdr.detectChanges();
+    console.log('✅ Force update completed');
   }
 
-  // فتح مودال التفاصيل
-  openDetails(doctor: Doctor) {
-    this.selectedDoctor = doctor;
-    this.showBookingModal = false;
+  loadAppointments() {
+    console.log('🔄 Loading appointments...');
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    this.forceUpdate();
+
+    this.appointmentsService.getAllAppointments().subscribe({
+      next: (data: Appointment[]) => {
+        console.log('✅ Appointments loaded:', data.length);
+        this.appointments = data;
+        this.isLoading = false;
+        this.forceUpdate();
+      },
+      error: (error: any) => {
+        console.error('❌ Error loading appointments:', error);
+        this.errorMessage = 'Failed to load appointments. Please try again.';
+        this.isLoading = false;
+        this.forceUpdate();
+      }
+    });
   }
 
-  // فتح مودال الحجز
-  openBooking(doctor: Doctor) {
-    this.bookingDoctor = doctor;
-    this.showBookingModal = true;
-    this.showSuccessMessage = false;
-
-    this.bookingDate = null;
-    this.bookingTime = null;
-
-    // لا تغلقي selectedDoctor عند فتح الحجز
-    this.generateMonthDates();
+  loadDoctors() {
+    this.doctorsService.getActiveDoctors().subscribe({
+      next: (data: Doctor[]) => {
+        console.log('✅ Doctors loaded for filtering:', data.length);
+        this.doctors = data;
+        this.forceUpdate();
+      },
+      error: (error: any) => {
+        console.error('❌ Error loading doctors:', error);
+      }
+    });
   }
 
-  // توليد أيام الشهر للتقويم
-  generateMonthDates() {
-    this.monthDates = [];
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+  // Modal functions
+  openCancelModal(appointment: Appointment) {
+    console.log('📝 Opening cancel modal for:', appointment.patientName);
+    this.selectedAppointment = appointment;
+    this.cancelReason = '';
+    this.showCancelModal = true;
+    
+    setTimeout(() => {
+      this.forceUpdate();
+    }, 100);
+  }
 
-    for (let i = 1; i <= daysInMonth; i++) {
-      const date = new Date(year, month, i);
-      const dayName = date.toLocaleDateString('en-US', { weekday: 'short' }); // Mon, Tue...
-      const fullDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
-      this.monthDates.push({ dayNumber: i, dayName, fullDate });
+  openCloseModal(appointment: Appointment) {
+    console.log('📝 Opening close modal for:', appointment.patientName);
+    this.selectedAppointment = appointment;
+    this.closeNotes = '';
+    this.closeMedicine = '';
+    this.showCloseModal = true;
+    
+    setTimeout(() => {
+      this.forceUpdate();
+    }, 100);
+  }
+
+  closeModals() {
+    console.log('❌ Closing modals');
+    this.showCancelModal = false;
+    this.showCloseModal = false;
+    this.selectedAppointment = null;
+    this.cancelReason = '';
+    this.closeNotes = '';
+    this.closeMedicine = '';
+    this.forceUpdate();
+  }
+
+  // Action methods
+  onCancelAppointment() {
+    if (!this.selectedAppointment || !this.cancelReason.trim()) {
+      alert('Please provide a cancellation reason.');
+      return;
+    }
+
+    const cancelData: CancelAppointmentDto = {
+      appointmentId: this.selectedAppointment.appointmentId,
+      cancellationReason: this.cancelReason.trim()
+    };
+
+    console.log('🔄 Canceling appointment:', cancelData);
+    this.isLoading = true;
+    this.forceUpdate();
+
+    this.appointmentsService.cancelAppointment(cancelData).subscribe({
+      next: (response: any) => {
+        console.log('✅ Appointment canceled successfully');
+        this.loadAppointments();
+        this.closeModals();
+      },
+      error: (error: any) => {
+        console.error('❌ Error canceling appointment:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to cancel appointment. Please try again.');
+      }
+    });
+  }
+
+  onCloseAppointment() {
+    if (!this.selectedAppointment) {
+      alert('No appointment selected.');
+      return;
+    }
+
+    if (this.isLoading) {
+      // Prevent duplicate submissions while a close request is already in progress
+      return;
+    }
+
+    const closeData: CloseAppointmentDto = {
+      appointmentId: this.selectedAppointment.appointmentId,
+      notes: this.closeNotes.trim(),
+      medicine: this.closeMedicine.trim()
+    };
+
+    console.log('🔄 Closing appointment:', closeData);
+    this.isLoading = true;
+    this.forceUpdate();
+
+    this.appointmentsService.closeAppointment(closeData).subscribe({
+      next: (response: any) => {
+        console.log('✅ Appointment closed successfully');
+        this.loadAppointments();
+        // Explicitly close the modal after successful response
+        this.showCloseModal = false;
+        this.selectedAppointment = null;
+        this.closeNotes = '';
+        this.closeMedicine = '';
+        this.isLoading = false;
+        this.forceUpdate();
+      },
+      error: (error: any) => {
+        console.error('❌ Error closing appointment:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to close appointment. Please try again.');
+      }
+    });
+  }
+
+  // Navigation methods
+  navigateToBookAppointment() {
+    console.log('📅 Navigating to book appointment');
+    this.router.navigate(['/book-appointment']);
+  }
+
+  navigateToAssign(appointment: Appointment) {
+    console.log('👥 Navigating to assign appointment:', appointment.appointmentId);
+    this.router.navigate(['/assign-appointment', appointment.appointmentId]);
+  }
+
+  navigateToDetails(appointment: Appointment) {
+    console.log('👁️ Navigating to appointment details:', appointment.appointmentId);
+    this.router.navigate(['/appointments', appointment.appointmentId]);
+  }
+
+  // UI Helper Methods
+  getStatusIcon(status: string): string {
+    const statusLower = status.toLowerCase();
+    switch (statusLower) {
+      case 'scheduled':
+      case 'confirmed':
+        return 'fas fa-calendar-check';
+      case 'pending':
+        return 'fas fa-clock';
+      case 'assigned':
+        return 'fas fa-user-md';
+      case 'in progress':
+        return 'fas fa-procedures';
+      case 'completed':
+      case 'closed':
+        return 'fas fa-check-circle';
+      case 'cancelled':
+        return 'fas fa-times-circle';
+      default:
+        return 'fas fa-calendar';
     }
   }
 
-  // تأكيد الحجز
-   confirmBooking() {
-    if (this.bookingDate && this.bookingTime) {
-      this.showSuccessMessage = true;
-      setTimeout(() => {
-        this.router.navigate(['/table']); // هنا يروح للصفحة الجديدة بعد 1.5 ثانية
-      }, 1500);
-    } else {
-      alert('Please select a day and time!');
+  getCardColor(status: string, index: number): string {
+    const statusLower = status.toLowerCase();
+    if (statusLower === 'cancelled') return '#ffebee';
+    if (statusLower === 'completed') return '#e8f5e8';
+    if (statusLower === 'in progress') return '#f3e5f5';
+    return index % 2 === 0 ? '#e6ccff' : '#f2f2f2';
+  }
+
+  filteredAppointments(): Appointment[] {
+    const filtered = this.appointments
+      .filter(a => a.patientName?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                  a.doctorName?.toLowerCase().includes(this.searchTerm.toLowerCase()))
+      .filter(a => !this.selectedStatus || a.status === this.selectedStatus)
+      .filter(a => !this.selectedDoctor || a.doctorName === this.selectedDoctor);
+    
+    console.log('🔍 Filtered appointments:', filtered.length);
+    return filtered;
+  }
+
+  // Confirmation for actions
+  confirmCancel(appointment: Appointment) {
+    this.confirmationConfig = {
+      title: 'Cancel Appointment',
+      message: `Are you sure you want to cancel the appointment for <strong>${appointment.patientName}</strong> with Dr. ${appointment.doctorName}?`,
+      icon: 'fas fa-times-circle',
+      iconColor: '#dc3545',
+      confirmText: 'Cancel Appointment',
+      cancelText: 'Keep Appointment',
+      confirmButtonClass: 'btn-danger'
+    };
+
+    this.pendingAction = () => this.openCancelModal(appointment);
+    this.showConfirmationModal = true;
+    this.forceUpdate();
+  }
+
+  confirmClose(appointment: Appointment) {
+    this.confirmationConfig = {
+      title: 'Close Appointment',
+      message: `Are you sure you want to close the appointment for <strong>${appointment.patientName}</strong>? This will mark it as completed.`,
+      icon: 'fas fa-check-circle',
+      iconColor: '#28a745',
+      confirmText: 'Close Appointment',
+      cancelText: 'Keep Open',
+      confirmButtonClass: 'btn-success'
+    };
+
+    this.pendingAction = () => this.openCloseModal(appointment);
+    this.showConfirmationModal = true;
+    this.forceUpdate();
+  }
+
+  // Confirmation modal handlers
+  onConfirmAction() {
+    console.log('✅ Confirmation confirmed');
+    this.showConfirmationModal = false;
+    if (this.pendingAction) {
+      this.pendingAction();
     }
+    this.forceUpdate();
   }
 
-  // إغلاق مودال التفاصيل
-  closeDetails() {
-    this.selectedDoctor = null;
-    this.showSuccessMessage = false;
+  onCancelAction() {
+    console.log('❌ Confirmation cancelled');
+    this.showConfirmationModal = false;
+    this.pendingAction = () => {};
+    this.forceUpdate();
   }
 
-  // التحقق من الأيام المتاحة
-  isDayAvailable(fullDate: string): boolean {
-    const dayName = new Date(fullDate).toLocaleDateString('en-US', { weekday: 'short' });
-    return this.bookingDoctor?.availableDays?.includes(dayName) ?? false;
+  // Stats and Utilities
+  countByStatus(status: string): number {
+    const count = this.appointments.filter(a => a.status === status).length;
+    console.log(`📊 ${status} appointments count:`, count);
+    return count;
   }
 
-  // إغلاق مودال الحجز
-  closeBooking() {
-    this.showBookingModal = false;
-    this.showSuccessMessage = false;
-    this.bookingDate = null;
-    this.bookingTime = null;
+  countPending(): number {
+    return this.countByStatus('Pending');
+  }
+
+  countScheduled(): number {
+    return this.countByStatus('Scheduled');
+  }
+
+  countInProgress(): number {
+    return this.countByStatus('In Progress');
+  }
+
+  countCompleted(): number {
+    return this.countByStatus('Completed');
+  }
+
+  clearAllFilters() {
+    console.log('🧹 Clearing all filters');
+    this.searchTerm = '';
+    this.selectedStatus = '';
+    this.selectedDoctor = '';
+    this.forceUpdate();
+  }
+
+  // Debug method
+  debugState() {
+    console.log('🔍 Current Appointments Component State:', {
+      isLoading: this.isLoading,
+      appointmentsCount: this.appointments.length,
+      filteredCount: this.filteredAppointments().length,
+      showCancelModal: this.showCancelModal,
+      showCloseModal: this.showCloseModal,
+      showConfirmationModal: this.showConfirmationModal,
+      searchTerm: this.searchTerm,
+      selectedStatus: this.selectedStatus,
+      selectedDoctor: this.selectedDoctor
+    });
+    this.forceUpdate();
   }
 }

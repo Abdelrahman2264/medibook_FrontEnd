@@ -1,0 +1,139 @@
+<div class="assign-appointment-page">
+  <div class="page-header">
+    <h1>Assign Appointment #{{ appointmentId }}</h1>
+    <button class="btn-back" (click)="cancel()">
+      <i class="fas fa-arrow-left"></i> Back to Appointments
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-circle"></i>
+    {{ errorMessage }}
+    <button (click)="loadNurses(); loadRooms()" class="btn-retry">
+      <i class="fas fa-redo"></i> Retry
+    </button>
+  </div>
+
+  <div class="assignment-container">
+    <!-- Nurses Selection -->
+    <div class="selection-section">
+      <h2>
+        Select Nurse 
+        <span *ngIf="nursesLoading" class="loading-badge">Loading...</span>
+        <span *ngIf="!nursesLoading && nurses.length > 0" class="count-badge">{{ nurses.length }} available</span>
+      </h2>
+      
+      <!-- Loading State -->
+      <div *ngIf="nursesLoading" class="loading-state">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+        <p>Loading nurses...</p>
+      </div>
+
+      <!-- Success State -->
+      <div *ngIf="!nursesLoading && nurses.length > 0" class="cards-grid">
+        <div 
+          class="selection-card" 
+          *ngFor="let nurse of nurses"
+          [class.selected]="selectedNurseId === nurse.nurseId"
+          (click)="selectNurse(nurse.nurseId)"
+        >
+          <div class="card-image">
+            <img
+              [src]="nurse.photoUrl || 'assets/images/nurse-placeholder.png'"
+              [alt]="nurse.fullName"
+              class="nurse-photo"
+              (error)="$event.target.src='assets/images/nurse-placeholder.png'"
+            />
+          </div>
+          <div class="card-info">
+            <h3>{{ nurse.fullName }}</h3>
+            <p class="details">{{ nurse.gender }} • {{ calculateAge(nurse.dateOfBirth) }} years</p>
+            <p class="bio">{{ nurse.bio || 'No bio available' }}</p>
+            <p class="status" [class.active]="nurse.isActive">
+              <i [class]="nurse.isActive ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+              {{ nurse.isActive ? 'Active' : 'Inactive' }}
+            </p>
+          </div>
+          <div class="selection-indicator">
+            <i class="fas fa-check" *ngIf="selectedNurseId === nurse.nurseId"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!nursesLoading && nurses.length === 0" class="empty-state">
+        <i class="fas fa-user-nurse fa-3x"></i>
+        <h3>No Active Nurses</h3>
+        <p>No active nurses available right now.</p>
+        <button (click)="loadNurses()" class="btn-retry">
+          <i class="fas fa-redo"></i> Try Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Rooms Selection -->
+    <div class="selection-section">
+      <h2>
+        Select Room
+        <span *ngIf="roomsLoading" class="loading-badge">Loading...</span>
+        <span *ngIf="!roomsLoading && rooms.length > 0" class="count-badge">{{ rooms.length }} available</span>
+      </h2>
+      
+      <!-- Loading State -->
+      <div *ngIf="roomsLoading" class="loading-state">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+        <p>Loading rooms...</p>
+      </div>
+
+      <!-- Success State -->
+      <div *ngIf="!roomsLoading && rooms.length > 0" class="cards-grid">
+        <div 
+          class="selection-card" 
+          *ngFor="let room of rooms"
+          [class.selected]="selectedRoomId === room.roomId"
+          (click)="selectRoom(room.roomId)"
+        >
+          <div class="card-icon" [style.background-color]="room.typeColor">
+            <i [class]="room.typeIcon"></i>
+          </div>
+          <div class="card-info">
+            <h3>{{ room.roomName }}</h3>
+            <p class="type">{{ room.roomType }}</p>
+            <p class="status" [class.active]="room.isActive">
+              <i [class]="room.isActive ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+              {{ room.state }}
+            </p>
+          </div>
+          <div class="selection-indicator">
+            <i class="fas fa-check" *ngIf="selectedRoomId === room.roomId"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!roomsLoading && rooms.length === 0" class="empty-state">
+        <i class="fas fa-door-closed fa-3x"></i>
+        <h3>No Active Rooms</h3>
+        <p>No active rooms available right now.</p>
+        <button (click)="loadRooms()" class="btn-retry">
+          <i class="fas fa-redo"></i> Try Again
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button class="btn-cancel" (click)="cancel()">Cancel</button>
+    <button 
+      class="btn-confirm" 
+      (click)="confirmAssignment()" 
+      [disabled]="!selectedNurseId || !selectedRoomId || isLoading"
+    >
+      <i class="fas fa-user-nurse" *ngIf="!isLoading"></i>
+      <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+      {{ isLoading ? 'Assigning...' : 'Confirm Assignment' }}
+    </button>
+  </div>
+</div>

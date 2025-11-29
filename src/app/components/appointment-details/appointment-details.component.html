@@ -1,0 +1,178 @@
+<div class="appointment-details-page">
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin fa-3x"></i>
+      <p>Loading appointment details...</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMessage && !isLoading && !appointment" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>Error Loading Appointment</h3>
+      <p>{{ errorMessage }}</p>
+      <button class="btn btn-secondary" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Appointments
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="appointment && !isLoading" class="details-content">
+    <div class="page-header">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Appointments
+      </button>
+      <h1>Appointment #{{ appointment.appointmentId }}</h1>
+      <span class="status-badge">
+        <i [class]="appointment.statusIcon"></i>
+        {{ appointment.status }}
+      </span>
+    </div>
+
+    <div class="details-grid">
+      <!-- Patient -->
+      <section class="details-card">
+        <h2><i class="fas fa-user-injured"></i> Patient</h2>
+        <div class="entity-header" *ngIf="patient">
+          <img
+            [src]="patient.profileImage || 'assets/images/patient-placeholder.png'"
+            [alt]="patient.fullName"
+            class="avatar"
+            (error)="$event.target.src='assets/images/patient-placeholder.png'"
+          />
+          <div>
+            <p class="title">{{ patient.fullName }}</p>
+            <p class="subtitle">{{ patient.email }}</p>
+          </div>
+        </div>
+        <div class="entity-details" *ngIf="patient">
+          <p><strong>ID:</strong> {{ patient.id }}</p>
+          <p><strong>Mobile:</strong> {{ patient.mobilePhone || 'Not provided' }}</p>
+          <p><strong>Gender:</strong> {{ patient.gender || 'Not specified' }}</p>
+          <p><strong>Marital Status:</strong> {{ patient.mitrialStatus || 'Not specified' }}</p>
+          <p><strong>Date of Birth:</strong> {{ patient.dateOfBirth | date:'mediumDate' }}</p>
+          <p *ngIf="patient.age"><strong>Age:</strong> {{ patient.age }} years</p>
+          <p><strong>Member Since:</strong> {{ patient.createDate | date:'mediumDate' }}</p>
+          <p><strong>Status:</strong> {{ patient.state }}</p>
+        </div>
+        <div *ngIf="!patient">
+          <p class="muted">Patient details not available.</p>
+        </div>
+      </section>
+
+      <!-- Doctor -->
+      <section class="details-card">
+        <h2><i class="fas fa-user-md"></i> Doctor</h2>
+        <div class="entity-header" *ngIf="doctor">
+          <img
+            [src]="doctor.photoUrl || 'assets/images/doctor-placeholder.png'"
+            [alt]="doctor.fullName"
+            class="avatar"
+            (error)="$event.target.src='assets/images/doctor-placeholder.png'"
+          />
+          <div>
+            <p class="title">{{ doctor.fullName }}</p>
+            <p class="subtitle">{{ doctor.specialization }}</p>
+          </div>
+        </div>
+        <div class="entity-details" *ngIf="doctor">
+          <p><strong>Doctor ID:</strong> {{ doctor.doctorId }}</p>
+          <p><strong>User ID:</strong> {{ doctor.userId }}</p>
+          <p><strong>Email:</strong> {{ doctor.email }}</p>
+          <p><strong>Type:</strong> {{ doctor.type }}</p>
+          <p><strong>Mobile:</strong> {{ doctor.mobilePhone }}</p>
+          <p><strong>Gender:</strong> {{ doctor.gender }}</p>
+          <p><strong>Experience:</strong> {{ doctor.experienceYears }} years</p>
+          <p><strong>Date of Birth:</strong> {{ doctor.dateOfBirth | date:'mediumDate' }}</p>
+          <p><strong>Status:</strong> {{ doctor.state }}</p>
+          <p><strong>Created:</strong> {{ doctor.createDate | date:'mediumDate' }}</p>
+          <p *ngIf="doctor.bio"><strong>Bio:</strong> {{ doctor.bio }}</p>
+        </div>
+        <div *ngIf="!doctor">
+          <p class="muted">Doctor details not available.</p>
+        </div>
+      </section>
+
+      <!-- Nurse -->
+      <section class="details-card">
+        <h2><i class="fas fa-user-nurse"></i> Nurse</h2>
+        <ng-container *ngIf="nurse; else noNurse">
+          <div class="entity-header">
+            <img
+              [src]="nurse.photoUrl || 'assets/images/nurse-placeholder.png'"
+              [alt]="nurse.fullName"
+              class="avatar"
+              (error)="$event.target.src='assets/images/nurse-placeholder.png'"
+            />
+            <div>
+              <p class="title">{{ nurse.fullName }}</p>
+              <p class="subtitle">{{ nurse.email }}</p>
+            </div>
+          </div>
+          <div class="entity-details">
+            <p><strong>Nurse ID:</strong> {{ nurse.nurseId }}</p>
+            <p><strong>User ID:</strong> {{ nurse.userId }}</p>
+            <p><strong>Email:</strong> {{ nurse.email }}</p>
+            <p><strong>Mobile:</strong> {{ nurse.mobilePhone }}</p>
+            <p><strong>Gender:</strong> {{ nurse.gender }}</p>
+            <p><strong>Date of Birth:</strong> {{ nurse.dateOfBirth | date:'mediumDate' }}</p>
+            <p><strong>Status:</strong> {{ nurse.state }}</p>
+            <p><strong>Created:</strong> {{ nurse.createDate | date:'mediumDate' }}</p>
+            <p *ngIf="nurse.bio"><strong>Bio:</strong> {{ nurse.bio }}</p>
+          </div>
+        </ng-container>
+        <ng-template #noNurse>
+          <p class="muted">No nurse assigned to this appointment.</p>
+        </ng-template>
+      </section>
+
+      <!-- Room -->
+      <section class="details-card">
+        <h2><i class="fas fa-door-open"></i> Room</h2>
+        <ng-container *ngIf="room; else noRoom">
+          <div class="room-row">
+            <div class="room-icon" [style.background-color]="room.typeColor">
+              <i [class]="room.typeIcon"></i>
+            </div>
+            <div>
+              <p class="title">{{ room.roomName }}</p>
+              <p class="subtitle">{{ room.roomType }}</p>
+            </div>
+          </div>
+          <div class="entity-details">
+            <p><strong>Room ID:</strong> {{ room.roomId }}</p>
+            <p><strong>Status:</strong> {{ room.state }}</p>
+            <p><strong>Created:</strong> {{ room.createDate | date:'mediumDate' }}</p>
+          </div>
+        </ng-container>
+        <ng-template #noRoom>
+          <p class="muted">No room assigned to this appointment.</p>
+        </ng-template>
+      </section>
+
+      <!-- Appointment core info -->
+      <section class="details-card">
+        <h2><i class="fas fa-calendar-alt"></i> Appointment Info</h2>
+        <p><strong>Date:</strong> {{ appointment.formattedDate }}</p>
+        <p><strong>Time:</strong> {{ appointment.formattedTime }}</p>
+        <p><strong>Status:</strong> {{ appointment.status }}</p>
+        <p><strong>Raw Date:</strong> {{ appointment.appointmentDate }}</p>
+      </section>
+
+      <!-- Medical info -->
+      <section class="details-card full-width">
+        <h2><i class="fas fa-file-medical"></i> Medical Details</h2>
+        <p *ngIf="appointment.medicine"><strong>Medicine:</strong> {{ appointment.medicine }}</p>
+        <p *ngIf="appointment.notes"><strong>Notes:</strong> {{ appointment.notes }}</p>
+        <p *ngIf="!appointment.medicine && !appointment.notes" class="muted">
+          No medical information recorded yet.
+        </p>
+      </section>
+    </div>
+  </div>
+</div>
+
+
