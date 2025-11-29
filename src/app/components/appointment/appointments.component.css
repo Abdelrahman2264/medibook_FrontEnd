@@ -16,7 +16,9 @@
 .search-filter select {
   padding: 6px 10px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-light);
+  background: var(--surface-01);
+  color: var(--text-primary);
 }
 
 /* حاوية الكروت */
@@ -29,25 +31,24 @@
 
 .card-hover {
   transition: all 0.3s ease;
-
 }
 
 /* الكارت */
 .doctor-card {
   width: 100%;
   padding: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-light);
   border-radius: 10px;
   text-align: center;
   background: linear-gradient(135deg, var(--secondary-50) 0%, var(--primary-50) 100%);
   backdrop-filter: blur(50px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
 }
 
 .doctor-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 /* صورة الدكتور */
@@ -63,11 +64,12 @@
 .name {
   margin: 5px 0;
   font-size: 18px;
+  color: var(--text-primary);
 }
 
 .spec {
   margin: 0;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -78,11 +80,11 @@
 }
 
 .star {
-  color: #ccc;
+  color: var(--border-medium);
 }
 
 .star.filled {
-  color: #f5b301;
+  color: var(--warning-500);
 }
 
 /* الأزرار */
@@ -92,7 +94,6 @@
   gap: 10px;
   margin-top: 10px;
 }
-
 
 /* مودال التفاصيل */
 .modal {
@@ -109,12 +110,13 @@
 }
 
 .modal-content {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 10px;
   width: 700px;
   max-width: 90%;
   padding: 20px;
   position: relative;
+  box-shadow: var(--shadow-xl);
 }
 
 .close {
@@ -123,6 +125,7 @@
   right: 15px;
   font-size: 28px;
   cursor: pointer;
+  color: var(--text-tertiary);
 }
 
 .modal-body {
@@ -139,10 +142,12 @@
 
 .modal-info h2 {
   margin-top: 0;
+  color: var(--text-primary);
 }
 
 .modal-info p {
   margin: 5px 0;
+  color: var(--text-secondary);
 }
 
 /* مودال الحجز */
@@ -173,23 +178,24 @@
   justify-content: center;
   padding: 4px 0;
   text-align: center;
-  background: #f1f1f1;
+  background: var(--surface-03);
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
   transition: background 0.2s, transform 0.1s;
   font-size: 12px;
+  color: var(--text-primary);
 }
 
 .calendar .day:hover {
-  background: #e2e2e2;
+  background: var(--surface-04);
   transform: scale(1.05);
 }
 
 /* اسم اليوم */
 .day-name {
   font-size: 12px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 2px;
 }
 
@@ -204,13 +210,14 @@
   opacity: 0.4;
   text-decoration: line-through;
   pointer-events: none;
+  color: var(--text-disabled);
 }
 
 /* اليوم اللي المستخدم اختاره */
 .calendar .day.selected {
   background-color: var(--primary-600);
   /* أزرق */
-  color: white;
+  color: var(--text-inverse);
   font-size: 12px;
 }
 
@@ -230,19 +237,21 @@
   padding: 4px 8px;
   font-size: 12px;
   border: none;
-  background: #ddd;
+  background: var(--surface-03);
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
 }
 
 .time-btn:hover {
-  background: #ccc;
+  background: var(--surface-04);
 }
 
 .time-btn.selected {
   background: var(--primary-600);
-  color: #fff;
+  color: var(--text-inverse);
 }
 
 .booking-actions {
@@ -254,9 +263,12 @@
 
 .cancel {
   background: var(--secondary-600);
-  color: white;
+  color: var(--text-inverse);
   padding: 8px 14px;
   border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .cancel:hover {
@@ -265,9 +277,12 @@
 
 .confirm {
   background: var(--primary-600);
-  color: white;
+  color: var(--text-inverse);
   padding: 8px 14px;
   border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .confirm:hover {
@@ -275,7 +290,7 @@
 }
 
 .success-message {
-  color: green;
+  color: var(--success-500);
   font-weight: bold;
   margin-top: 15px;
   text-align: center;
@@ -288,4 +303,5 @@
   /* قللنا المسافة بين السطور */
   margin: 4px 0;
   /* قللنا المسافة بين الفقرات */
+  color: var(--text-primary);
 }

@@ -1,7 +1,7 @@
 .dashboard-container {
   padding: 30px;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
 }
 
 .dashboard-header {
@@ -10,12 +10,12 @@
 
 .dashboard-header h1 {
   font-size: 2.5rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 10px;
 }
 
 .dashboard-header p {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 1.1rem;
 }
 
@@ -27,10 +27,10 @@
 }
 
 .stat-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 15px;
   padding: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
   gap: 20px;
@@ -40,7 +40,7 @@
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
 }
 
 .stat-icon {
@@ -60,26 +60,26 @@
 .stat-value {
   font-size: 2rem;
   font-weight: 700;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 5px;
 }
 
 .stat-label {
   font-size: 1rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .activities-section {
-  background: white;
+  background: var(--bg-card);
   border-radius: 15px;
   padding: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
 }
 
 .activities-section h2 {
   font-size: 1.5rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 
@@ -94,13 +94,13 @@
   align-items: center;
   gap: 15px;
   padding: 15px;
-  background: #f8f9fa;
+  background: var(--surface-03);
   border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 .activity-item:hover {
-  background: #e9ecef;
+  background: var(--surface-04);
   transform: translateX(5px);
 }
 
@@ -112,23 +112,23 @@
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
-  background: #e3f2fd;
-  color: #1976d2;
+  background: var(--info-50);
+  color: var(--info-500);
 }
 
 .icon-checkin {
-  background: #e8f5e8;
-  color: #2e7d32;
+  background: var(--success-50);
+  color: var(--success-500);
 }
 
 .icon-report {
-  background: #fff3e0;
-  color: #f57c00;
+  background: var(--warning-50);
+  color: var(--warning-500);
 }
 
 .icon-room {
-  background: #f3e5f5;
-  color: #7b1fa2;
+  background: var(--secondary-50);
+  color: var(--secondary-500);
 }
 
 .activity-content {
@@ -137,21 +137,17 @@
 
 .activity-action {
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 3px;
 }
 
 .activity-patient {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin-bottom: 2px;
 }
 
 .activity-time {
-  color: #868e96;
+  color: var(--text-tertiary);
   font-size: 0.8rem;
 }
-
-
-
-

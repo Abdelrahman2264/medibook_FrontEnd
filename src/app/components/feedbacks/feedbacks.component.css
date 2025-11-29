@@ -1,7 +1,7 @@
 .feedbacks-container {
   padding: 30px;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
 }
 
 .feedbacks-header {
@@ -10,12 +10,12 @@
 
 .feedbacks-header h1 {
   font-size: 2.5rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 10px;
 }
 
 .feedbacks-header p {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 1.1rem;
 }
 
@@ -26,16 +26,16 @@
 }
 
 .feedback-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 15px;
   padding: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
 }
 
 .feedback-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Original hover shadow preserved */
 }
 
 .feedback-header {
@@ -47,7 +47,7 @@
 
 .feedback-patient h3 {
   font-size: 1.3rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
@@ -57,17 +57,13 @@
 }
 
 .feedback-date {
-  color: #868e96;
+  color: var(--text-tertiary);
   font-size: 0.9rem;
 }
 
 .feedback-comment {
-  color: #495057;
+  color: var(--text-secondary);
   font-size: 1rem;
   line-height: 1.6;
   margin: 0;
 }
-
-
-
-

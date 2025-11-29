@@ -1,18 +1,18 @@
 .patient-info {
   margin: 20px 40px;
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto Slab', serif;
 }
 
 .patient-info h2 {
   margin-bottom: 10px;
-  color: #108bbc;
+  color: var(--primary-600);
   font-weight: bold;
 }
 
 .patient-info p {
   margin: 5px 0;
   font-size: 16px;
-  color: #000000;
+  color: var(--text-primary);
 }
 
 /* جدول المواعيد */
@@ -20,31 +20,43 @@
   width: calc(100% - 80px);
   margin: 20px 40px;
   border-collapse: collapse;
+  background: var(--bg-card);
 }
 
 .appointments-table th, .appointments-table td {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-light);
   padding: 10px;
-  text-align: left;
   text-align: center;
 }
 
 .appointments-table th {
-  background-color: #0d70ea9d;
+  background-color: var(--primary-400);
+  color: var(--text-inverse);
   text-align: center;
 }
 
+.appointments-table td {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
 .cancel-btn {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--error-500);
+  color: var(--text-inverse);
   border: none;
   padding: 6px 12px;
   cursor: pointer;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
-.cancel-btn:hover {
-  background-color: #c0392b;
+.cancel-btn:hover:not(:disabled) {
+  background-color: var(--error-700);
+}
+
+.cancel-btn:disabled {
+  opacity: var(--disabled-opacity);
+  cursor: not-allowed;
 }
 
 /* مودال رسالة التأكيد */
@@ -62,43 +74,93 @@
 }
 
 .modal-content {
-  background-color: #fff;
+  background-color: var(--bg-card);
   padding: 20px 30px;
   border-radius: 8px;
   text-align: center;
   max-width: 400px;
   width: 90%;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
 }
 
 .modal-actions {
   margin-top: 15px;
   display: flex;
   justify-content: space-around;
+  gap: 15px;
 }
 
 .yes-btn {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--error-500);
+  color: var(--text-inverse);
   border: none;
   padding: 8px 20px;
   cursor: pointer;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
+  flex: 1;
 }
 
-.yes-btn:hover {
-  background-color: #c0392b;
+.yes-btn:hover:not(:disabled) {
+  background-color: var(--error-700);
 }
 
 .no-btn {
-  background-color: #95a5a6;
-  color: white;
+  background-color: var(--gray-500);
+  color: var(--text-inverse);
   border: none;
   padding: 8px 20px;
   cursor: pointer;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
+  flex: 1;
 }
 
-.no-btn:hover {
-  background-color: #7f8c8d;
+.no-btn:hover:not(:disabled) {
+  background-color: var(--gray-600);
+}
+
+.yes-btn:disabled, .no-btn:disabled {
+  opacity: var(--disabled-opacity);
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .patient-info {
+    margin: 20px;
+  }
+  
+  .appointments-table {
+    width: calc(100% - 40px);
+    margin: 20px;
+    font-size: 0.9rem;
+  }
+  
+  .appointments-table th, 
+  .appointments-table td {
+    padding: 8px 6px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .patient-info {
+    margin: 15px;
+  }
+  
+  .appointments-table {
+    width: calc(100% - 30px);
+    margin: 15px;
+    font-size: 0.8rem;
+  }
+  
+  .appointments-table th, 
+  .appointments-table td {
+    padding: 6px 4px;
+  }
 }

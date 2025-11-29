@@ -6,7 +6,7 @@
 
 .nurses-page-container {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -14,7 +14,7 @@
 .main-content {
   width: 100%;
   padding: 30px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
   min-height: 100vh;
 }
 
@@ -35,14 +35,14 @@
 
 .page-title {
   font-size: 2.5rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-weight: 700;
   margin: 0;
 }
 
 .add-nurse-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--secondary-500) 0%, var(--primary-600) 100%);
+  color: var(--text-inverse);
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -53,12 +53,12 @@
   align-items: center;
   gap: 8px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .add-nurse-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4); /* Original hover shadow preserved */
 }
 
 .add-nurse-btn i {
@@ -77,7 +77,7 @@
   padding: 25px;
   border-radius: 15px;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   transition: transform 0.3s ease;
   border-left: 5px solid;
 }
@@ -87,17 +87,17 @@
 }
 
 .top-card.light-purple {
-  background: linear-gradient(135deg, #e6e6ff, #f0e6ff);
-  border-left-color: #8a2be2;
+  background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
+  border-left-color: var(--primary-600);
 }
 
 .top-card.light-gray {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border-left-color: #6c757d;
+  background: linear-gradient(135deg, var(--surface-02), var(--surface-03));
+  border-left-color: var(--text-secondary);
 }
 
 .top-card h3 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 10px;
   font-size: 1.1rem;
 }
@@ -105,7 +105,7 @@
 .top-card p {
   font-size: 2rem;
   font-weight: bold;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 /* Search Container */
@@ -118,17 +118,18 @@
 .search-input {
   width: 100%;
   padding: 15px 50px 15px 20px;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--border-light);
   border-radius: 25px;
   font-size: 1rem;
-  background: white;
+  background: var(--bg-card);
   transition: all 0.3s ease;
+  color: var(--text-primary);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #8a2be2;
-  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .search-icon {
@@ -136,7 +137,7 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  color: #6c757d;
+  color: var(--text-tertiary);
 }
 
 /* Controls */
@@ -150,21 +151,22 @@
 
 .filter-select, .sort-btn {
   padding: 12px 20px;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--border-light);
   border-radius: 8px;
   font-size: 1rem;
-  background: white;
+  background: var(--bg-card);
   transition: all 0.3s ease;
+  color: var(--text-primary);
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: #8a2be2;
+  border-color: var(--primary-600);
 }
 
 .sort-btn {
-  background: #8a2be2;
-  color: white;
+  background: var(--primary-600);
+  color: var(--text-inverse);
   border: none;
   cursor: pointer;
   display: flex;
@@ -174,18 +176,18 @@
 }
 
 .sort-btn:hover {
-  background: #7b1fa2;
+  background: var(--primary-700); /* Original hover color preserved */
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.1);
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.1); /* Original hover shadow preserved */
 }
 
 .clear-all-btn {
   padding: 12px 20px;
-  border: 2px solid #e74c3c;
+  border: 2px solid #e74c3c; /* Original color preserved */
   border-radius: 8px;
   font-size: 1rem;
-  background: white;
-  color: #e74c3c;
+  background: var(--bg-card);
+  color: #e74c3c; /* Original color preserved */
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -195,10 +197,10 @@
 }
 
 .clear-all-btn:hover {
-  background: #e74c3c;
-  color: white;
+  background: #e74c3c; /* Original hover color preserved */
+  color: var(--text-inverse);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3); /* Original hover shadow preserved */
 }
 
 /* Loading State */
@@ -211,18 +213,18 @@
 
 .loading-spinner {
   text-align: center;
-  color: #8a2be2;
+  color: var(--primary-600);
 }
 
 .loading-spinner i {
-  color: #8a2be2;
+  color: var(--primary-600);
   margin-bottom: 20px;
 }
 
 .loading-spinner p {
   margin-top: 15px;
   font-size: 16px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .loading-dots {
@@ -236,7 +238,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #8a2be2;
+  background: var(--primary-600);
   animation: bounce 1.4s infinite ease-in-out both;
 }
 
@@ -259,9 +261,9 @@
 
 /* Error Message */
 .error-message {
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  color: #856404;
+  background: var(--warning-50);
+  border: 1px solid var(--warning-200);
+  color: var(--warning-700);
   padding: 15px 20px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -276,8 +278,8 @@
 }
 
 .btn-retry {
-  background: #8a2be2;
-  color: white;
+  background: var(--primary-600);
+  color: var(--text-inverse);
   border: none;
   padding: 8px 16px;
   border-radius: 6px;
@@ -287,17 +289,17 @@
 }
 
 .btn-retry:hover {
-  background: #7b1fa2;
+  background: #7b1fa2; /* Original hover color preserved */
 }
 
 /* Results Bar */
 .results-bar {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  background: linear-gradient(135deg, var(--surface-02), var(--surface-03));
   padding: 15px 25px;
   border-radius: 12px;
   margin-bottom: 25px;
-  border-left: 4px solid #8a2be2;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid var(--primary-600);
+  box-shadow: var(--shadow-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -308,23 +310,23 @@
   align-items: center;
   gap: 10px;
   font-size: 1rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .results-info i {
-  color: #8a2be2;
+  color: var(--primary-600);
   font-size: 1.2rem;
 }
 
 .results-info .highlight {
-  color: #8a2be2;
+  color: var(--primary-600);
   font-weight: 700;
   font-size: 1.1rem;
 }
 
 .results-info .total {
-  color: #8a2be2;
+  color: var(--primary-600);
   font-weight: 700;
   font-size: 1.1rem;
 }
@@ -349,19 +351,19 @@
 }
 
 .empty-state-content i {
-  color: #8a2be2;
+  color: white;
   margin-bottom: 20px;
   opacity: 0.7;
 }
 
 .empty-state-content h2 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 10px;
   font-size: 1.8rem;
 }
 
 .empty-state-content p {
-  color: #6c757d;
+  color: var(--text-secondary);
   margin-bottom: 30px;
   font-size: 1.1rem;
 }
@@ -375,10 +377,10 @@
 }
 
 .nurse-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 15px;
   padding: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
   border-top: 5px solid transparent;
   display: flex;
@@ -389,7 +391,7 @@
 
 .nurse-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Original hover shadow preserved */
   animation: pulse-medical 2s infinite;
 }
 
@@ -402,9 +404,9 @@
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
-  background: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
-  border: 1px solid #e74c3c;
+  background: rgba(231, 76, 60, 0.1); /* Original color preserved */
+  color: #e74c3c; /* Original color preserved */
+  border: 1px solid #e74c3c; /* Original color preserved */
   display: flex;
   align-items: center;
   gap: 5px;
@@ -412,9 +414,9 @@
 }
 
 .status-badge.active {
-  background: rgba(39, 174, 96, 0.1);
-  color: #27ae60;
-  border: 1px solid #27ae60;
+  background: rgba(39, 174, 96, 0.1); /* Original color preserved */
+  color: #27ae60; /* Original color preserved */
+  border: 1px solid #27ae60; /* Original color preserved */
 }
 
 .status-badge i {
@@ -435,8 +437,8 @@
   object-fit: cover;
   margin: 0 auto;
   display: block;
-  border: 3px solid white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 3px solid var(--bg-card);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Nurse Info */
@@ -447,14 +449,14 @@
 }
 
 .nurse-info h3 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 15px;
   font-size: 1.3rem;
   text-align: left;
 }
 
 .nurse-info p {
-  color: #6c757d;
+  color: var(--text-secondary);
   margin: 12px 0;
   display: flex;
   align-items: flex-start;
@@ -467,12 +469,12 @@
 .nurse-info i {
   min-width: 20px;
   text-align: center;
-  color: #8a2be2;
+  color: var(--primary-600);
 }
 
 .bio-preview {
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-style: italic;
 }
 
@@ -499,54 +501,54 @@
 }
 
 .view-btn {
-  background: #8a2be2;
-  color: white;
+  background: var(--primary-600);
+  color: var(--text-inverse);
 }
 
 .view-btn:hover {
-  background: #7b1fa2;
+  background: #7b1fa2; /* Original hover color preserved */
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.1);
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.1); /* Original hover shadow preserved */
 }
 
 .edit-btn {
-  background: #3498db;
-  color: white;
+  background: #3498db; /* Original color preserved */
+  color: var(--text-inverse);
 }
 
 .edit-btn:hover {
-  background: #2980b9;
+  background: #2980b9; /* Original hover color preserved */
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.1);
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.1); /* Original hover shadow preserved */
 }
 
 .activate-btn {
-  background: #c54b57;
-  color: white;
+  background: #c54b57; /* Original color preserved */
+  color: var(--text-inverse);
 }
 
 .activate-btn:hover {
-  background: #c0392b;
+  background: #c0392b; /* Original hover color preserved */
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(197, 75, 87, 0.1);
+  box-shadow: 0 4px 15px rgba(197, 75, 87, 0.1); /* Original hover shadow preserved */
 }
 
 .activate-btn.active {
-  background: #378256;
+  background: #378256; /* Original color preserved */
 }
 
 .activate-btn.active:hover {
-  background: #219a52;
+  background: #219a52; /* Original hover color preserved */
 }
 
 /* Banner Advertisement */
 .banner-advertisement {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--secondary-500), var(--primary-600));
   border-radius: 20px;
   padding: 40px;
   margin-top: 20px;
-  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
-  color: white;
+  box-shadow: var(--shadow-lg);
+  color: var(--text-inverse);
   position: relative;
   overflow: hidden;
 }
@@ -580,7 +582,7 @@
 .banner-text h2 {
   font-size: 2rem;
   margin-bottom: 10px;
-  color: #ffd93d;
+  color: #ffd93d; /* Original color preserved */
 }
 
 .banner-text p {
@@ -601,14 +603,14 @@
   align-items: center;
   gap: 8px;
   font-size: 0.95rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1); /* Original color preserved */
   padding: 8px 15px;
   border-radius: 20px;
   backdrop-filter: blur(10px);
 }
 
 .banner-features i {
-  color: #4cd137;
+  color: #4cd137; /* Original color preserved */
 }
 
 .banner-offer {
@@ -617,14 +619,14 @@
 }
 
 .offer-badge {
-  background: linear-gradient(135deg, #ffd93d, #ffcd00);
-  color: #2c3e50;
+  background: linear-gradient(135deg, #ffd93d, #ffcd00); /* Original colors preserved */
+  color: var(--text-primary);
   padding: 15px 25px;
   border-radius: 15px;
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 10px;
-  box-shadow: 0 4px 15px rgba(255, 217, 61, 0.4);
+  box-shadow: 0 4px 15px rgba(255, 217, 61, 0.4); /* Original shadow preserved */
 }
 
 .offer-text {
@@ -634,8 +636,8 @@
 }
 
 .banner-cta {
-  background: white;
-  color: #667eea;
+  background: var(--text-inverse);
+  color: var(--secondary-500);
   border: none;
   padding: 15px 30px;
   border-radius: 10px;
@@ -643,13 +645,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .banner-cta:hover {
-  background: #ffd93d;
+  background: #ffd93d; /* Original hover color preserved */
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* Original hover shadow preserved */
 }
 
 /* Animations */
@@ -665,9 +667,9 @@
 }
 
 @keyframes pulse-medical {
-  0% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(138, 43, 226, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0.4); } /* Original color preserved */
+  70% { box-shadow: 0 0 0 10px rgba(138, 43, 226, 0); } /* Original color preserved */
+  100% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0); } /* Original color preserved */
 }
 
 /* Responsive Design */
