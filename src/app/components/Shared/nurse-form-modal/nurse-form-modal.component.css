@@ -13,13 +13,13 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lg);
   animation: slideIn 0.3s ease-out;
 }
 
@@ -44,9 +44,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 30px;
-  border-bottom: 1px solid #e0e0e0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  border-bottom: 1px solid var(--border-light);
+  background: linear-gradient(135deg, var(--primary-400), var(--primary-700));
+  color: var(--text-inverse);
   border-radius: 12px 12px 0 0;
 }
 
@@ -59,7 +59,7 @@
 .close-btn {
   background: rgba(255, 255, 255, 0.2);
   border: none;
-  color: white;
+  color: var(--text-inverse);
   font-size: 18px;
   cursor: pointer;
   padding: 8px;
@@ -73,11 +73,11 @@
 }
 
 .close-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--hover-overlay);
 }
 
 .close-btn:disabled {
-  opacity: 0.5;
+  opacity: var(--disabled-opacity);
   cursor: not-allowed;
 }
 
@@ -86,12 +86,12 @@
 }
 
 .error-message {
-  background: #ffebee;
-  color: #c62828;
+  background: var(--error-50);
+  color: var(--error-700);
   padding: 12px 16px;
   border-radius: 6px;
   margin-bottom: 20px;
-  border-left: 4px solid #f44336;
+  border-left: 4px solid var(--error-500);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -116,33 +116,34 @@
   display: block;
   margin-bottom: 6px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   font-size: 0.9em;
 }
 
 .required {
-  color: #e53935;
+  color: var(--error-500);
 }
 
 .form-control {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border-light);
   border-radius: 6px;
   font-size: 14px;
   transition: all 0.3s;
-  background: white;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .form-control:disabled {
-  background: #f5f5f5;
-  color: #999;
+  background: var(--bg-secondary);
+  color: var(--text-disabled);
   cursor: not-allowed;
 }
 
@@ -152,7 +153,7 @@ textarea.form-control {
 }
 
 .text-muted {
-  color: #666;
+  color: var(--text-tertiary);
   font-size: 0.8em;
   margin-top: 4px;
   display: block;
@@ -160,15 +161,16 @@ textarea.form-control {
 
 /* Image Upload Styles */
 .image-upload-container {
-  border: 2px dashed #e0e0e0;
+  border: 2px dashed var(--border-light);
   border-radius: 8px;
   padding: 20px;
   text-align: center;
   transition: border-color 0.3s;
+  background: var(--bg-secondary);
 }
 
 .image-upload-container:hover {
-  border-color: #667eea;
+  border-color: var(--primary-400);
 }
 
 .file-input {
@@ -185,15 +187,15 @@ textarea.form-control {
   height: 120px;
   border-radius: 8px;
   object-fit: cover;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border-light);
 }
 
 .remove-image-btn {
   position: absolute;
   top: -8px;
   right: -8px;
-  background: #f44336;
-  color: white;
+  background: var(--error-500);
+  color: var(--text-inverse);
   border: none;
   border-radius: 50%;
   width: 24px;
@@ -207,29 +209,29 @@ textarea.form-control {
 }
 
 .remove-image-btn:hover:not(:disabled) {
-  background: #d32f2f;
+  background: var(--error-700);
 }
 
 .remove-image-btn:disabled {
-  opacity: 0.5;
+  opacity: var(--disabled-opacity);
   cursor: not-allowed;
 }
 
 .image-placeholder {
-  color: #666;
+  color: var(--text-tertiary);
 }
 
 .image-placeholder i {
   font-size: 48px;
-  color: #ccc;
+  color: var(--text-disabled);
   margin-bottom: 10px;
   display: block;
 }
 
 .upload-label {
   display: inline-block;
-  background: #667eea;
-  color: white;
+  background: var(--primary-400);
+  color: var(--text-inverse);
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
@@ -238,11 +240,11 @@ textarea.form-control {
 }
 
 .upload-label:hover:not(.disabled) {
-  background: #5a52d5;
+  background: var(--primary-600);
 }
 
 .upload-label.disabled {
-  background: #ccc;
+  background: var(--text-disabled);
   cursor: not-allowed;
 }
 
@@ -252,7 +254,7 @@ textarea.form-control {
   justify-content: flex-end;
   gap: 12px;
   padding: 20px 0 0 0;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border-light);
   margin-top: 20px;
 }
 
@@ -272,25 +274,25 @@ textarea.form-control {
 }
 
 .btn-cancel {
-  background: #f5f5f5;
-  color: #333;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .btn-cancel:hover:not(:disabled) {
-  background: #e0e0e0;
+  background: var(--bg-tertiary);
 }
 
 .btn-save {
-  background: #667eea;
-  color: white;
+  background: var(--primary-400);
+  color: var(--text-inverse);
 }
 
 .btn-save:hover:not(:disabled) {
-  background: #5a52d5;
+  background: var(--primary-600);
 }
 
 .btn-cancel:disabled, .btn-save:disabled {
-  opacity: 0.5;
+  opacity: var(--disabled-opacity);
   cursor: not-allowed;
   transform: none !important;
 }
@@ -330,8 +332,3 @@ textarea.form-control {
     min-width: 80px;
   }
 }
-
-
-
-
-

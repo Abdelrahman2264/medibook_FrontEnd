@@ -15,10 +15,10 @@
   font-weight: 900;
   margin-bottom: 1rem;
   color: var(--primary-50);
-  text-shadow: 0 0 10px var(--primary-200),
-              0 0 20px var(--primary-200),
-              0 0 40px var(--primary-200),
-              0 0 80px var(--primary-200);
+  text-shadow: 0 0 10px var(--primary-300),
+              0 0 30px var(--primary-300),
+              0 0 40px var(--primary-300)
+              ;
   
 }
 .hero-title::after {

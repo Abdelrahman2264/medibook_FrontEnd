@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -7,25 +7,45 @@ import { RouterModule } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements AfterViewInit {
+
   ngAfterViewInit() {
-  const counters = document.querySelectorAll('.stat-number');
+    const counters = document.querySelectorAll('.stat-number');
+    const statsSection: any = document.querySelector('.stats-section');
 
-  counters.forEach((counter: any) => {
-    const updateCount = () => {
-      const target = +counter.getAttribute('data-target');
-      const current = +counter.innerText;
-      const increment = target / 150; 
+    // Stop re-running animation
+    let animated = false;
 
-      if (current < target) {
-        counter.innerText = Math.ceil(current + increment);
-        setTimeout(updateCount, 20);
-      } else {
-        counter.innerText = target;
-      }
+    // Function to animate numbers
+    const animateCounters = () => {
+      counters.forEach((counter: any) => {
+        const update = () => {
+          const target = +counter.getAttribute('data-target');
+          const current = +counter.innerText;
+          const increment = target / 150;
+
+          if (current < target) {
+            counter.innerText = Math.ceil(current + increment);
+            setTimeout(update, 15);
+          } else {
+            counter.innerText = target;
+          }
+        };
+        update();
+      });
     };
 
-    updateCount();
-  });
-}
+    // Intersection Observer (when section becomes visible)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !animated) {
+          animateCounters();
+          animated = true;
+        }
+      },
+      { threshold: 0.4 } // يبدأ لما حوالي 40% من السكشن يظهر
+    );
+
+    observer.observe(statsSection);
+  }
 }

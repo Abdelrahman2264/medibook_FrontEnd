@@ -140,12 +140,18 @@ body {
   /* Status Colors */
   --success-50: #f0fdf4;
   --success-100: #dcfce7;
+  --success-200: #bbf7d0;
+  --success-300: #86efac;
+  --success-400: #4ade80;
   --success-500: #22c55e;
   /* Confirmed appointments */
   --success-700: #15803d;
 
   --warning-50: #fffbeb;
   --warning-100: #fef3c7;
+  --warning-200: #fde68a;
+  --warning-300: #fcd34d;
+  --warning-400: #fbbf24;
   --warning-500: #f59e0b;
   /* Pending/Rescheduled */
   --warning-700: #b45309;
@@ -302,12 +308,18 @@ body {
   /* Status Colors */
   --success-50: #f0fdf4;
   --success-100: #dcfce7;
+  --success-200: #bbf7d0;
+  --success-300: #86efac;
+  --success-400: #4ade80;
   --success-500: #22c55e;
   /* Confirmed appointments */
   --success-700: #15803d;
 
   --warning-50: #fffbeb;
   --warning-100: #fef3c7;
+  --warning-200: #fde68a;
+  --warning-300: #fcd34d;
+  --warning-400: #fbbf24;
   --warning-500: #f59e0b;
   /* Pending/Rescheduled */
   --warning-700: #b45309;
