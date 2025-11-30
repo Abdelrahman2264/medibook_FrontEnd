@@ -1,0 +1,113 @@
+<div class="notifications-container">
+  <!-- Floating Bell Button -->
+  <button 
+    class="notification-bell" 
+    (click)="toggleNotifications()"
+    [class.has-unread]="unreadCount > 0"
+    title="Notifications"
+  >
+    <i class="fas fa-bell"></i>
+    <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+  </button>
+
+  <!-- Notifications Dropdown/Modal -->
+  <div class="notifications-panel" *ngIf="isOpen" (click)="$event.stopPropagation()">
+    <div class="notifications-header">
+      <h3>
+        <i class="fas fa-bell"></i> Notifications
+        <span class="unread-count-text" *ngIf="unreadCount > 0">({{ unreadCount }} unread)</span>
+      </h3>
+      <button class="close-btn" (click)="closeNotifications()" title="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="notifications-actions" *ngIf="notifications.length > 0">
+      <button 
+        class="btn-mark-all-read" 
+        (click)="markAllAsRead()" 
+        [disabled]="unreadCount === 0"
+        title="Mark all as read"
+      >
+        <i class="fas fa-check-double"></i> Mark All as Read
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading notifications...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && notifications.length === 0" class="empty-state">
+      <i class="fas fa-bell-slash"></i>
+      <p>No notifications yet</p>
+    </div>
+
+    <!-- Notifications List -->
+    <div *ngIf="!isLoading && notifications.length > 0" class="notifications-list">
+      <!-- Unread Notifications -->
+      <div *ngIf="getUnreadNotifications().length > 0" class="notifications-section">
+        <h4 class="section-title">
+          <i class="fas fa-circle" style="color: #28a745; font-size: 0.6em;"></i> Unread
+        </h4>
+        <div class="notification-item" 
+             *ngFor="let notification of getUnreadNotifications()"
+             [class.unread]="!notification.isRead"
+             (click)="markAsRead(notification)">
+          <div class="notification-content">
+            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-meta">
+              <span class="notification-sender" *ngIf="notification.senderName">
+                <i class="fas fa-user"></i> {{ notification.senderName }}
+              </span>
+              <span class="notification-time">
+                <i class="fas fa-clock"></i> {{ formatDate(notification.createDate) }}
+              </span>
+            </div>
+          </div>
+          <button 
+            class="mark-read-btn" 
+            (click)="markAsRead(notification); $event.stopPropagation()"
+            title="Mark as read"
+          >
+            <i class="fas fa-check"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Read Notifications -->
+      <div *ngIf="getReadNotifications().length > 0" class="notifications-section">
+        <h4 class="section-title">
+          <i class="fas fa-check-circle" style="color: #6c757d; font-size: 0.6em;"></i> Read
+        </h4>
+        <div class="notification-item" 
+             *ngFor="let notification of getReadNotifications()"
+             [class.read]="notification.isRead">
+          <div class="notification-content">
+            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-meta">
+              <span class="notification-sender" *ngIf="notification.senderName">
+                <i class="fas fa-user"></i> {{ notification.senderName }}
+              </span>
+              <span class="notification-time">
+                <i class="fas fa-clock"></i> {{ formatDate(notification.createDate) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backdrop to close when clicking outside -->
+  <div class="notifications-backdrop" *ngIf="isOpen" (click)="closeNotifications()"></div>
+</div>
+

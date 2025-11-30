@@ -1,8 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { PatientsService } from '../../services/patients.service';
+import { AdminsService } from '../../services/admins.service';
+import { DoctorsService } from '../../services/doctors.service';
+import { NursesService } from '../../services/nurses.service';
 import { ForgetPasswordModalComponent } from './forget-password-modal.component';
 
 @Component({
@@ -24,9 +29,15 @@ export class SigninComponent {
   errorMessage: string = '';
   showForgetPasswordModal: boolean = false;
 
+  private patientsService = inject(PatientsService);
+  private adminsService = inject(AdminsService);
+  private doctorsService = inject(DoctorsService);
+  private nursesService = inject(NursesService);
+
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
   togglePassword() {
@@ -53,6 +64,8 @@ export class SigninComponent {
           }
           // Redirect to dashboard after login
           this.router.navigate(['/dashboard']);
+          // Load profile data in background
+          this.loadProfileInBackground();
         }
       },
       error: (error) => {
@@ -72,6 +85,8 @@ export class SigninComponent {
             // Additional logic for remember me
           }
           this.router.navigate(['/dashboard']);
+          // Load profile data in background
+          this.loadProfileInBackground();
         }
       },
       error: (error) => {
@@ -100,5 +115,74 @@ export class SigninComponent {
   onPasswordResetSuccess() {
     this.closeForgetPasswordModal();
     // Optionally show a success message or redirect
+  }
+
+  /**
+   * Load user profile data in the background after login
+   * This preloads the data so it's ready when user navigates to profile page
+   */
+  private loadProfileInBackground(): void {
+    // Use setTimeout to ensure this runs after navigation
+    setTimeout(() => {
+      // Get current role and user ID, then preload data
+      this.userService.getCurrentRole().subscribe({
+        next: (role: string) => {
+          const normalizedRole = (role || '').toLowerCase().trim();
+          console.log('🔄 Background loading profile for role:', normalizedRole);
+          
+          // Get current user ID
+          this.userService.getCurrentUser().subscribe({
+            next: (user) => {
+              const userId = user?.id || user?.userId || 0;
+              if (userId && userId > 0) {
+                // Preload the data based on role (fire and forget)
+                this.preloadRoleData(normalizedRole, userId);
+              }
+            },
+            error: (error) => {
+              console.log('Background profile loading: Could not get user ID', error);
+            }
+          });
+        },
+        error: (error) => {
+          console.log('Background profile loading: Could not get role', error);
+        }
+      });
+    }, 500); // Small delay to ensure navigation completes
+  }
+
+  /**
+   * Preload role-specific data in the background
+   */
+  private preloadRoleData(role: string, userId: number): void {
+    switch (role) {
+      case 'user':
+      case 'patient':
+        this.patientsService.getPatientById(userId).subscribe({
+          next: () => console.log('✅ Background: Patient data preloaded'),
+          error: () => console.log('⚠️ Background: Patient data preload failed')
+        });
+        break;
+      case 'admin':
+        this.adminsService.getAdminById(userId).subscribe({
+          next: () => console.log('✅ Background: Admin data preloaded'),
+          error: () => console.log('⚠️ Background: Admin data preload failed')
+        });
+        break;
+      case 'doctor':
+        this.doctorsService.getDoctorByUserId(userId).subscribe({
+          next: () => console.log('✅ Background: Doctor data preloaded'),
+          error: () => console.log('⚠️ Background: Doctor data preload failed')
+        });
+        break;
+      case 'nurse':
+        this.nursesService.getNurseByUserId(userId).subscribe({
+          next: () => console.log('✅ Background: Nurse data preloaded'),
+          error: () => console.log('⚠️ Background: Nurse data preload failed')
+        });
+        break;
+      default:
+        console.log('⚠️ Background: Unknown role:', role);
+    }
   }
 }

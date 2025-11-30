@@ -6,17 +6,20 @@ import { AppointmentsService } from '../../services/appointments.service';
 import { DoctorsService } from '../../services/doctors.service';
 import { NursesService } from '../../services/nurses.service';
 import { RoomsService } from '../../services/rooms.service';
+import { FeedbacksService } from '../../services/feedbacks.service';
 import { Appointment, CreateAppointmentDto, CancelAppointmentDto, AssignAppointmentDto, CloseAppointmentDto } from '../../models/appointment.model';
 import { Doctor } from '../../models/doctor.model';
 import { Nurse } from '../../models/nurse.model';
 import { Room } from '../../models/room.model';
+import { CreateFeedbackDto, Feedback } from '../../models/feedback.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
+import { FeedbackFormModalComponent } from '../Shared/feedback-form-modal/feedback-form-modal.component';
 
 @Component({
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
   styleUrls: ['./appointments.component.css'],
-  imports: [CommonModule, FormsModule, RouterModule, ConfirmationModalComponent]
+  imports: [CommonModule, FormsModule, RouterModule, ConfirmationModalComponent, FeedbackFormModalComponent]
 })
 export class AppointmentsComponent implements OnInit {
   searchTerm: string = '';
@@ -27,6 +30,9 @@ export class AppointmentsComponent implements OnInit {
   doctors: Doctor[] = [];
   statuses: string[] = ['Pending', 'Scheduled', 'Confirmed', 'Assigned', 'In Progress', 'Completed', 'Cancelled'];
   
+  // Track which appointments have feedback
+  appointmentsWithFeedback: Set<number> = new Set();
+  
   // Loading and error states
   isLoading: boolean = false;
   errorMessage: string = '';
@@ -34,6 +40,7 @@ export class AppointmentsComponent implements OnInit {
   // Modal states
   showCancelModal: boolean = false;
   showCloseModal: boolean = false;
+  showFeedbackModal: boolean = false;
   selectedAppointment: Appointment | null = null;
   cancelReason: string = '';
   closeNotes: string = '';
@@ -49,6 +56,7 @@ export class AppointmentsComponent implements OnInit {
     private doctorsService: DoctorsService,
     private nursesService: NursesService,
     private roomsService: RoomsService,
+    private feedbacksService: FeedbacksService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -57,6 +65,7 @@ export class AppointmentsComponent implements OnInit {
     console.log('🔄 AppointmentsComponent initialized');
     this.loadAppointments();
     this.loadDoctors();
+    this.loadFeedbacks();
   }
 
   // Force update method
@@ -102,6 +111,29 @@ export class AppointmentsComponent implements OnInit {
     });
   }
 
+  loadFeedbacks() {
+    console.log('🔄 Loading feedbacks to check existing feedbacks...');
+    this.feedbacksService.getAllFeedbacks().subscribe({
+      next: (feedbacks: Feedback[]) => {
+        console.log('✅ Feedbacks loaded:', feedbacks.length);
+        // Create a set of appointment IDs that have feedback
+        this.appointmentsWithFeedback = new Set(
+          feedbacks.map(feedback => feedback.appointmentId)
+        );
+        console.log('📊 Appointments with feedback:', Array.from(this.appointmentsWithFeedback));
+        this.forceUpdate();
+      },
+      error: (error: any) => {
+        console.error('❌ Error loading feedbacks:', error);
+        // Don't show error to user, just log it
+      }
+    });
+  }
+
+  hasFeedback(appointmentId: number): boolean {
+    return this.appointmentsWithFeedback.has(appointmentId);
+  }
+
   // Modal functions
   openCancelModal(appointment: Appointment) {
     console.log('📝 Opening cancel modal for:', appointment.patientName);
@@ -130,11 +162,27 @@ export class AppointmentsComponent implements OnInit {
     console.log('❌ Closing modals');
     this.showCancelModal = false;
     this.showCloseModal = false;
+    this.showFeedbackModal = false;
     this.selectedAppointment = null;
     this.cancelReason = '';
     this.closeNotes = '';
     this.closeMedicine = '';
     this.forceUpdate();
+  }
+
+  openFeedbackModal(appointment: Appointment) {
+    console.log('📝 Opening feedback modal for:', appointment.patientName);
+    this.selectedAppointment = appointment;
+    this.showFeedbackModal = true;
+    
+    setTimeout(() => {
+      this.forceUpdate();
+    }, 100);
+  }
+
+  navigateToDetails(appointment: Appointment) {
+    console.log('👁️ Navigating to appointment details:', appointment.appointmentId);
+    this.router.navigate(['/appointment-details', appointment.appointmentId]);
   }
 
   // Action methods
@@ -174,11 +222,6 @@ export class AppointmentsComponent implements OnInit {
       return;
     }
 
-    if (this.isLoading) {
-      // Prevent duplicate submissions while a close request is already in progress
-      return;
-    }
-
     const closeData: CloseAppointmentDto = {
       appointmentId: this.selectedAppointment.appointmentId,
       notes: this.closeNotes.trim(),
@@ -193,13 +236,7 @@ export class AppointmentsComponent implements OnInit {
       next: (response: any) => {
         console.log('✅ Appointment closed successfully');
         this.loadAppointments();
-        // Explicitly close the modal after successful response
-        this.showCloseModal = false;
-        this.selectedAppointment = null;
-        this.closeNotes = '';
-        this.closeMedicine = '';
-        this.isLoading = false;
-        this.forceUpdate();
+        this.closeModals();
       },
       error: (error: any) => {
         console.error('❌ Error closing appointment:', error);
@@ -219,11 +256,6 @@ export class AppointmentsComponent implements OnInit {
   navigateToAssign(appointment: Appointment) {
     console.log('👥 Navigating to assign appointment:', appointment.appointmentId);
     this.router.navigate(['/assign-appointment', appointment.appointmentId]);
-  }
-
-  navigateToDetails(appointment: Appointment) {
-    console.log('👁️ Navigating to appointment details:', appointment.appointmentId);
-    this.router.navigate(['/appointments', appointment.appointmentId]);
   }
 
   // UI Helper Methods
@@ -347,6 +379,30 @@ export class AppointmentsComponent implements OnInit {
     this.selectedStatus = '';
     this.selectedDoctor = '';
     this.forceUpdate();
+  }
+
+  onCreateFeedback(feedbackData: CreateFeedbackDto) {
+    console.log('🔄 Creating feedback:', feedbackData);
+    this.isLoading = true;
+    this.forceUpdate();
+
+    this.feedbacksService.createFeedback(feedbackData).subscribe({
+      next: (response: any) => {
+        console.log('✅ Feedback created successfully');
+        // Add the appointment ID to the set of appointments with feedback
+        this.appointmentsWithFeedback.add(feedbackData.appointmentId);
+        this.isLoading = false;
+        this.closeModals();
+        alert('Feedback submitted successfully!');
+        this.forceUpdate();
+      },
+      error: (error: any) => {
+        console.error('❌ Error creating feedback:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to submit feedback. Please try again.');
+      }
+    });
   }
 
   // Debug method

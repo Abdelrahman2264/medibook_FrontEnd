@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, map, catchError, throwError } from 'rxjs';
 import { NurseDetailsDto, CreateNurseDto, Nurse, mapNurseDetailsDtoToNurse, UpdateNurseDto } from '../models/nurse.model';
 
 @Injectable({
@@ -65,13 +65,96 @@ export class NursesService {
     );
   }
 
+  // Get nurse by User ID - returns mapped Nurse from NurseDetailsDto
+  getNurseByUserId(userId: number): Observable<Nurse> {
+    console.log('🔍 Fetching nurse by User ID:', userId);
+    return this.http.get<any>(`${this.baseUrl}/Nurses/byUserId/${userId}`).pipe(
+      map(dto => {
+        console.log('📥 Raw nurse data from API:', dto);
+        const nurse = mapNurseDetailsDtoToNurse(dto);
+        console.log('✅ Mapped nurse:', { nurseId: nurse.nurseId, fullName: nurse.fullName });
+        if (nurse.nurseId === 0 || !nurse.nurseId) {
+          console.error('❌ ERROR: nurseId is 0 or invalid after mapping!', { dto, nurse });
+        }
+        return nurse;
+      })
+    );
+  }
+
   // Create nurse - accepts CreateNurseDto, returns NurseDetailsDto
   createNurse(body: CreateNurseDto): Observable<NurseDetailsDto> {
     console.log('🔄 Creating nurse with data:', { 
       ...body, 
       password: body.password ? '[REDACTED]' : 'No Password' 
     });
-    return this.http.post<NurseDetailsDto>(`${this.baseUrl}/Nurses/create`, body);
+    
+    // Validate required fields before sending
+    if (!body.firstName || !body.lastName || !body.email || !body.password) {
+      throw new Error('Missing required fields: firstName, lastName, email, and password are required');
+    }
+    
+    // Process profile image - remove data URL prefix if present
+    let processedImage: string | null = null;
+    if (body.profileImage) {
+      // If it's a data URL (starts with "data:image/..."), extract just the base64 part
+      if (body.profileImage.startsWith('data:image/')) {
+        // Extract base64 string after the comma
+        const base64Index = body.profileImage.indexOf(',');
+        if (base64Index !== -1) {
+          processedImage = body.profileImage.substring(base64Index + 1);
+        } else {
+          processedImage = body.profileImage;
+        }
+      } else {
+        // Already just base64 string
+        processedImage = body.profileImage;
+      }
+    }
+
+    // Ensure dateOfBirth is properly formatted
+    const payload: any = {
+      firstName: body.firstName.trim(),
+      lastName: body.lastName.trim(),
+      email: body.email.trim(),
+      mobilePhone: body.mobilePhone?.trim() || '',
+      password: body.password,
+      gender: body.gender || 'Male',
+      mitrialStatus: body.mitrialStatus || 'Single',
+      dateOfBirth: body.dateOfBirth || new Date().toISOString(),
+      bio: body.bio?.trim() || '',
+      profileImage: processedImage
+    };
+    
+    console.log('📤 Sending nurse creation request:', {
+      ...payload,
+      password: '[REDACTED]',
+      dateOfBirth: payload.dateOfBirth
+    });
+    
+    return this.http.post<NurseDetailsDto>(`${this.baseUrl}/Nurses/create`, payload).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('❌ HTTP Error creating nurse:', error);
+        
+        let errorMessage = 'Failed to create nurse. ';
+        if (error.error) {
+          if (typeof error.error === 'string') {
+            errorMessage += error.error;
+          } else if (error.error.message) {
+            errorMessage += error.error.message;
+          } else if (error.error.errors) {
+            // Handle validation errors from backend
+            const validationErrors = Object.entries(error.error.errors)
+              .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+              .join('; ');
+            errorMessage += validationErrors;
+          }
+        } else if (error.message) {
+          errorMessage += error.message;
+        }
+        
+        return throwError(() => ({ message: errorMessage, originalError: error }));
+      })
+    );
   }
 
   // Update nurse - accepts UpdateNurseDto, returns NurseDetailsDto

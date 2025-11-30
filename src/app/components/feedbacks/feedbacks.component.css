@@ -67,3 +67,247 @@
   line-height: 1.6;
   margin: 0;
 }
+
+.favourite-badge {
+  color: #ffc107;
+  margin-left: 8px;
+  font-size: 0.9rem;
+}
+
+.rating-value {
+  margin-left: 10px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.feedback-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+}
+
+.feedback-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.feedback-meta i {
+  color: var(--primary-400);
+}
+
+.feedback-content {
+  margin-top: 15px;
+}
+
+.doctor-reply {
+  background: var(--bg-secondary);
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border-left: 4px solid var(--primary-400);
+}
+
+.reply-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.reply-header i {
+  color: var(--primary-400);
+}
+
+.reply-date {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  font-weight: normal;
+}
+
+.reply-content {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.appointment-info {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-light);
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+}
+
+.appointment-info i {
+  color: var(--primary-400);
+  margin-right: 5px;
+}
+
+.feedback-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-light);
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.favourite-btn {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 2px solid var(--border-light);
+}
+
+.favourite-btn.active {
+  background: #fff3cd;
+  color: #856404;
+  border-color: #ffc107;
+}
+
+.favourite-btn:hover:not(:disabled) {
+  background: #fff3cd;
+  transform: translateY(-2px);
+}
+
+.edit-btn {
+  background: #3498db;
+  color: var(--text-inverse);
+}
+
+.edit-btn:hover:not(:disabled) {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+.reply-btn {
+  background: var(--primary-400);
+  color: var(--text-inverse);
+}
+
+.reply-btn:hover:not(:disabled) {
+  background: var(--primary-600);
+  transform: translateY(-2px);
+}
+
+.delete-btn {
+  background: #e74c3c;
+  color: var(--text-inverse);
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: #c0392b;
+  transform: translateY(-2px);
+}
+
+/* Loading and Error States */
+.loading-container, .error-message, .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-card);
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.loading-spinner {
+  color: var(--primary-500);
+}
+
+.error-message {
+  background: var(--error-50);
+  color: var(--error-700);
+  border: 1px solid var(--error-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.empty-state-content {
+  color: var(--text-tertiary);
+}
+
+.empty-state-content i {
+  margin-bottom: 20px;
+  color: var(--border-light);
+}
+
+.results-bar {
+  background: var(--bg-card);
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.results-info {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.results-info i {
+  color: var(--primary-400);
+  margin-right: 5px;
+}
+
+.highlight {
+  color: var(--primary-600);
+  font-weight: 600;
+}
+
+.btn-retry {
+  padding: 8px 16px;
+  background: var(--primary-400);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-retry:hover {
+  background: var(--primary-600);
+}
+
+@media (max-width: 768px) {
+  .feedback-actions {
+    flex-direction: column;
+  }
+
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .feedback-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

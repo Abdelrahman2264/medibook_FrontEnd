@@ -1,18 +1,26 @@
-<main class="main  overflow-hidden"  >
+<main class="main overflow-hidden">
 
   <!-- Header Component (for unauthorized/public routes) -->
   <app-header *ngIf="showHeader"></app-header>
 
+  <!-- Floating Buttons Component (for authorized routes) -->
+  <app-floating-buttons *ngIf="showSidebar"></app-floating-buttons>
+
   <!-- Sidebar Component (for authorized routes) -->
   <app-sidebar *ngIf="showSidebar"></app-sidebar>
 
+  <!-- Notifications Component (for authorized routes) -->
+  <app-notifications *ngIf="showSidebar"></app-notifications>
+
   <!-- Main Content -->
-  <div [class.content-with-sidebar]="showSidebar" [class.content-with-header]="showHeader">
+  <div [class.content-with-sidebar]="showSidebar" 
+       [class.content-with-header]="showHeader" 
+       [class.content-with-toolbar]="showSidebar"
+       [class.sidebar-collapsed]="showSidebar && isSidebarCollapsed">
     <router-outlet></router-outlet>
   </div>
   
   <!-- Footer (only show on public routes) -->
   <app-footer *ngIf="showHeader"></app-footer>
-
 
 </main>

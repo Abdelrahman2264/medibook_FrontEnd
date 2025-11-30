@@ -1,199 +1,327 @@
-<div class="user-profile-container ">
-  <!-- Main Content -->
-  <div class="main-content ">
-    <!-- Header -->
-    <div class="profile-header ">
-      <div class="header-title">
-        <h1>User Profile</h1>
-        <p>Manage your personal and professional information</p>
+<div class="user-profile-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin fa-3x"></i>
+      <p>Loading user profile...</p>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
-      <div class="header-actions ">
-        <button class="btn-secondary" (click)="toggleEditMode()" *ngIf="!isEditMode">
-          <i class="fas fa-edit"></i>
-          Edit Profile
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading && !patient && !admin && !doctor && !nurse" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>Error Loading Profile</h3>
+      <p>{{ errorMessage }}</p>
+      <div *ngIf="errorDetails" style="margin-top: 10px; font-size: 0.9em; color: #666;">
+        <details style="cursor: pointer;">
+          <summary>Error Details</summary>
+          <pre style="text-align: left; margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 4px; overflow-x: auto;">{{ errorDetails | json }}</pre>
+        </details>
+      </div>
+      <div class="error-actions">
+        <button class="btn btn-primary" (click)="retryLoad()">
+          <i class="fas fa-redo"></i> Try Again
         </button>
-        <div class="edit-actions" *ngIf="isEditMode">
-          <button class="btn-success" (click)="saveProfile()">
-            <i class="fas fa-check"></i>
-            Save Changes
-          </button>
-          <button class="btn-danger" (click)="cancelEdit()">
-            <i class="fas fa-times"></i>
-            Cancel
-          </button>
-        </div>
-        <button class="btn-primary">
-          <i class="fas fa-download"></i>
-          Export Data
+        <button class="btn btn-secondary" (click)="goToDashboard()">
+          <i class="fas fa-home"></i> Go to Dashboard
         </button>
       </div>
     </div>
+  </div>
 
-    <div class="profile-content">
-      <!-- Left Column -->
-      <div class="left-column ">
-        <!-- Personal Information Card -->
-        <div class="info-card">
-          <div class="card-header">
-            <h2><i class="fas fa-user-circle" style="color: #28a745;"></i> Personal Information</h2>
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="success-message" style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; margin: 20px; border-radius: 8px; text-align: center;">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="(patient || admin || doctor || nurse) && !isLoading" class="profile-content">
+    <!-- Header Section -->
+    <div class="profile-header">
+      <div class="header-title">
+        <h1>{{ getRole() }} Profile</h1>
+        <p>Manage your personal and professional information</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-edit" (click)="toggleEditMode()" *ngIf="!isEditMode" [disabled]="isSaving">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+        <div class="edit-actions" *ngIf="isEditMode">
+          <button class="btn btn-success" (click)="saveProfile()" [disabled]="isSaving">
+            <i class="fas fa-spinner fa-spin" *ngIf="isSaving"></i>
+            <i class="fas fa-check" *ngIf="!isSaving"></i> 
+            {{ isSaving ? 'Saving...' : 'Save Changes' }}
+          </button>
+          <button class="btn btn-danger" (click)="cancelEdit()" [disabled]="isSaving">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Profile Card -->
+    <div class="profile-card">
+      <div class="profile-header-section">
+        <div class="profile-image-container">
+          <img 
+            [src]="getProfileImage()" 
+            [alt]="getFullName()" 
+            class="profile-image"
+            (error)="$event.target.src=getDefaultImage()"
+          />
+          <div [class]="getStatusBadgeClass()">
+            <i [class]="(patient?.isActive || admin?.isActive || doctor?.isActive || nurse?.isActive) ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+            {{ (patient?.isActive || admin?.isActive || doctor?.isActive || nurse?.isActive) ? 'Active' : 'Inactive' }}
           </div>
-          <div class="card-body">
-            <div class="photo-section">
-              <div class="photo-container">
-                <img [src]="isEditMode ? editedUser.photo : user.photo" alt="Profile Photo" class="profile-photo-large">
-                <input type="file" id="profilePhotoInput" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
-                <button class="photo-edit-btn" (click)="triggerFileInput()" *ngIf="isEditMode">
-                  <i class="fas fa-camera"></i>
-                </button>
+        </div>
+        
+        <div class="profile-basic-info">
+          <h1 class="profile-name">{{ getFullName() }}</h1>
+          
+          <!-- Doctor-specific info -->
+          <p *ngIf="doctor" class="profile-title">{{ doctor.specialization }}</p>
+          <p *ngIf="doctor" class="profile-type">{{ doctor.type }}</p>
+          
+          <div *ngIf="doctor" class="rating-experience">
+            <div class="experience">
+              <i class="fas fa-award"></i>
+              <span>{{ getExperienceLevel() }} ({{ doctor.experienceYears }} years experience)</span>
+            </div>
+            <div class="profile-id">
+              <i class="fas fa-id-card"></i>
+              <span>ID: {{ doctor.doctorId }}</span>
+            </div>
+          </div>
+
+          <!-- Nurse-specific info -->
+          <div *ngIf="nurse" class="profile-id">
+            <i class="fas fa-id-card"></i>
+            <span>ID: {{ nurse.nurseId }}</span>
+          </div>
+
+          <!-- Patient-specific info -->
+          <div *ngIf="patient" class="profile-id">
+            <i class="fas fa-id-card"></i>
+            <span>ID: {{ patient.id }}</span>
+          </div>
+
+          <!-- Admin-specific info -->
+          <div *ngIf="admin" class="profile-id">
+            <i class="fas fa-id-card"></i>
+            <span>ID: {{ admin.id }}</span>
+          </div>
+
+          <div class="profile-email">
+            <i class="fas fa-envelope"></i>
+            <span>{{ getEmail() }}</span>
+          </div>
+
+          <div *ngIf="admin" class="profile-role">
+            <i class="fas fa-user-shield"></i>
+            <span>Administrator</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Sections -->
+      <div class="profile-details">
+        <!-- Contact Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-address-card"></i> Contact Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <label>Email</label>
+                <p>{{ getEmail() }}</p>
+                <small style="color: #666; font-size: 0.85em;" *ngIf="isEditMode">Email cannot be changed</small>
               </div>
             </div>
-
-            <div class="info-grid">
-              <div class="info-field">
-                <label>Full Name</label>
-                <div *ngIf="!isEditMode" class="info-value">{{ user.name }}</div>
-                <input *ngIf="isEditMode" [(ngModel)]="editedUser.name" class="edit-input">
-              </div>
-
-              <div class="info-field">
-                <label>Email Address</label>
-                <div *ngIf="!isEditMode" class="info-value">{{ user.email }}</div>
-                <input *ngIf="isEditMode" [(ngModel)]="editedUser.email" type="email" class="edit-input">
-              </div>
-
-              <div class="info-field">
-                <label>Phone Number</label>
-                <div *ngIf="!isEditMode" class="info-value">{{ user.phone }}</div>
-                <input *ngIf="isEditMode" [(ngModel)]="editedUser.phone" class="edit-input">
-              </div>
-
-              <div class="info-field">
-                <label>Address</label>
-                <div *ngIf="!isEditMode" class="info-value">{{ user.address }}</div>
-                <textarea *ngIf="isEditMode" [(ngModel)]="editedUser.address" class="edit-textarea"></textarea>
-              </div>
-
-              <div class="info-field">
-                <label>Emergency Contact</label>
-                <div *ngIf="!isEditMode" class="info-value">{{ user.emergencyContact }}</div>
-                <input *ngIf="isEditMode" [(ngModel)]="editedUser.emergencyContact" class="edit-input">
+            <div class="detail-item">
+              <i class="fas fa-phone"></i>
+              <div>
+                <label>Mobile Phone</label>
+                <p *ngIf="!isEditMode">{{ getPhone() || 'Not provided' }}</p>
+                <input *ngIf="isEditMode && patient" [(ngModel)]="patient.mobilePhone" class="edit-input">
+                <input *ngIf="isEditMode && admin" [(ngModel)]="admin.mobilePhone" class="edit-input">
+                <input *ngIf="isEditMode && doctor" [(ngModel)]="doctor.mobilePhone" class="edit-input">
+                <input *ngIf="isEditMode && nurse" [(ngModel)]="nurse.mobilePhone" class="edit-input">
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Professional Information Card -->
-        <div class="info-card">
-          <div class="card-header">
-            <h2><i class="fas fa-briefcase" style="color: #28a745;"></i> Professional Information</h2>
+        <!-- Personal Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-user"></i> Personal Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item" *ngIf="patient || admin">
+              <i [class]="getGenderIcon(patient?.gender || admin?.gender)"></i>
+              <div>
+                <label>Gender</label>
+                <p *ngIf="!isEditMode">{{ (patient?.gender || admin?.gender) || 'Not specified' }}</p>
+                <input *ngIf="isEditMode && patient" [(ngModel)]="patient.gender" class="edit-input">
+                <input *ngIf="isEditMode && admin" [(ngModel)]="admin.gender" class="edit-input">
+              </div>
+            </div>
+            <div class="detail-item" *ngIf="doctor || nurse">
+              <i [class]="getGenderIcon(doctor?.gender || nurse?.gender)"></i>
+              <div>
+                <label>Gender</label>
+                <p>{{ (doctor?.gender || nurse?.gender) || 'Not specified' }}</p>
+                <small style="color: #666; font-size: 0.85em;">Gender cannot be changed</small>
+              </div>
+            </div>
+            <div class="detail-item" *ngIf="patient || admin">
+              <i class="fas fa-heart"></i>
+              <div>
+                <label>Marital Status</label>
+                <p *ngIf="!isEditMode">{{ (patient?.mitrialStatus || admin?.mitrialStatus) || 'Not specified' }}</p>
+                <input *ngIf="isEditMode && patient" [(ngModel)]="patient.mitrialStatus" class="edit-input">
+                <input *ngIf="isEditMode && admin" [(ngModel)]="admin.mitrialStatus" class="edit-input">
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-birthday-cake"></i>
+              <div>
+                <label>Date of Birth</label>
+                <p>{{ formatDate(patient?.dateOfBirth || admin?.dateOfBirth || doctor?.dateOfBirth || nurse?.dateOfBirth) }}</p>
+                <small style="color: #666; font-size: 0.85em;" *ngIf="isEditMode">Date of birth cannot be changed</small>
+              </div>
+            </div>
+            <div class="detail-item" *ngIf="(patient?.age || admin?.age)">
+              <i class="fas fa-calendar-alt"></i>
+              <div>
+                <label>Age</label>
+                <p>{{ (patient?.age || admin?.age) }} years</p>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <div class="info-grid">
-              <div class="info-field">
-                <label>Role</label>
-                <div class="info-value">{{ user.role }}</div>
-              </div>
+        </div>
 
-              <div class="info-field">
-                <label>Department</label>
-                <div class="info-value">{{ user.department }}</div>
+        <!-- Professional Information (Doctor only) -->
+        <div *ngIf="doctor" class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-briefcase"></i> Professional Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i [class]="getSpecialtyIcon(doctor.specialization)"></i>
+              <div>
+                <label>Specialization</label>
+                <p *ngIf="!isEditMode">{{ doctor.specialization }}</p>
+                <input *ngIf="isEditMode" [(ngModel)]="doctor.specialization" class="edit-input">
               </div>
-
-              <div class="info-field">
-                <label>Join Date</label>
-                <div class="info-value">{{ user.joinDate }}</div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-user-md"></i>
+              <div>
+                <label>Doctor Type</label>
+                <p *ngIf="!isEditMode">{{ doctor.type || 'Not specified' }}</p>
+                <input *ngIf="isEditMode" [(ngModel)]="doctor.type" class="edit-input">
               </div>
-
-              <div class="info-field">
-                <label>Status</label>
-                <div class="status-badge" [class.active]="user.status === 'Active'">
-                  {{ user.status }}
-                </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-calendar-alt"></i>
+              <div>
+                <label>Experience</label>
+                <p *ngIf="!isEditMode">{{ doctor.experienceYears }} years</p>
+                <input *ngIf="isEditMode" type="number" [(ngModel)]="doctor.experienceYears" class="edit-input">
               </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-star"></i>
+              <div>
+                <label>Experience Level</label>
+                <p>{{ getExperienceLevel() }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              <div class="info-field full-width">
-                <label>Last Login</label>
-                <div class="info-value">{{ user.lastLogin }}</div>
+        <!-- Biography (Doctor and Nurse) -->
+        <div *ngIf="(doctor?.bio || nurse?.bio)" class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i> Biography
+          </h3>
+          <div class="bio-content">
+            <p *ngIf="!isEditMode">{{ doctor?.bio || nurse?.bio }}</p>
+            <textarea *ngIf="isEditMode && doctor" 
+              [(ngModel)]="doctor.bio" 
+              class="edit-textarea" 
+              rows="5" 
+              placeholder="Enter biography..."></textarea>
+            <textarea *ngIf="isEditMode && nurse" 
+              [(ngModel)]="nurse.bio" 
+              class="edit-textarea" 
+              rows="5" 
+              placeholder="Enter biography..."></textarea>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i> Additional Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <i class="fas fa-calendar-plus"></i>
+              <div>
+                <label>Member Since</label>
+                <p>{{ formatDate(patient?.createDate || admin?.createDate || doctor?.createDate || nurse?.createDate) }}</p>
+              </div>
+            </div>
+            <div class="detail-item" *ngIf="doctor || nurse">
+              <i class="fas fa-user"></i>
+              <div>
+                <label>User ID</label>
+                <p>{{ (doctor?.userId || nurse?.userId) || 'N/A' }}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-user-check"></i>
+              <div>
+                <label>Account Status</label>
+                <p>
+                  <span [class]="getStatusBadgeClass()">
+                    {{ (patient?.isActive || admin?.isActive || doctor?.isActive || nurse?.isActive) ? 'Active' : 'Inactive' }}
+                  </span>
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Right Column -->
-      <div class="right-column">
-        <!-- Statistics Card -->
-        <div class="stats-card">
-          <h2><i class="fas fa-chart-bar" style="color: #28a745;"></i> Performance Statistics</h2>
-          <div class="stats-grid">
-            <div *ngFor="let stat of stats" class="stat-item" [style.border-left-color]="stat.color">
-              <div class="stat-icon" [style.background]="stat.color + '20'">
-                <i [class]="stat.icon" [style.color]="stat.color"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-value">{{ stat.value }}</div>
-                <div class="stat-label">{{ stat.label }}</div>
-              </div>
-            </div>
-          </div>
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="toggleEditMode()" *ngIf="!isEditMode" [disabled]="isSaving">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+        <div *ngIf="isEditMode" class="edit-actions">
+          <button class="btn btn-success" (click)="saveProfile()" [disabled]="isSaving">
+            <i class="fas fa-spinner fa-spin" *ngIf="isSaving"></i>
+            <i class="fas fa-check" *ngIf="!isSaving"></i> 
+            {{ isSaving ? 'Saving...' : 'Save Changes' }}
+          </button>
+          <button class="btn btn-danger" (click)="cancelEdit()" [disabled]="isSaving">
+            <i class="fas fa-times"></i> Cancel
+          </button>
         </div>
-
-        <!-- Qualifications Card -->
-        <div class="info-card">
-          <div class="card-header">
-            <h2><i class="fas fa-graduation-cap" style="color: #28a745;"></i> Qualifications & Education</h2>
-          </div>
-          <div class="card-body">
-            <div class="qualifications-list">
-              <div *ngFor="let qualification of user.qualifications" class="qualification-item">
-                <i class="fas fa-certificate"></i>
-                {{ qualification }}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Skills & Languages Card -->
-        <div class="skills-languages-card">
-          <div class="skills-section">
-            <h3><i class="fas fa-tools" style="color: #28a745;"></i> Professional Skills</h3>
-            <div class="skills-list">
-              <span *ngFor="let skill of user.skills" class="skill-tag">
-                {{ skill }}
-              </span>
-            </div>
-          </div>
-
-          <div class="languages-section">
-            <h3><i class="fas fa-language" style="color: #28a745;"></i> Languages</h3>
-            <div class="languages-list">
-              <span *ngFor="let language of user.languages" class="language-tag">
-                {{ language }}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Recent Activities Card -->
-        <div class="info-card">
-          <div class="card-header">
-            <h2><i class="fas fa-history" style="color: #28a745;"></i> Recent Activities</h2>
-          </div>
-          <div class="card-body">
-            <div class="activities-list">
-              <div *ngFor="let activity of recentActivities" class="activity-item">
-                <div class="activity-icon" [style.background]="getActivityColor(activity.type) + '20'">
-                  <i [class]="activity.icon" [style.color]="getActivityColor(activity.type)"></i>
-                </div>
-                <div class="activity-content">
-                  <div class="activity-action">{{ activity.action }}</div>
-                  <div class="activity-patient">{{ activity.patient }}</div>
-                  <div class="activity-time">{{ activity.time }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <button class="btn btn-secondary" (click)="goToDashboard()" [disabled]="isSaving">
+          <i class="fas fa-home"></i> Back to Dashboard
+        </button>
       </div>
     </div>
   </div>

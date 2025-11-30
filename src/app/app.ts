@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +8,12 @@ import { filter } from 'rxjs/operators';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from "./components/footer/footer.component";
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { FloatingButtonsComponent } from './components/floating-buttons/floating-buttons.component';
+import { NotificationsComponent } from './components/notifications/notifications.component';
 import { AuthService } from './services/auth.service';
+import { ThemeService } from './services/theme.service';
+import { SidebarService } from './services/sidebar.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -19,22 +24,28 @@ import { AuthService } from './services/auth.service';
     FormsModule,
     HeaderComponent,
     FooterComponent,
-    SidebarComponent
+    SidebarComponent,
+    FloatingButtonsComponent,
+    NotificationsComponent
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
-export class App implements OnInit {
+export class App implements OnInit, OnDestroy {
   isAuthenticated = false;
   showHeader = false;
   showSidebar = false;
+  isSidebarCollapsed = false;
 
   // Routes that should show header (public routes)
   private publicRoutes = ['/signin', '/signup', '/about', '/contact', '/'];
+  private sidebarSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService,
+    private sidebarService: SidebarService
   ) {}
 
   ngOnInit() {
@@ -52,6 +63,20 @@ export class App implements OnInit {
       .subscribe(() => {
         this.updateAuthState();
       });
+
+    // Subscribe to sidebar state changes
+    this.sidebarSubscription = this.sidebarService.isOpen$.subscribe(isOpen => {
+      this.isSidebarCollapsed = !isOpen;
+    });
+
+    // Initialize sidebar state
+    this.isSidebarCollapsed = !this.sidebarService.isSidebarOpen();
+  }
+
+  ngOnDestroy() {
+    if (this.sidebarSubscription) {
+      this.sidebarSubscription.unsubscribe();
+    }
   }
 
   private updateAuthState() {

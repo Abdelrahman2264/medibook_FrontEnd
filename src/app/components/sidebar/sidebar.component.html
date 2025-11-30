@@ -1,11 +1,16 @@
-<div class="sidebar">
+<div class="sidebar" [class.sidebar-collapsed]="!isSidebarOpen">
+  <!-- Sidebar Toggle Button -->
+  <button class="sidebar-toggle-btn" (click)="toggleSidebar()" [title]="isSidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'">
+    <i class="fas" [class]="getSidebarIcon()"></i>
+  </button>
+
   <!-- User Profile Summary -->
   <div class="user-profile-summary">
     <div class="avatar-container">
       <img [src]="getUserPhoto()" alt="User Photo" class="user-avatar">
       <div class="online-status active"></div>
     </div>
-    <h2>{{ getUserName() }}</h2>
+    <h2 class="user-name">{{ getUserName() }}</h2>
     <p class="user-role">{{ getUserRole() }}</p>
   </div>
 
@@ -23,25 +28,27 @@
       <li 
         *ngFor="let item of menuItems" 
         [class.active]="item.active"
-        (click)="setActiveMenu(item)"
       >
         <i [class]="item.icon"></i>
         <a 
           *ngIf="item.name !== 'Signout'" 
           [routerLink]="item.route"
           routerLinkActive="active-link"
-          [routerLinkActiveOptions]="{exact: item.route === '/dashboard'}"
-          style="color: inherit; text-decoration: none; cursor: pointer;"
+          [routerLinkActiveOptions]="getRouterLinkActiveOptions(item.route)"
+          style="color: inherit; text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%;"
         >
-          {{ item.name }}
+          <span class="menu-text">{{ item.name }}</span>
         </a>
-        <span *ngIf="item.name === 'Signout'" style="cursor: pointer;">
-          {{ item.name }}
+        <span *ngIf="item.name === 'Signout'" (click)="signOut()" style="cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%;">
+          <span class="menu-text">{{ item.name }}</span>
         </span>
       </li>
     </ul>
   </nav>
 </div>
+
+
+
 
 
 

@@ -39,6 +39,19 @@ export class DoctorsService {
     );
   }
 
+  // Get doctor by User ID - returns mapped Doctor from DoctorDetailsDto
+  getDoctorByUserId(userId: number): Observable<Doctor> {
+    console.log('🔍 Fetching doctor by User ID:', userId);
+    return this.http.get<DoctorDetailsDto>(`${this.baseUrl}/Doctors/byUserId/${userId}`).pipe(
+      map(dto => {
+        console.log('📥 Raw doctor data from API:', dto);
+        const doctor = mapDoctorDetailsDtoToDoctor(dto);
+        console.log('✅ Mapped doctor:', { doctorId: doctor.doctorId, fullName: doctor.fullName });
+        return doctor;
+      })
+    );
+  }
+
   // Create doctor - accepts CreateDoctorDto, returns DoctorDetailsDto
   createDoctor(body: CreateDoctorDto): Observable<DoctorDetailsDto> {
     return this.http.post<DoctorDetailsDto>(`${this.baseUrl}/Doctors/create`, body);

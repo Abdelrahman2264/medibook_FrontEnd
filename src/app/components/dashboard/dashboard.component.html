@@ -1,44 +1,355 @@
 <div class="dashboard-container">
+  <!-- Header -->
   <div class="dashboard-header">
     <h1>Dashboard</h1>
     <p>Welcome back! Here's what's happening today.</p>
   </div>
 
-  <div class="stats-grid">
-    <div *ngFor="let stat of stats" class="stat-card" [routerLink]="stat.route">
-      <div class="stat-icon" [style.background-color]="stat.color + '20'" [style.color]="stat.color">
-        <i [class]="stat.icon"></i>
-      </div>
-      <div class="stat-content">
-        <div class="stat-value">{{ stat.value }}</div>
-        <div class="stat-label">{{ stat.label }}</div>
-      </div>
-    </div>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading dashboard data...</p>
   </div>
 
-  <div class="activities-section">
-    <h2>Recent Activities</h2>
-    <div class="activities-list">
-      <div *ngFor="let activity of recentActivities" class="activity-item">
-        <div class="activity-icon" [class]="'icon-' + activity.type">
-          <i [class]="activity.type === 'appointment' ? 'fas fa-calendar-check' : 
-                      activity.type === 'checkin' ? 'fas fa-check-circle' : 
-                      activity.type === 'report' ? 'fas fa-file-alt' : 
-                      'fas fa-door-open'"></i>
+  <!-- Main Content -->
+  <div *ngIf="!isLoading" class="dashboard-content">
+    <!-- Statistics Cards Row 1 -->
+    <div class="stats-grid">
+      <div class="stat-card" [routerLink]="['/doctors']">
+        <div class="stat-icon" style="background-color: #ff6b6b20; color: #ff6b6b;">
+          <i class="fas fa-user-md"></i>
         </div>
-        <div class="activity-content">
-          <div class="activity-action">{{ activity.action }}</div>
-          <div class="activity-patient">{{ activity.patient }}</div>
-          <div class="activity-time">{{ activity.time }}</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(totalDoctors) }}</div>
+          <div class="stat-label">Total Doctors</div>
+        </div>
+      </div>
+
+      <div class="stat-card" [routerLink]="['/nurses']">
+        <div class="stat-icon" style="background-color: #2196f320; color: #2196f3;">
+          <i class="fas fa-user-nurse"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(totalNurses) }}</div>
+          <div class="stat-label">Total Nurses</div>
+        </div>
+      </div>
+
+      <div class="stat-card" [routerLink]="['/admins']">
+        <div class="stat-icon" style="background-color: #ff980020; color: #ff9800;">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(totalAdmins) }}</div>
+          <div class="stat-label">Total Admins</div>
+        </div>
+      </div>
+
+      <div class="stat-card" [routerLink]="['/patients']">
+        <div class="stat-icon" style="background-color: #9c27b020; color: #9c27b0;">
+          <i class="fas fa-user-injured"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(totalPatients) }}</div>
+          <div class="stat-label">Total Patients</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards Row 2 -->
+    <div class="stats-grid">
+      <div class="stat-card" [routerLink]="['/appointments']">
+        <div class="stat-icon" style="background-color: #4caf5020; color: #4caf50;">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(totalAppointments) }}</div>
+          <div class="stat-label">Total Appointments</div>
+        </div>
+      </div>
+
+      <div class="stat-card" [routerLink]="['/feedbacks']">
+        <div class="stat-icon" style="background-color: #ff980020; color: #ff9800;">
+          <i class="fas fa-comments"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(totalFeedbacks) }}</div>
+          <div class="stat-label">Total Feedbacks</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background-color: #ffc10720; color: #ffc107;">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatRate(averageRate) }}</div>
+          <div class="stat-label">Average Rating</div>
+        </div>
+      </div>
+
+      <div class="stat-card" [routerLink]="['/rooms']">
+        <div class="stat-icon" style="background-color: #00bcd420; color: #00bcd4;">
+          <i class="fas fa-door-open"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(rooms.length) }}</div>
+          <div class="stat-label">Total Rooms</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Donut Charts Row -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Doctors Status</h3>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="doctorsDonutChartData"
+            [options]="donutChartOptions"
+            type="doughnut">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Nurses Status</h3>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="nursesDonutChartData"
+            [options]="donutChartOptions"
+            type="doughnut">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Admins Status</h3>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="adminsDonutChartData"
+            [options]="donutChartOptions"
+            type="doughnut">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Patients Status</h3>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="patientsDonutChartData"
+            [options]="donutChartOptions"
+            type="doughnut">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row - Bar, Line, Pie -->
+    <div class="charts-row-large">
+      <div class="chart-card-large">
+        <h3>Appointments by Status</h3>
+        <div class="chart-container-large">
+          <canvas baseChart
+            [data]="appointmentsBarChartData"
+            [options]="barChartOptions"
+            type="bar">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="chart-card-large">
+        <h3>Appointments Over Time (Last 7 Days)</h3>
+        <div class="chart-container-large">
+          <canvas baseChart
+            [data]="appointmentsLineChartData"
+            [options]="lineChartOptions"
+            type="line">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-row-large">
+      <div class="chart-card-large">
+        <h3>Top Doctors by Appointments</h3>
+        <div class="chart-container-large">
+          <canvas baseChart
+            [data]="appointmentsPieChartData"
+            [options]="pieChartOptions"
+            type="pie">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="chart-card-large">
+        <h3>Recent Actions</h3>
+        <div class="recent-actions-list">
+          <div *ngFor="let action of recentActions" class="action-item">
+            <div class="action-icon" [style.background-color]="action.color + '20'" [style.color]="action.color">
+              <i [class]="action.icon"></i>
+            </div>
+            <div class="action-content">
+              <div class="action-title">{{ action.action }}</div>
+              <div class="action-description">{{ action.description }}</div>
+              <div class="action-time">{{ action.time }}</div>
+            </div>
+          </div>
+          <div *ngIf="recentActions.length === 0" class="no-data">
+            No recent actions
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Lists and Recent Data -->
+    <div class="data-grid">
+      <!-- Top Doctors by Appointments -->
+      <div class="data-card">
+        <h3>Top Doctors by Appointments</h3>
+        <div class="top-list">
+          <div *ngFor="let doctor of topDoctorsByAppointments; let i = index" class="top-item" [routerLink]="['/doctors', doctor.id]">
+            <div class="rank-badge">{{ i + 1 }}</div>
+            <div class="item-info">
+              <div class="item-name">{{ doctor.name }}</div>
+              <div class="item-detail">{{ doctor.specialization }}</div>
+            </div>
+            <div class="item-count">{{ doctor.count }} appointments</div>
+          </div>
+          <div *ngIf="topDoctorsByAppointments.length === 0" class="no-data">
+            No data available
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Doctors by Rates -->
+      <div class="data-card">
+        <h3>Top Doctors by Ratings</h3>
+        <div class="top-list">
+          <div *ngFor="let doctor of topDoctorsByRates; let i = index" class="top-item" [routerLink]="['/doctors', doctor.id]">
+            <div class="rank-badge">{{ i + 1 }}</div>
+            <div class="item-info">
+              <div class="item-name">{{ doctor.name }}</div>
+              <div class="item-detail">{{ doctor.specialization }}</div>
+            </div>
+            <div class="item-rating">
+              <i class="fas fa-star"></i> {{ formatRate(doctor.averageRate) }}
+              <span class="rating-count">({{ doctor.feedbackCount }})</span>
+            </div>
+          </div>
+          <div *ngIf="topDoctorsByRates.length === 0" class="no-data">
+            No data available
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Nurses -->
+      <div class="data-card">
+        <h3>Top Nurses</h3>
+        <div class="top-list">
+          <div *ngFor="let nurse of topNurses; let i = index" class="top-item" [routerLink]="['/nurses', nurse.id]">
+            <div class="rank-badge">{{ i + 1 }}</div>
+            <div class="item-info">
+              <div class="item-name">{{ nurse.name }}</div>
+            </div>
+            <div class="item-count">{{ nurse.count }} appointments</div>
+          </div>
+          <div *ngIf="topNurses.length === 0" class="no-data">
+            No data available
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Rooms -->
+      <div class="data-card">
+        <h3>Top Rooms</h3>
+        <div class="top-list">
+          <div *ngFor="let room of topRooms; let i = index" class="top-item" [routerLink]="['/rooms']">
+            <div class="rank-badge">{{ i + 1 }}</div>
+            <div class="item-info">
+              <div class="item-name">{{ room.name }}</div>
+              <div class="item-detail">{{ room.type }}</div>
+            </div>
+            <div class="item-count">{{ room.count }} appointments</div>
+          </div>
+          <div *ngIf="topRooms.length === 0" class="no-data">
+            No data available
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Patients -->
+      <div class="data-card">
+        <h3>Top Patients by Bookings</h3>
+        <div class="top-list">
+          <div *ngFor="let patient of topPatients; let i = index" class="top-item" [routerLink]="['/patients', patient.id]">
+            <div class="rank-badge">{{ i + 1 }}</div>
+            <div class="item-info">
+              <div class="item-name">{{ patient.name }}</div>
+            </div>
+            <div class="item-count">{{ patient.count }} bookings</div>
+          </div>
+          <div *ngIf="topPatients.length === 0" class="no-data">
+            No data available
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Appointments -->
+      <div class="data-card">
+        <h3>Recent Appointments</h3>
+        <div class="recent-list">
+          <div *ngFor="let appointment of recentAppointments" class="recent-item" [routerLink]="['/appointment-details', appointment.appointmentId]">
+            <div class="recent-icon" [style.color]="appointment.statusColor">
+              <i [class]="appointment.statusIcon"></i>
+            </div>
+            <div class="recent-content">
+              <div class="recent-title">{{ appointment.patientName }}</div>
+              <div class="recent-detail">Dr. {{ appointment.doctorName }}</div>
+              <div class="recent-meta">
+                <span>{{ appointment.formattedDate }}</span>
+                <span class="status-badge" [style.background-color]="appointment.statusColor + '20'" [style.color]="appointment.statusColor">
+                  {{ appointment.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="recentAppointments.length === 0" class="no-data">
+            No recent appointments
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Feedbacks -->
+      <div class="data-card">
+        <h3>Recent Feedbacks</h3>
+        <div class="recent-list">
+          <div *ngFor="let feedback of recentFeedbacks" class="recent-item">
+            <div class="recent-icon" style="color: #ff9800;">
+              <i class="fas fa-star"></i>
+            </div>
+            <div class="recent-content">
+              <div class="recent-title">{{ feedback.patientName }}</div>
+              <div class="recent-detail">Dr. {{ feedback.doctorName }}</div>
+              <div class="recent-meta">
+                <span class="rating-stars">
+                  <i *ngFor="let star of [1,2,3,4,5]" 
+                     [class]="star <= feedback.rate ? 'fas fa-star' : 'far fa-star'"
+                     style="color: #ffc107; font-size: 0.8rem;"></i>
+                </span>
+                <span>{{ feedback.formattedFeedbackDate }}</span>
+              </div>
+              <div class="feedback-comment" *ngIf="feedback.comment">
+                "{{ feedback.comment.length > 50 ? (feedback.comment.substring(0, 50) + '...') : feedback.comment }}"
+              </div>
+            </div>
+          </div>
+          <div *ngIf="recentFeedbacks.length === 0" class="no-data">
+            No recent feedbacks
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-
-
-
-
-
-

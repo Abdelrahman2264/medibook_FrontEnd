@@ -1,0 +1,81 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="onClose()">
+  <div class="modal-content" (click)="onModalClick($event)">
+    <div class="modal-header">
+      <h2>Add Feedback</h2>
+      <button class="close-btn" (click)="onClose()" [disabled]="isLoading">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="appointment-summary" *ngIf="appointment">
+        <h4>Appointment Details:</h4>
+        <p><strong>Patient:</strong> {{ appointment.patientName }}</p>
+        <p><strong>Doctor:</strong> {{ appointment.doctorName }}</p>
+        <p><strong>Date:</strong> {{ appointment.formattedDate }} at {{ appointment.formattedTime }}</p>
+      </div>
+      
+      <form (ngSubmit)="onSubmit()" #feedbackFormRef="ngForm">
+        <div class="form-group">
+          <label>Rating <span class="required">*</span></label>
+          <div class="rating-container">
+            <div class="stars">
+              <i 
+                *ngFor="let star of [1,2,3,4,5]" 
+                [class]="star <= feedbackForm.rate ? 'fas fa-star' : 'far fa-star'"
+                [style.color]="star <= feedbackForm.rate ? '#ffc107' : '#ddd'"
+                (click)="setRate(star)"
+                class="star-icon"
+                [class.disabled]="isLoading"
+              ></i>
+            </div>
+            <span class="rating-text">{{ feedbackForm.rate }} out of 5</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Comment <span class="required">*</span></label>
+          <textarea 
+            [(ngModel)]="feedbackForm.comment" 
+            name="comment"
+            class="form-control"
+            placeholder="Please share your experience and feedback..."
+            rows="6"
+            required
+            [disabled]="isLoading"
+            maxlength="500"
+          ></textarea>
+          <div class="char-count">{{ feedbackForm.comment.length }}/500</div>
+        </div>
+        
+        <div class="modal-footer">
+          <button 
+            type="button" 
+            class="btn-cancel" 
+            (click)="onClose()"
+            [disabled]="isLoading"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-save" 
+            [disabled]="isLoading || !feedbackForm.comment.trim()"
+          >
+            <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            <i class="fas fa-check" *ngIf="!isLoading"></i>
+            Submit Feedback
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+

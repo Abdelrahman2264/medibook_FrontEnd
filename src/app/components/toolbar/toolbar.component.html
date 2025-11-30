@@ -1,0 +1,14 @@
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button class="toolbar-btn sidebar-toggle" (click)="toggleSidebar()" title="Toggle Sidebar">
+      <i class="fas" [class]="getSidebarIcon()"></i>
+    </button>
+  </div>
+  
+  <div class="toolbar-right">
+    <button class="toolbar-btn theme-toggle" (click)="toggleTheme()" [title]="currentTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+      <i class="fas" [class]="getThemeIcon()"></i>
+    </button>
+  </div>
+</div>
+

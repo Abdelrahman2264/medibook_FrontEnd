@@ -1,0 +1,116 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="onClose()">
+  <div class="modal-content" (click)="onModalClick($event)">
+    <div class="modal-header">
+      <h2>Appointment Details</h2>
+      <button class="close-btn" (click)="onClose()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" *ngIf="appointment">
+      <!-- Status Badge -->
+      <div class="status-section">
+        <div class="status-badge" [style.background-color]="appointment.statusColor">
+          <i [class]="appointment.statusIcon"></i>
+          {{ appointment.status }}
+        </div>
+      </div>
+
+      <!-- Patient Information -->
+      <div class="detail-section">
+        <h3><i class="fas fa-user-injured"></i> Patient Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Patient Name</label>
+            <p>{{ appointment.patientName }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Patient ID</label>
+            <p>#{{ appointment.patientId }}</p>
+          </div>
+          <div class="detail-item" *ngIf="appointment.patientInfo">
+            <label>Patient Details</label>
+            <p>{{ appointment.patientInfo }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor Information -->
+      <div class="detail-section">
+        <h3><i class="fas fa-user-md"></i> Doctor Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Doctor Name</label>
+            <p>Dr. {{ appointment.doctorName }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Doctor ID</label>
+            <p>#{{ appointment.doctorId }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Specialization</label>
+            <p>{{ appointment.doctorSpecialization }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment Information -->
+      <div class="detail-section">
+        <h3><i class="fas fa-calendar-alt"></i> Appointment Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Appointment ID</label>
+            <p>#{{ appointment.appointmentId }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Date</label>
+            <p><i class="fas fa-calendar-day"></i> {{ appointment.formattedDate }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Time</label>
+            <p><i class="fas fa-clock"></i> {{ appointment.formattedTime }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignment Information -->
+      <div class="detail-section" *ngIf="appointment.nurseId || appointment.roomId">
+        <h3><i class="fas fa-clipboard-list"></i> Assignment Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item" *ngIf="appointment.nurseId">
+            <label>Assigned Nurse</label>
+            <p><i class="fas fa-user-nurse"></i> {{ appointment.nurseName }}</p>
+          </div>
+          <div class="detail-item" *ngIf="appointment.roomId">
+            <label>Assigned Room</label>
+            <p><i class="fas fa-door-open"></i> {{ appointment.roomName }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medical Information -->
+      <div class="detail-section" *ngIf="appointment.medicine || appointment.notes">
+        <h3><i class="fas fa-file-medical"></i> Medical Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item full-width" *ngIf="appointment.medicine">
+            <label>Medicine Prescribed</label>
+            <p><i class="fas fa-pills"></i> {{ appointment.medicine }}</p>
+          </div>
+          <div class="detail-item full-width" *ngIf="appointment.notes">
+            <label>Treatment Notes</label>
+            <p><i class="fas fa-sticky-note"></i> {{ appointment.notes }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State for Medical Info -->
+      <div class="detail-section" *ngIf="!appointment.medicine && !appointment.notes">
+        <h3><i class="fas fa-file-medical"></i> Medical Information</h3>
+        <p class="no-data">No medical information available yet.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

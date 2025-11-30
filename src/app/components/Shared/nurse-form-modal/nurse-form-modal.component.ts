@@ -304,19 +304,36 @@ export class NurseFormModalComponent implements OnInit, OnDestroy, OnChanges {
       this.save.emit(updateData);
     } else {
       // Prepare CreateNurseDto for new nurse
+      // Ensure dateOfBirth is properly formatted
+      let dateOfBirth: string;
+      if (this.nurseForm.dateOfBirth) {
+        try {
+          const date = new Date(this.nurseForm.dateOfBirth);
+          if (isNaN(date.getTime())) {
+            console.warn('Invalid date provided, using current date');
+            dateOfBirth = new Date().toISOString();
+          } else {
+            dateOfBirth = date.toISOString();
+          }
+        } catch (e) {
+          console.warn('Error parsing date, using current date:', e);
+          dateOfBirth = new Date().toISOString();
+        }
+      } else {
+        dateOfBirth = new Date().toISOString();
+      }
+
       const formData: CreateNurseDto = {
         firstName: this.nurseForm.firstName.trim(),
         lastName: this.nurseForm.lastName.trim(),
         email: this.nurseForm.email.trim(),
-        mobilePhone: this.nurseForm.mobilePhone.trim(),
+        mobilePhone: this.nurseForm.mobilePhone?.trim() || '',
         password: this.nurseForm.password,
-        gender: this.nurseForm.gender,
-        mitrialStatus: this.nurseForm.mitrialStatus,
-        profileImage: this.nurseForm.profileImage,
-        dateOfBirth: this.nurseForm.dateOfBirth 
-          ? new Date(this.nurseForm.dateOfBirth).toISOString() 
-          : new Date().toISOString(),
-        bio: this.nurseForm.bio.trim()
+        gender: this.nurseForm.gender || 'Male',
+        mitrialStatus: this.nurseForm.mitrialStatus || 'Single',
+        profileImage: this.nurseForm.profileImage || null,
+        dateOfBirth: dateOfBirth,
+        bio: this.nurseForm.bio?.trim() || ''
       };
 
       console.log('Form submitted (CREATE):', {

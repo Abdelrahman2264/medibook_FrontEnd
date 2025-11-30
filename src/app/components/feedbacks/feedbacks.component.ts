@@ -1,25 +1,207 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { FeedbacksService } from '../../services/feedbacks.service';
+import { Feedback, UpdateFeedbackDto, DoctorReplyDto } from '../../models/feedback.model';
+import { FeedbackEditModalComponent } from '../Shared/feedback-edit-modal/feedback-edit-modal.component';
+import { DoctorReplyModalComponent } from '../Shared/doctor-reply-modal/doctor-reply-modal.component';
+import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-feedbacks',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, FeedbackEditModalComponent, DoctorReplyModalComponent, ConfirmationModalComponent],
   templateUrl: './feedbacks.component.html',
   styleUrls: ['./feedbacks.component.css']
 })
-export class FeedbacksComponent {
-  feedbacks = [
-    { id: 1, patient: 'Ahmed Mohamed', rating: 5, comment: 'Excellent service and care!', date: '2024-01-15' },
-    { id: 2, patient: 'Sara Ali', rating: 4, comment: 'Very professional staff.', date: '2024-01-14' },
-    { id: 3, patient: 'Nour Hassan', rating: 5, comment: 'Great experience overall.', date: '2024-01-13' },
-    { id: 4, patient: 'Karim Samy', rating: 3, comment: 'Good but could be improved.', date: '2024-01-12' }
-  ];
+export class FeedbacksComponent implements OnInit {
+  feedbacks: Feedback[] = [];
+  isLoading: boolean = false;
+  errorMessage: string = '';
+  
+  // Modal states
+  showEditModal: boolean = false;
+  showReplyModal: boolean = false;
+  showConfirmationModal: boolean = false;
+  selectedFeedback: Feedback | null = null;
+  confirmationConfig: any = {};
+  pendingAction: () => void = () => {};
+
+  constructor(
+    private feedbacksService: FeedbacksService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    console.log('🔄 FeedbacksComponent initialized');
+    this.loadFeedbacks();
+  }
+
+  forceUpdate() {
+    console.log('🔄 Force updating component...');
+    this.cdr.detectChanges();
+    console.log('✅ Force update completed');
+  }
+
+  loadFeedbacks() {
+    console.log('🔄 Loading feedbacks...');
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.forceUpdate();
+
+    this.feedbacksService.getAllFeedbacks().subscribe({
+      next: (data: Feedback[]) => {
+        console.log('✅ Feedbacks loaded:', data.length);
+        this.feedbacks = data;
+        this.isLoading = false;
+        this.forceUpdate();
+      },
+      error: (error: any) => {
+        console.error('❌ Error loading feedbacks:', error);
+        this.errorMessage = 'Failed to load feedbacks. Please try again.';
+        this.isLoading = false;
+        this.forceUpdate();
+      }
+    });
+  }
+
+  openEditModal(feedback: Feedback) {
+    console.log('📝 Opening edit modal for feedback:', feedback.feedbackId);
+    this.selectedFeedback = feedback;
+    this.showEditModal = true;
+    
+    setTimeout(() => {
+      this.forceUpdate();
+    }, 100);
+  }
+
+  openReplyModal(feedback: Feedback) {
+    console.log('💬 Opening reply modal for feedback:', feedback.feedbackId);
+    this.selectedFeedback = feedback;
+    this.showReplyModal = true;
+    
+    setTimeout(() => {
+      this.forceUpdate();
+    }, 100);
+  }
+
+  closeModals() {
+    console.log('❌ Closing modals');
+    this.showEditModal = false;
+    this.showReplyModal = false;
+    this.showConfirmationModal = false;
+    this.selectedFeedback = null;
+    this.forceUpdate();
+  }
+
+  onUpdateFeedback(updateData: UpdateFeedbackDto) {
+    console.log('🔄 Updating feedback:', updateData);
+    this.isLoading = true;
+    this.forceUpdate();
+
+    this.feedbacksService.updateFeedback(updateData).subscribe({
+      next: (response: any) => {
+        console.log('✅ Feedback updated successfully');
+        this.loadFeedbacks();
+        this.closeModals();
+      },
+      error: (error: any) => {
+        console.error('❌ Error updating feedback:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to update feedback. Please try again.');
+      }
+    });
+  }
+
+  onAddDoctorReply(replyData: DoctorReplyDto) {
+    console.log('🔄 Adding doctor reply:', replyData);
+    this.isLoading = true;
+    this.forceUpdate();
+
+    this.feedbacksService.addDoctorReply(replyData).subscribe({
+      next: (response: any) => {
+        console.log('✅ Doctor reply added successfully');
+        this.loadFeedbacks();
+        this.closeModals();
+      },
+      error: (error: any) => {
+        console.error('❌ Error adding doctor reply:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to add doctor reply. Please try again.');
+      }
+    });
+  }
+
+  onToggleFavourite(feedback: Feedback) {
+    console.log('⭐ Toggling favourite for feedback:', feedback.feedbackId);
+    this.isLoading = true;
+    this.forceUpdate();
+
+    this.feedbacksService.toggleFavourite(feedback.feedbackId).subscribe({
+      next: (response: any) => {
+        console.log('✅ Favourite toggled successfully');
+        this.loadFeedbacks();
+      },
+      error: (error: any) => {
+        console.error('❌ Error toggling favourite:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to toggle favourite. Please try again.');
+      }
+    });
+  }
+
+  confirmDelete(feedback: Feedback) {
+    this.confirmationConfig = {
+      title: 'Delete Feedback',
+      message: `Are you sure you want to delete the feedback from <strong>${feedback.patientName}</strong>? This action cannot be undone.`,
+      icon: 'fas fa-trash-alt',
+      iconColor: '#dc3545',
+      confirmText: 'Delete Feedback',
+      cancelText: 'Cancel',
+      confirmButtonClass: 'btn-danger'
+    };
+
+    this.pendingAction = () => this.deleteFeedback(feedback);
+    this.showConfirmationModal = true;
+    this.forceUpdate();
+  }
+
+  deleteFeedback(feedback: Feedback) {
+    console.log('🔄 Deleting feedback:', feedback.feedbackId);
+    this.isLoading = true;
+    this.forceUpdate();
+
+    this.feedbacksService.deleteFeedback(feedback.feedbackId).subscribe({
+      next: (response: any) => {
+        console.log('✅ Feedback deleted successfully');
+        this.loadFeedbacks();
+        this.closeModals();
+      },
+      error: (error: any) => {
+        console.error('❌ Error deleting feedback:', error);
+        this.isLoading = false;
+        this.forceUpdate();
+        alert('Failed to delete feedback. Please try again.');
+      }
+    });
+  }
+
+  onConfirmAction() {
+    console.log('✅ Confirmation confirmed');
+    this.showConfirmationModal = false;
+    if (this.pendingAction) {
+      this.pendingAction();
+    }
+    this.forceUpdate();
+  }
+
+  onCancelAction() {
+    console.log('❌ Confirmation cancelled');
+    this.showConfirmationModal = false;
+    this.pendingAction = () => {};
+    this.forceUpdate();
+  }
 }
-
-
-
-
-
-
-

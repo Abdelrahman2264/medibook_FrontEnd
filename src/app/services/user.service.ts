@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, tap, map } from 'rxjs';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -33,14 +33,36 @@ export class UserService {
 
   /**
    * Get current user from API
-   * Update this endpoint based on your actual API
+   * Uses endpoint: /api/Users/current
    */
   getCurrentUser(): Observable<any> {
-    return this.http.get<any>(`${this.API_BASE_URL}/User/current`)
+    return this.http.get<any>(`${this.baseUrl}/Users/current`)
       .pipe(
-        // Update local storage when user is fetched
-        // You may need to adjust this based on your API response
+        tap(user => {
+          // Update local storage and auth service when user is fetched
+          if (user) {
+            this.authService.setCurrentUser(user);
+            this.currentUserSubject.next(user);
+          }
+        })
       );
+  }
+
+  /**
+   * Get current user role from API
+   * Uses endpoint: /api/Users/currentrole
+   * Note: This endpoint returns plain text, not JSON
+   */
+  getCurrentRole(): Observable<string> {
+    return this.http.get(`${this.baseUrl}/Users/currentrole`, { responseType: 'text' }).pipe(
+      map(response => {
+        // Response is already a string (plain text)
+        if (typeof response === 'string') {
+          return response.trim();
+        }
+        return '';
+      })
+    );
   }
 
   /**

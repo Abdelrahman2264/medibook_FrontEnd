@@ -174,9 +174,9 @@
               <i class="fas fa-user-nurse"></i> Assign
             </button>
 
-            <!-- Close Button (for assigned or in progress appointments) -->
+            <!-- Close Button (for in progress or assigned appointments with nurse and room) -->
             <button 
-              *ngIf="['Assigned', 'In Progress'].includes(appointment.status)"
+              *ngIf="(appointment.status === 'In Progress' || appointment.status === 'Assigned') && appointment.nurseId && appointment.roomId"
               class="close-btn" 
               (click)="confirmClose(appointment)">
               <i class="fas fa-check-circle"></i> Close
@@ -188,6 +188,14 @@
               class="cancel-btn" 
               (click)="confirmCancel(appointment)">
               <i class="fas fa-times-circle"></i> Cancel
+            </button>
+
+            <!-- Add Feedback Button (for completed appointments without existing feedback) -->
+            <button 
+              *ngIf="appointment.status === 'Completed' && !hasFeedback(appointment.appointmentId)"
+              class="feedback-btn" 
+              (click)="openFeedbackModal(appointment)">
+              <i class="fas fa-comment-dots"></i> Add Feedback
             </button>
 
             <!-- View Details Button -->
@@ -318,4 +326,14 @@
     (confirm)="onConfirmAction()"
     (cancel)="onCancelAction()">
   </app-confirmation-modal>
+
+  <!-- Feedback Form Modal -->
+  <app-feedback-form-modal
+    [isVisible]="showFeedbackModal"
+    [appointment]="selectedAppointment"
+    [isLoading]="isLoading"
+    (close)="closeModals()"
+    (save)="onCreateFeedback($event)">
+  </app-feedback-form-modal>
+
 </div>

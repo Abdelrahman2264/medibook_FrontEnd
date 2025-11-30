@@ -1,0 +1,57 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="onClose()">
+  <div class="modal-content" (click)="onModalClick($event)">
+    <div class="modal-header">
+      <h2>Edit Feedback</h2>
+      <button class="close-btn" (click)="onClose()" [disabled]="isLoading">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
+      
+      <form (ngSubmit)="onSubmit()" #feedbackFormRef="ngForm">
+        <div class="form-group">
+          <label>Comment <span class="required">*</span></label>
+          <textarea 
+            [(ngModel)]="feedbackForm.comment" 
+            name="comment"
+            class="form-control"
+            placeholder="Please share your experience and feedback..."
+            rows="6"
+            required
+            [disabled]="isLoading"
+            maxlength="500"
+          ></textarea>
+          <div class="char-count">{{ feedbackForm.comment.length }}/500</div>
+        </div>
+        
+        <div class="modal-footer">
+          <button 
+            type="button" 
+            class="btn-cancel" 
+            (click)="onClose()"
+            [disabled]="isLoading"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-save" 
+            [disabled]="isLoading || !feedbackForm.comment.trim()"
+          >
+            <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            <i class="fas fa-save" *ngIf="!isLoading"></i>
+            Update Feedback
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+

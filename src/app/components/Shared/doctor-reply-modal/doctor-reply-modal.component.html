@@ -1,0 +1,71 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="onClose()">
+  <div class="modal-content" (click)="onModalClick($event)">
+    <div class="modal-header">
+      <h2>Doctor Reply</h2>
+      <button class="close-btn" (click)="onClose()" [disabled]="isLoading">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="feedback-summary" *ngIf="selectedFeedback">
+        <h4>Patient Feedback:</h4>
+        <div class="feedback-rating">
+          <i *ngFor="let star of [1,2,3,4,5]" 
+             [class]="star <= selectedFeedback.rate ? 'fas fa-star' : 'far fa-star'"
+             [style.color]="star <= selectedFeedback.rate ? '#ffc107' : '#ddd'"></i>
+        </div>
+        <p class="feedback-comment">{{ selectedFeedback.comment }}</p>
+        <p class="feedback-meta">
+          <strong>Patient:</strong> {{ selectedFeedback.patientName }} | 
+          <strong>Date:</strong> {{ selectedFeedback.formattedFeedbackDate }}
+        </p>
+      </div>
+      
+      <form (ngSubmit)="onSubmit()" #replyFormRef="ngForm">
+        <div class="form-group">
+          <label>Your Reply <span class="required">*</span></label>
+          <textarea 
+            [(ngModel)]="replyForm.doctorReply" 
+            name="doctorReply"
+            class="form-control"
+            placeholder="Enter your reply to the patient's feedback..."
+            rows="6"
+            required
+            [disabled]="isLoading"
+            maxlength="500"
+          ></textarea>
+          <div class="char-count">{{ replyForm.doctorReply.length }}/500</div>
+        </div>
+        
+        <div class="modal-footer">
+          <button 
+            type="button" 
+            class="btn-cancel" 
+            (click)="onClose()"
+            [disabled]="isLoading"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-save" 
+            [disabled]="isLoading || !replyForm.doctorReply.trim()"
+          >
+            <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            <i class="fas fa-reply" *ngIf="!isLoading"></i>
+            Submit Reply
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+

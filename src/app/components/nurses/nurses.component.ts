@@ -208,7 +208,7 @@ export class Nurses implements OnInit {
       // Create nurse - nurseData is CreateNurseDto
       this.nursesService.createNurse(nurseData as CreateNurseDto).subscribe({
         next: (response: any) => {
-          console.log('✅ Nurse created successfully');
+          console.log('✅ Nurse created successfully:', response);
           this.loadNurses(); // This will refresh the list and force update
           this.closeModal();
         },
@@ -216,7 +216,26 @@ export class Nurses implements OnInit {
           console.error('❌ Error creating nurse:', error);
           this.isLoading = false;
           this.forceUpdate();
-          alert('Failed to create nurse. Please try again.');
+          
+          // Extract error message
+          let errorMessage = 'Failed to create nurse. ';
+          if (error.error) {
+            if (typeof error.error === 'string') {
+              errorMessage += error.error;
+            } else if (error.error.message) {
+              errorMessage += error.error.message;
+            } else if (error.error.errors) {
+              // Handle validation errors
+              const validationErrors = Object.values(error.error.errors).flat();
+              errorMessage += validationErrors.join(', ');
+            }
+          } else if (error.message) {
+            errorMessage += error.message;
+          } else {
+            errorMessage += 'Please check the console for details.';
+          }
+          
+          alert(errorMessage);
         }
       });
     }
