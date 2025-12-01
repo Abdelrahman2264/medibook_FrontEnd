@@ -1,0 +1,23 @@
+<div 
+  *ngIf="isVisible" 
+  class="notification-card"
+  [class.show]="isVisible"
+  [attr.data-notification-id]="notification.notificationId"
+>
+  <div class="notification-content">
+    <div class="notification-icon">
+      {{ getNotificationIcon() }}
+    </div>
+    <div class="notification-body">
+      <div class="notification-message">{{ notification.message }}</div>
+      <div class="notification-meta">
+        <span class="notification-sender">{{ notification.senderName }}</span>
+        <span class="notification-time">{{ formatDate(notification.createDate) }}</span>
+      </div>
+    </div>
+    <button class="notification-close" (click)="close()" aria-label="Close notification">
+      ×
+    </button>
+  </div>
+</div>
+

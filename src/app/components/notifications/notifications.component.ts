@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule} from '@angular/common';
 import { NotificationsService } from '../../services/notifications.service';
-import { Notification } from '../../models/notification.model';
+import { SignalRService } from '../../services/signalr.service';
+import { Notification, NotificationDetailsDto } from '../../models/notification.model';
 import { interval, Subscription } from 'rxjs';
+import { mapNotificationDetailsDtoToNotification } from '../../models/notification.model';
 
 @Component({
   selector: 'app-notifications',
@@ -19,10 +21,12 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   errorMessage: string = '';
   
   private refreshSubscription?: Subscription;
+  private signalRSubscription?: Subscription;
   private readonly REFRESH_INTERVAL = 30000; // Refresh every 30 seconds
 
   constructor(
     private notificationsService: NotificationsService,
+    private signalRService: SignalRService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -30,7 +34,29 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.loadNotifications();
     this.loadUnreadCount();
     
-    // Set up auto-refresh
+    // Subscribe to real-time notifications from SignalR
+    this.signalRSubscription = this.signalRService.notification$.subscribe(notification => {
+      console.log('🔔 NotificationsComponent: Real-time notification received', notification);
+      
+      // Convert NotificationDetailsDto to Notification
+      const notificationModel = mapNotificationDetailsDtoToNotification(notification);
+      
+      // Add to the beginning of the list if not already present
+      const existingIndex = this.notifications.findIndex(n => n.notificationId === notificationModel.notificationId);
+      if (existingIndex === -1) {
+        this.notifications.unshift(notificationModel);
+        if (!notificationModel.isRead) {
+          this.unreadCount++;
+          console.log('📊 Unread count updated:', this.unreadCount);
+        }
+        this.cdr.detectChanges();
+        console.log('✅ Notification added to list. Total:', this.notifications.length);
+      } else {
+        console.log('⚠️ Notification already exists, skipping');
+      }
+    });
+    
+    // Set up auto-refresh (less frequent now that we have real-time updates)
     this.refreshSubscription = interval(this.REFRESH_INTERVAL).subscribe(() => {
       this.loadUnreadCount();
       if (this.isOpen) {
@@ -42,6 +68,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
+    }
+    if (this.signalRSubscription) {
+      this.signalRSubscription.unsubscribe();
     }
   }
 

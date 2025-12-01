@@ -1,32 +1,232 @@
 <div class="reports-container">
   <div class="reports-header">
-    <h1>Reports</h1>
-    <p>View and manage all system reports</p>
+    <h1>Reports Management</h1>
+    <p>Generate, view, and manage system reports</p>
   </div>
 
-  <div class="reports-list">
-    <div *ngFor="let report of reports" class="report-card">
-      <div class="report-icon">
-        <i class="fas fa-file-alt"></i>
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    <i class="fas fa-exclamation-circle"></i>
+    {{ error }}
+    <button class="close-btn" (click)="error = null">&times;</button>
+  </div>
+
+  <!-- Loading Indicator for Report Generation -->
+  <div *ngIf="generatingReport" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Generating report...</p>
+  </div>
+
+  <!-- Report Generation Section -->
+  <div class="report-generation-section">
+    <h2>Generate Reports</h2>
+    
+    <!-- Entity Reports -->
+    <div class="report-category">
+      <h3>Entity Reports</h3>
+      <div class="button-grid">
+        <!-- Nurses Reports -->
+        <div class="report-button-group">
+          <h4>Nurses</h4>
+          <button class="btn btn-excel" (click)="generateReport('Nurses', 'XLSX')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Nurses', 'CSV')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Nurses', 'PDF')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+
+        <!-- Doctors Reports -->
+        <div class="report-button-group">
+          <h4>Doctors</h4>
+          <button class="btn btn-excel" (click)="generateReport('Doctors', 'XLSX')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Doctors', 'CSV')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Doctors', 'PDF')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+
+        <!-- Users Reports -->
+        <div class="report-button-group">
+          <h4>Users</h4>
+          <button class="btn btn-excel" (click)="generateReport('Users', 'XLSX')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Users', 'CSV')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Users', 'PDF')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+
+        <!-- Patients Reports -->
+        <div class="report-button-group">
+          <h4>Patients</h4>
+          <button class="btn btn-excel" (click)="generateReport('Patients', 'XLSX')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Patients', 'CSV')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Patients', 'PDF')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+
+        <!-- Appointments Reports -->
+        <div class="report-button-group">
+          <h4>Appointments</h4>
+          <button class="btn btn-excel" (click)="generateReport('Appointments', 'XLSX')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Appointments', 'CSV')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Appointments', 'PDF')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+
+        <!-- Feedbacks Reports -->
+        <div class="report-button-group">
+          <h4>Feedbacks</h4>
+          <button class="btn btn-excel" (click)="generateReport('Feedbacks', 'XLSX')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Feedbacks', 'CSV')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Feedbacks', 'PDF')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
       </div>
-      <div class="report-content">
-        <h3>{{ report.title }}</h3>
-        <p class="report-type">{{ report.type }} Report</p>
-        <p class="report-date">{{ report.date }}</p>
+    </div>
+
+    <!-- Summary Reports -->
+    <div class="report-category">
+      <h3>Summary Reports</h3>
+      <div class="button-grid">
+        <!-- Day Summary -->
+        <div class="report-button-group">
+          <h4>Today</h4>
+          <button class="btn btn-excel" (click)="generateReport('Summary', 'XLSX', 'Day')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Summary', 'CSV', 'Day')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Summary', 'PDF', 'Day')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+
+        <!-- Week Summary -->
+        <div class="report-button-group">
+          <h4>This Week</h4>
+          <button class="btn btn-excel" (click)="generateReport('Summary', 'XLSX', 'Week')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Summary', 'CSV', 'Week')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Summary', 'PDF', 'Week')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+
+        <!-- Month Summary -->
+        <div class="report-button-group">
+          <h4>This Month</h4>
+          <button class="btn btn-excel" (click)="generateReport('Summary', 'XLSX', 'Month')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Summary', 'CSV', 'Month')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Summary', 'PDF', 'Month')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+
+        <!-- Year Summary -->
+        <div class="report-button-group">
+          <h4>This Year</h4>
+          <button class="btn btn-excel" (click)="generateReport('Summary', 'XLSX', 'Year')" [disabled]="generatingReport">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-csv" (click)="generateReport('Summary', 'CSV', 'Year')" [disabled]="generatingReport">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn btn-pdf" (click)="generateReport('Summary', 'PDF', 'Year')" [disabled]="generatingReport">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
       </div>
-      <div class="report-status" [class]="'status-' + report.status.toLowerCase().replace(' ', '-')">
-        {{ report.status }}
+    </div>
+  </div>
+
+  <!-- Saved Reports List -->
+  <div class="saved-reports-section">
+    <div class="section-header">
+      <h2>Saved Reports</h2>
+      <button class="btn btn-refresh" (click)="loadReports()" [disabled]="loadingList">
+        <i class="fas fa-sync-alt" [class.fa-spin]="loadingList"></i> 
+        <span *ngIf="!loadingList">Refresh</span>
+        <span *ngIf="loadingList">Loading...</span>
+      </button>
+    </div>
+
+    <!-- Loading State for List -->
+    <div *ngIf="loadingList && reports.length === 0" class="loading-state">
+      <div class="spinner-small"></div>
+      <p>Loading reports...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="reports.length === 0 && !loadingList" class="empty-state">
+      <i class="fas fa-file-alt"></i>
+      <h3>No Reports Yet</h3>
+      <p>You haven't generated any reports yet. Use the buttons above to generate your first report!</p>
+      <p class="empty-hint">Reports will be automatically saved and appear here after generation.</p>
+    </div>
+
+    <!-- Reports List -->
+    <div class="reports-list" *ngIf="reports.length > 0">
+      <div *ngFor="let report of reports" class="report-card">
+        <div class="report-icon" [ngClass]="getFileColor(report.fileFormat)">
+          <i class="fas" [ngClass]="getFileIcon(report.fileFormat)"></i>
+        </div>
+        <div class="report-content">
+          <h3>{{ report.fileName }}</h3>
+          <p class="report-type">{{ report.reportType }} Report</p>
+          <p class="report-date">
+            <i class="fas fa-calendar"></i> {{ formatDate(report.reportDate) }}
+          </p>
+          <p class="report-description" *ngIf="report.description">
+            {{ report.description }}
+          </p>
+          <p class="report-period" *ngIf="report.periodType">
+            <i class="fas fa-clock"></i> Period: {{ report.periodType }}
+          </p>
+        </div>
+        <div class="report-actions">
+          <button class="btn btn-download" (click)="downloadReport(report)" title="Download">
+            <i class="fas fa-download"></i>
+          </button>
+          <button class="btn btn-delete" (click)="deleteReport(report.reportId)" title="Delete">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-

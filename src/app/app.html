@@ -12,6 +12,16 @@
   <!-- Notifications Component (for authorized routes) -->
   <app-notifications *ngIf="showSidebar"></app-notifications>
 
+  <!-- Real-time Notification Cards -->
+  <div class="notification-container" *ngIf="isAuthenticated">
+    <app-notification-card
+      *ngFor="let notification of realTimeNotifications"
+      [notification]="notification"
+      [autoClose]="true"
+      [duration]="5000">
+    </app-notification-card>
+  </div>
+
   <!-- Main Content -->
   <div [class.content-with-sidebar]="showSidebar" 
        [class.content-with-header]="showHeader" 

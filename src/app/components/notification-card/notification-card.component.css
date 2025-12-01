@@ -1,0 +1,109 @@
+.notification-card {
+  position: relative;
+  min-width: 320px;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 10000 !important;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  margin-bottom: 12px;
+  border-left: 4px solid #4CAF50;
+  pointer-events: auto;
+  display: block !important;
+  visibility: visible !important;
+  width: 100%;
+}
+
+.notification-card.show {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.notification-content {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 12px;
+}
+
+.notification-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f7ff;
+  border-radius: 50%;
+}
+
+.notification-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-message {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  word-wrap: break-word;
+}
+
+.notification-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.notification-sender {
+  font-weight: 500;
+  color: #4CAF50;
+}
+
+.notification-time {
+  color: #999;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.notification-close:hover {
+  color: #333;
+}
+
+/* Notifications will stack naturally in the flex container */
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .notification-card {
+    right: 10px;
+    left: 10px;
+    min-width: auto;
+    max-width: none;
+  }
+}
+
