@@ -7,8 +7,8 @@ import { DoctorsService } from '../../services/doctors.service';
 import { NursesService } from '../../services/nurses.service';
 import { RoomsService } from '../../services/rooms.service';
 import { FeedbacksService } from '../../services/feedbacks.service';
-// استيراد النماذج (Models) المطلوبة
-import { Appointment, CancelAppointmentDto, CloseAppointmentDto } from '../../models/appointment.model';
+import { RoleService } from '../../services/role.service';
+import { Appointment, CreateAppointmentDto, CancelAppointmentDto, AssignAppointmentDto, CloseAppointmentDto } from '../../models/appointment.model';
 import { Doctor } from '../../models/doctor.model';
 import { CreateFeedbackDto, Feedback } from '../../models/feedback.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
@@ -56,18 +56,86 @@ export class AppointmentsComponent implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  currentRole: string | null = null;
+  currentUserId: number | null = null;
+  currentDoctorId: number | null = null;
+  currentNurseId: number | null = null;
+  isUser: boolean = false;
+  isDoctor: boolean = false;
+  isNurse: boolean = false;
+
   constructor(
     private appointmentsService: AppointmentsService,
     private doctorsService: DoctorsService,
     private nursesService: NursesService,
     private roomsService: RoomsService,
     private feedbacksService: FeedbacksService,
+    private roleService: RoleService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     console.log('🔄 AppointmentsComponent initialized');
+    
+    // Get current role and user ID
+    this.currentRole = this.roleService.getCurrentRole();
+    this.currentUserId = this.roleService.getCurrentUserId();
+    this.currentDoctorId = this.roleService.getCurrentDoctorId();
+    this.currentNurseId = this.roleService.getCurrentNurseId();
+    this.isUser = this.roleService.isUser();
+    this.isDoctor = this.roleService.isDoctor();
+    this.isNurse = this.roleService.isNurse();
+    
+    // Subscribe to role changes
+    this.roleService.getCurrentRole$().subscribe(role => {
+      this.currentRole = role;
+      this.isUser = this.roleService.isUser();
+      this.isDoctor = this.roleService.isDoctor();
+      this.isNurse = this.roleService.isNurse();
+    });
+    
+    this.roleService.getCurrentUserId$().subscribe(userId => {
+      this.currentUserId = userId;
+      // If doctor, load doctor ID
+      if (this.isDoctor && userId) {
+        this.doctorsService.getDoctorByUserId(userId).subscribe({
+          next: (doctor) => {
+            if (doctor && doctor.doctorId) {
+              this.currentDoctorId = doctor.doctorId;
+              this.loadAppointments(); // Reload appointments with doctor ID
+            }
+          },
+          error: (error) => {
+            console.error('Error loading doctor ID:', error);
+          }
+        });
+      }
+      // If nurse, load nurse ID
+      if (this.isNurse && userId) {
+        this.nursesService.getNurseByUserId(userId).subscribe({
+          next: (nurse) => {
+            if (nurse && nurse.nurseId) {
+              this.currentNurseId = nurse.nurseId;
+              this.loadAppointments(); // Reload appointments with nurse ID
+            }
+          },
+          error: (error) => {
+            console.error('Error loading nurse ID:', error);
+          }
+        });
+      }
+    });
+    
+    this.roleService.getCurrentDoctorId$().subscribe(doctorId => {
+      this.currentDoctorId = doctorId;
+    });
+    
+    this.roleService.getCurrentNurseId$().subscribe(nurseId => {
+      this.currentNurseId = nurseId;
+    });
+    
     this.loadAppointments();
     this.loadDoctors();
     this.loadFeedbacks();
@@ -87,7 +155,18 @@ export class AppointmentsComponent implements OnInit {
     
     this.forceUpdate();
 
-    this.appointmentsService.getAllAppointments().subscribe({
+    // If user role, load only their appointments
+    // If doctor role, load only their appointments
+    // If nurse role, load only their appointments (where they're involved)
+    const request = (this.isUser && this.currentUserId) 
+      ? this.appointmentsService.getAppointmentsByPatientId(this.currentUserId)
+      : (this.isDoctor && this.currentDoctorId)
+      ? this.appointmentsService.getAppointmentsByDoctorId(this.currentDoctorId)
+      : (this.isNurse && this.currentNurseId)
+      ? this.appointmentsService.getAppointmentsByNurseId(this.currentNurseId)
+      : this.appointmentsService.getAllAppointments();
+
+    request.subscribe({
       next: (data: Appointment[]) => {
         console.log('✅ Appointments loaded:', data.length);
         // تعيين isExpanded: false لكل موعد عند التحميل
@@ -122,7 +201,13 @@ export class AppointmentsComponent implements OnInit {
 
   loadFeedbacks() {
     console.log('🔄 Loading feedbacks to check existing feedbacks...');
-    this.feedbacksService.getAllFeedbacks().subscribe({
+    
+    // If user role, load only their feedbacks
+    const request = (this.isUser && this.currentUserId)
+      ? this.feedbacksService.getFeedbacksByPatient(this.currentUserId)
+      : this.feedbacksService.getAllFeedbacks();
+    
+    request.subscribe({
       next: (feedbacks: Feedback[]) => {
         console.log('✅ Feedbacks loaded:', feedbacks.length);
         // Create a set of appointment IDs that have feedback

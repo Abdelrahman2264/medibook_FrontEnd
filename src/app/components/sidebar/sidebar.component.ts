@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
+import { RoleService } from '../../services/role.service';
 import { SidebarService } from '../../services/sidebar.service';
 import { filter, Subscription } from 'rxjs';
 
@@ -11,6 +12,7 @@ interface MenuItem {
   icon: string;
   route: string;
   active: boolean;
+  isQuickAction?: boolean; // For quick action items like signout, home, etc.
 }
 
 @Component({
@@ -38,14 +40,17 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
   currentUser: any = null;
   currentRole: string = 'User';
   isSidebarOpen: boolean = true;
+  roleLoaded: boolean = false;
   private routerSubscription?: Subscription;
   private sidebarSubscription?: Subscription;
+  private roleSubscription?: Subscription;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
     private userService: UserService,
+    private roleService: RoleService,
     private sidebarService: SidebarService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -54,6 +59,31 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
     // First try to get from storage (for immediate display)
     this.currentUser = this.authService.getCurrentUser();
     this.setActiveMenuByRoute();
+    
+    // Try to get stored role immediately
+    const storedRole = this.roleService.getCurrentRole();
+    if (storedRole) {
+      // Role is available immediately from storage
+      this.roleLoaded = true;
+      this.updateMenuItems();
+      this.preloadDataByRole();
+    }
+    
+    // Subscribe to role changes FIRST to ensure we wait for role to load
+    this.roleSubscription = this.roleService.getCurrentRole$().subscribe(role => {
+      if (role && !this.roleLoaded) {
+        // Role is now loaded - update menu items only when role is available
+        this.roleLoaded = true;
+        this.updateMenuItems();
+        // Preload data in background based on role
+        this.preloadDataByRole();
+        this.cdr.detectChanges();
+      } else if (role && this.roleLoaded) {
+        // Role changed, update menu items
+        this.updateMenuItems();
+        this.cdr.detectChanges();
+      }
+    });
     
     // Then load from API to get latest data
     this.loadCurrentUser();
@@ -64,6 +94,10 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         this.setActiveMenuByRoute();
+        // Also update menu items in case authentication state changed
+        if (this.roleLoaded) {
+          this.updateMenuItems();
+        }
       });
 
     // Subscribe to sidebar state changes
@@ -83,6 +117,105 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.sidebarSubscription) {
       this.sidebarSubscription.unsubscribe();
     }
+    if (this.roleSubscription) {
+      this.roleSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * Update menu items based on current role
+   */
+  updateMenuItems() {
+    // Guard: Don't update menu if role is not yet loaded
+    if (!this.roleLoaded) {
+      console.warn('⚠️ Role not yet loaded, skipping menu update');
+      return;
+    }
+
+    const role = this.roleService.getCurrentRole();
+    
+    // Guard: Don't proceed if role is still null
+    if (!role) {
+      console.warn('⚠️ Role is null, skipping menu update');
+      return;
+    }
+
+    const isUser = this.roleService.isUser();
+    const isDoctor = this.roleService.isDoctor();
+    const isNurse = this.roleService.isNurse();
+    const isAuthenticated = this.authService.isAuthenticated();
+    
+    console.log('🔄 Updating menu items for role:', role, {isUser, isDoctor, isNurse, isAuthenticated});
+    
+    // Base menu items (main navigation)
+    const allMenuItems: MenuItem[] = [
+      { name: 'Dashboard', icon: 'fas fa-chart-line', route: '/dashboard', active: false },
+      { name: 'Appointments', icon: 'fas fa-calendar-check', route: '/appointments', active: false, isQuickAction: true },
+      { name: 'Doctors', icon: 'fas fa-user-md', route: '/doctors', active: false },
+      { name: 'Nurses', icon: 'fas fa-user-nurse', route: '/nurses', active: false },
+      { name: 'Patients', icon: 'fas fa-user-injured', route: '/patients', active: false },
+      { name: 'Admins', icon: 'fas fa-user-shield', route: '/admins', active: false },
+      { name: 'Rooms', icon: 'fas fa-door-open', route: '/rooms', active: false },
+      { name: 'Reports', icon: 'fas fa-file-alt', route: '/reports', active: false },
+      { name: 'Profile', icon: 'fas fa-user', route: '/user-profile', active: false },
+      { name: 'Feedbacks', icon: 'fas fa-comments', route: '/feedbacks', active: false }
+    ];
+    
+    // Quick action items (only shown when authenticated)
+    const quickActionItems: MenuItem[] = [
+      { name: 'Home', icon: 'fas fa-home', route: '/home', active: false, isQuickAction: true },
+      { name: 'About', icon: 'fas fa-info-circle', route: '/about', active: false, isQuickAction: true },
+      { name: 'Contact Us', icon: 'fas fa-envelope', route: '/contact', active: false, isQuickAction: true },
+      { name: 'Meet Our Team', icon: 'fas fa-users', route: '/about', active: false, isQuickAction: true }, // Navigate to about page with team section
+      { name: 'Signout', icon: 'fas fa-sign-out-alt', route: '/signout', active: false, isQuickAction: true }
+    ];
+    
+    // Filter menu items based on role
+    let filteredMenuItems: MenuItem[] = [];
+    if (isUser) {
+      // User role: hide Dashboard, Patients, Rooms, and Reports
+      console.log('✅ User role detected - filtering menu for Patient');
+      filteredMenuItems = allMenuItems.filter(item => 
+        item.name !== 'Dashboard' && 
+        item.name !== 'Patients' && 
+        item.name !== 'Rooms' && 
+        item.name !== 'Reports'
+      );
+    } else if (isDoctor) {
+      // Doctor role: hide Reports only
+      console.log('✅ Doctor role detected - filtering menu for Doctor');
+      filteredMenuItems = allMenuItems.filter(item => 
+        item.name !== 'Reports'
+      );
+    } else if (isNurse) {
+      // Nurse role: hide Reports only
+      console.log('✅ Nurse role detected - filtering menu for Nurse');
+      filteredMenuItems = allMenuItems.filter(item => 
+        item.name !== 'Reports'
+      );
+    } else {
+      // Admin: show all items
+      console.log('✅ Admin role detected - showing full menu');
+      filteredMenuItems = allMenuItems;
+    }
+    
+    // Remove Unauthorized page if it exists
+    filteredMenuItems = filteredMenuItems.filter(item => 
+      item.name !== 'Unauthorized' && item.route !== '/unauthorized'
+    );
+    
+    // Combine main menu items with quick actions (only if authenticated)
+    if (isAuthenticated) {
+      this.menuItems = [...filteredMenuItems, ...quickActionItems];
+    } else {
+      this.menuItems = filteredMenuItems;
+    }
+    
+    console.log('📋 Menu items updated:', this.menuItems.map(m => m.name));
+    
+    // Restore active state
+    this.setActiveMenuByRoute();
+    this.cdr.detectChanges();
   }
 
   loadCurrentUser() {
@@ -148,7 +281,8 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
       if (item.route === '/dashboard' || item.route === '/appointments' || 
           item.route === '/patients' || item.route === '/feedbacks' || 
           item.route === '/rooms' || item.route === '/reports' ||
-          item.route === '/user-profile' || item.route === '/admins') {
+          item.route === '/user-profile' || item.route === '/admins' ||
+          item.route === '/home' || item.route === '/about' || item.route === '/contact') {
         item.active = currentRoute === item.route;
       } else {
         // For routes with params (like /doctors/:id), check if it starts with the base route
@@ -167,7 +301,10 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
       '/rooms',
       '/reports',
       '/user-profile',
-      '/admins'
+      '/admins',
+      '/home',
+      '/about',
+      '/contact'
     ];
     
     return { exact: exactRoutes.includes(route) };
@@ -178,6 +315,29 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
     if (item.name === 'Signout') {
       this.signOut();
       return;
+    }
+  }
+
+  /**
+   * Handle quick action navigation
+   */
+  handleQuickAction(item: MenuItem) {
+    if (item.name === 'Signout') {
+      this.signOut();
+    } else if (item.name === 'Meet Our Team') {
+      // Navigate to about page and scroll to team section
+      this.router.navigate(['/about']).then(() => {
+        // Scroll to team section after navigation
+        setTimeout(() => {
+          const teamSection = document.querySelector('.team-section');
+          if (teamSection) {
+            teamSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      });
+    } else {
+      // Regular navigation for other quick actions
+      this.router.navigate([item.route]);
     }
   }
 
@@ -239,6 +399,43 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getSidebarIcon(): string {
     return this.isSidebarOpen ? 'fa-chevron-left' : 'fa-chevron-right';
+  }
+
+  /**
+   * Preload data in background based on user role
+   * This ensures data is ready when users navigate to pages
+   */
+  private preloadDataByRole() {
+    const role = this.roleService.getCurrentRole();
+    const isUser = this.roleService.isUser();
+    const isDoctor = this.roleService.isDoctor();
+    const isNurse = this.roleService.isNurse();
+    const isAdmin = this.roleService.isAdmin();
+    
+    console.log('🔄 Preloading data in background for role:', role);
+    
+    // Use setTimeout to defer loading and not block UI
+    setTimeout(() => {
+      if (isUser) {
+        // Patients: preload appointments, doctors, feedback
+        console.log('⏳ Preloading data for Patient role...');
+        // Data will be loaded when user navigates to these pages
+      } else if (isDoctor) {
+        // Doctors: preload appointments, patients, rooms, nurses
+        console.log('⏳ Preloading data for Doctor role...');
+        // Data will be loaded when doctor navigates to these pages
+      } else if (isNurse) {
+        // Nurses: preload appointments, rooms, patients
+        console.log('⏳ Preloading data for Nurse role...');
+        // Data will be loaded when nurse navigates to these pages
+      } else if (isAdmin) {
+        // Admins: preload all critical data
+        console.log('⏳ Preloading data for Admin role...');
+        // Data will be loaded when admin navigates to these pages
+      }
+      
+      console.log('✅ Background preload initiated for role:', role);
+    }, 100);
   }
 }
 

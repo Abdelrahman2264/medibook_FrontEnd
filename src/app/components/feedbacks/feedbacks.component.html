@@ -149,43 +149,45 @@
 
         </div>
 
-        <div class="feedback-actions">
+      <div class="feedback-actions">
+        <!-- Favorite button - not for nurses -->
+        <button 
+          *ngIf="!isNurse"
+          class="action-btn favourite-btn" 
+          [class.active]="feedback.isFavourite"
+          (click)="onToggleFavourite(feedback)"
+          [disabled]="isLoading"
+          [title]="feedback.isFavourite ? 'Remove from favourites' : 'Add to favourites'">
+          <i [class]="feedback.isFavourite ? 'fas fa-star' : 'far fa-star'"></i>
+          {{ feedback.isFavourite ? 'Favourite' : 'Add to Favourite' }}
+        </button>
 
-          <button
-            class="action-btn favourite-btn"
-            [class.active]="feedback.isFavourite"
-            (click)="onToggleFavourite(feedback); $event.stopPropagation()"
-            [disabled]="isLoading"
-            [title]="feedback.isFavourite ? 'Remove from favourites' : 'Add to favourites'">
-            <i
-              [class]="feedback.isFavourite ? 'fas fa-star' : 'far fa-star'"></i>
-            {{ feedback.isFavourite ? 'Favourite' : 'Add to Favourite' }}
-          </button>
+        <!-- Edit button - visible for users only (users can edit their comment), not for doctors or nurses -->
+        <button 
+          *ngIf="!isDoctor && !isNurse"
+          class="action-btn edit-btn" 
+          (click)="openEditModal(feedback)"
+          [disabled]="isLoading">
+          <i class="fas fa-edit"></i> Edit
+        </button>
 
-          <button
-            class="action-btn edit-btn"
-            (click)="openEditModal(feedback); $event.stopPropagation()"
-            [disabled]="isLoading">
-            <i class="fas fa-edit"></i> Edit
-          </button>
+        <!-- Doctor Reply button - for doctors and admins only, not for nurses -->
+        <button 
+          *ngIf="!isUser && !isNurse"
+          class="action-btn reply-btn" 
+          (click)="openReplyModal(feedback)"
+          [disabled]="isLoading">
+          <i class="fas fa-reply"></i> {{ feedback.doctorReply ? 'Update Reply' : 'Doctor Reply' }}
+        </button>
 
-          <button
-            class="action-btn reply-btn"
-            (click)="openReplyModal(feedback); $event.stopPropagation()"
-            [disabled]="isLoading">
-            <i class="fas fa-reply"></i>
-            {{ feedback.doctorReply ? 'Update Reply' : 'Doctor Reply' }}
-          </button>
-
-          <button
-            class="action-btn delete-btn"
-            (click)="confirmDelete(feedback); $event.stopPropagation()"
-            [disabled]="isLoading">
-            <i class="fas fa-trash-alt"></i> Delete
-          </button>
-
-        </div>
-
+        <!-- Delete button - only for admins, not for doctors or nurses -->
+        <button 
+          *ngIf="!isUser && !isDoctor && !isNurse"
+          class="action-btn delete-btn" 
+          (click)="confirmDelete(feedback)"
+          [disabled]="isLoading">
+          <i class="fas fa-trash-alt"></i> Delete
+        </button>
       </div>
 
     </div>

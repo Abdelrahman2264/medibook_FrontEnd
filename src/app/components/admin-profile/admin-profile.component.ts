@@ -3,9 +3,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AdminsService } from '../../services/admins.service';
+import { RoleService } from '../../services/role.service';
 import { Admin, UpdateAdminDto } from '../../models/admin.model';
 import { AdminFormModalComponent } from '../Shared/admin-form-modal/admin-form-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
+import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
 
 @Component({
   selector: 'app-admin-profile',
@@ -13,7 +15,7 @@ import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirm
   styleUrls: ['./admin-profile.component.css'],
   imports: [CommonModule, RouterModule, ConfirmationModalComponent, AdminFormModalComponent]
 })
-export class AdminProfile implements OnInit {
+export class AdminProfile extends BaseRoleAwareComponent implements OnInit {
   admin: Admin | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
@@ -26,20 +28,39 @@ export class AdminProfile implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  canManage: boolean = false; // For activate/inactivate
+  canEdit: boolean = false; // For editing admin data
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private adminsService: AdminsService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    roleService: RoleService,
+    cdr: ChangeDetectorRef
+  ) {
+    super(roleService, cdr);
+  }
 
-  ngOnInit() {
+  override ngOnInit() {
     console.log('🔄 AdminProfileComponent initialized');
+    // Wait for role to load before setting permissions
+    super.ngOnInit();
+  }
+
+  /**
+   * Called after role is loaded
+   */
+  protected override onRoleLoaded(role: string): void {
+    console.log('🔄 Role loaded, setting permissions for admin profile');
+    // Doctors and nurses can only view admins, not manage them
+    // Admins can activate/inactivate other admins, but cannot edit their data
+    this.canManage = this.roleService.canManageAdmins();
     this.loadAdmin();
   }
 
   // Force update method
-  forceUpdate() {
+  protected override forceUpdate() {
     console.log('🔄 Force updating admin profile...');
     this.cdr.detectChanges();
     console.log('✅ Force update completed');
@@ -80,6 +101,10 @@ export class AdminProfile implements OnInit {
           this.admin = admin;
           this.isLoading = false;
           this.errorMessage = '';
+          
+          // Check if current admin can edit this admin's data
+          // Admins can only edit their own profile, not other admins
+          this.canEdit = this.roleService.canEditAdmin(admin.id);
           
           // Force update after data is set
           this.forceUpdate();

@@ -2,6 +2,9 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FeedbacksService } from '../../services/feedbacks.service';
+import { RoleService } from '../../services/role.service';
+import { DoctorsService } from '../../services/doctors.service';
+import { NursesService } from '../../services/nurses.service';
 import { Feedback, UpdateFeedbackDto, DoctorReplyDto } from '../../models/feedback.model';
 import { FeedbackEditModalComponent } from '../Shared/feedback-edit-modal/feedback-edit-modal.component';
 import { DoctorReplyModalComponent } from '../Shared/doctor-reply-modal/doctor-reply-modal.component';
@@ -34,13 +37,83 @@ export class FeedbacksComponent implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  currentRole: string | null = null;
+  currentUserId: number | null = null;
+  currentDoctorId: number | null = null;
+  currentNurseId: number | null = null;
+  isUser: boolean = false;
+  isDoctor: boolean = false;
+  isNurse: boolean = false;
+
   constructor(
     private feedbacksService: FeedbacksService,
+    private roleService: RoleService,
+    private doctorsService: DoctorsService,
+    private nursesService: NursesService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     console.log('🔄 FeedbacksComponent initialized');
+    
+    // Get current role and user ID
+    this.currentRole = this.roleService.getCurrentRole();
+    this.currentUserId = this.roleService.getCurrentUserId();
+    this.currentDoctorId = this.roleService.getCurrentDoctorId();
+    this.currentNurseId = this.roleService.getCurrentNurseId();
+    this.isUser = this.roleService.isUser();
+    this.isDoctor = this.roleService.isDoctor();
+    this.isNurse = this.roleService.isNurse();
+    
+    // Subscribe to role changes
+    this.roleService.getCurrentRole$().subscribe(role => {
+      this.currentRole = role;
+      this.isUser = this.roleService.isUser();
+      this.isDoctor = this.roleService.isDoctor();
+      this.isNurse = this.roleService.isNurse();
+    });
+    
+    this.roleService.getCurrentUserId$().subscribe(userId => {
+      this.currentUserId = userId;
+      // If doctor, load doctor ID
+      if (this.isDoctor && userId) {
+        this.doctorsService.getDoctorByUserId(userId).subscribe({
+          next: (doctor) => {
+            if (doctor && doctor.doctorId) {
+              this.currentDoctorId = doctor.doctorId;
+              this.loadFeedbacks(); // Reload feedbacks with doctor ID
+            }
+          },
+          error: (error) => {
+            console.error('Error loading doctor ID:', error);
+          }
+        });
+      }
+      // If nurse, load nurse ID
+      if (this.isNurse && userId) {
+        this.nursesService.getNurseByUserId(userId).subscribe({
+          next: (nurse) => {
+            if (nurse && nurse.nurseId) {
+              this.currentNurseId = nurse.nurseId;
+              this.loadFeedbacks(); // Reload feedbacks with nurse ID
+            }
+          },
+          error: (error) => {
+            console.error('Error loading nurse ID:', error);
+          }
+        });
+      }
+    });
+    
+    this.roleService.getCurrentDoctorId$().subscribe(doctorId => {
+      this.currentDoctorId = doctorId;
+    });
+    
+    this.roleService.getCurrentNurseId$().subscribe(nurseId => {
+      this.currentNurseId = nurseId;
+    });
+    
     this.loadFeedbacks();
   }
 
@@ -56,7 +129,18 @@ export class FeedbacksComponent implements OnInit {
     this.errorMessage = '';
     this.forceUpdate();
 
-    this.feedbacksService.getAllFeedbacks().subscribe({
+    // If user role, load only their feedbacks
+    // If doctor role, load only their feedbacks
+    // If nurse role, load only their feedbacks (where they're involved)
+    const request = (this.isUser && this.currentUserId)
+      ? this.feedbacksService.getFeedbacksByPatient(this.currentUserId)
+      : (this.isDoctor && this.currentDoctorId)
+      ? this.feedbacksService.getFeedbacksByDoctor(this.currentDoctorId)
+      : (this.isNurse && this.currentNurseId)
+      ? this.feedbacksService.getFeedbacksByNurse(this.currentNurseId)
+      : this.feedbacksService.getAllFeedbacks();
+
+    request.subscribe({
       next: (data: Feedback[]) => {
         console.log('✅ Feedbacks loaded:', data.length);
         // Map the fetched data to the extended type, initializing isExpanded to false

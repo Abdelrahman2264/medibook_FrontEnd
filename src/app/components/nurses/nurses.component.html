@@ -5,7 +5,7 @@
       <!-- Title -->
       <div class="page-title-bar">
         <h1 class="page-title">Nurses List</h1>
-        <button class="add-nurse-btn" (click)="openCreateModal()">
+        <button *ngIf="roleLoaded && canManage" class="add-nurse-btn" (click)="openCreateModal()">
           <i class="fas fa-plus"></i> Add New Nurse
         </button>
       </div>
@@ -93,7 +93,7 @@
           <i class="fas fa-user-nurse fa-4x"></i>
           <h2>No Nurses Found</h2>
           <p>There are no nurses in the system yet.</p>
-          <button class="add-nurse-btn" (click)="openCreateModal()">
+          <button *ngIf="canManage" class="add-nurse-btn" (click)="openCreateModal()">
             <i class="fas fa-plus"></i> Add First Nurse
           </button>
         </div>
@@ -140,10 +140,10 @@
             <button class="view-btn" [routerLink]="['/nurses', nurse.nurseId]">
               <i class="fas fa-eye"></i> View Profile
             </button>
-            <button class="edit-btn" (click)="openEditModal(nurse)">
+            <button *ngIf="roleLoaded && canManage" class="edit-btn" (click)="openEditModal(nurse)">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button class="activate-btn" [ngClass]="{ active: nurse.isActive }" (click)="toggleActive(nurse)">
+            <button *ngIf="roleLoaded && canManage" class="activate-btn" [ngClass]="{ active: nurse.isActive }" (click)="toggleActive(nurse)">
               <i [class]="nurse.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
               {{ nurse.isActive ? 'Deactivate' : 'Activate' }}
             </button>

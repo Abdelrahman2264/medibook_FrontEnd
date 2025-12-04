@@ -36,7 +36,7 @@
       <button class="back-btn" (click)="goBack()">
         <i class="fas fa-arrow-left"></i> Back to Nurses
       </button>
-      <div class="header-actions">
+      <div class="header-actions" *ngIf="roleLoaded && canManage">
         <button class="btn btn-edit" (click)="editNurse()">
           <i class="fas fa-edit"></i> Edit Profile
         </button>
@@ -152,10 +152,11 @@
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="btn btn-primary" (click)="editNurse()">
+        <button *ngIf="canManage" class="btn btn-primary" (click)="editNurse()">
           <i class="fas fa-edit"></i> Edit Profile
         </button>
         <button 
+          *ngIf="canManage"
           class="btn" 
           [class.btn-success]="!nurse.isActive" 
           [class.btn-warning]="nurse.isActive" 

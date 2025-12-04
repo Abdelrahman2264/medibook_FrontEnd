@@ -4,9 +4,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NursesService } from '../../services/nurses.service';
+import { RoleService } from '../../services/role.service';
 import { Nurse, CreateNurseDto, UpdateNurseDto } from '../../models/nurse.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { NurseFormModalComponent } from '../Shared/nurse-form-modal/nurse-form-modal.component';
+import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
 
 @Component({
   selector: 'app-nurses',
@@ -15,7 +17,7 @@ import { NurseFormModalComponent } from '../Shared/nurse-form-modal/nurse-form-m
   styleUrls: ['./nurses.component.css'],
   imports: [CommonModule, FormsModule, RouterModule, ConfirmationModalComponent, NurseFormModalComponent]
 })
-export class Nurses implements OnInit {
+export class Nurses extends BaseRoleAwareComponent implements OnInit {
   searchTerm: string = '';
   selectedState: string = '';
 
@@ -36,17 +38,30 @@ export class Nurses implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  canManage: boolean = false;
+
   constructor(
     private nursesService: NursesService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    roleService: RoleService,
+    cdr: ChangeDetectorRef
+  ) {
+    super(roleService, cdr);
+  }
 
-  ngOnInit() {
+  override ngOnInit() {
     console.log('🔄 NursesComponent initialized');
+    // Wait for role to load before setting canManage
+    super.ngOnInit();
+  }
+
+  /**
+   * Called after role is loaded
+   */
+  protected override onRoleLoaded(role: string): void {
+    console.log('🔄 Role loaded, setting permissions for nurses list');
+    this.canManage = this.roleService.canManageNurses();
     this.loadNurses();
-    
-    // Debug: Check API response structure
-    this.debugApiResponse();
   }
 
   // Debug method to check API response
@@ -67,7 +82,7 @@ export class Nurses implements OnInit {
   }
 
   // Force update method
-  forceUpdate() {
+  protected override forceUpdate() {
     console.log('🔄 Force updating component...');
     this.cdr.detectChanges();
     console.log('✅ Force update completed');

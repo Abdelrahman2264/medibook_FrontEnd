@@ -5,7 +5,7 @@
       <!-- Title -->
       <div class="page-title-bar">
         <h1 class="page-title">Doctors List</h1>
-        <button class="add-doctor-btn" (click)="openCreateModal()">
+        <button *ngIf="roleLoaded && canManage" class="add-doctor-btn" (click)="openCreateModal()">
           <i class="fas fa-plus"></i> Add New Doctor
         </button>
       </div>
@@ -159,10 +159,10 @@
             <button class="view-btn" [routerLink]="['/doctors', doctor.doctorId]">
               <i class="fas fa-eye"></i> View Profile
             </button>
-            <button class="edit-btn" (click)="openEditModal(doctor)">
+            <button *ngIf="roleLoaded && canManage" class="edit-btn" (click)="openEditModal(doctor)">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button class="activate-btn" [ngClass]="{ active: doctor.isActive }" (click)="toggleActive(doctor)">
+            <button *ngIf="roleLoaded && canManage" class="activate-btn" [ngClass]="{ active: doctor.isActive }" (click)="toggleActive(doctor)">
               <i [class]="doctor.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
               {{ doctor.isActive ? 'Deactivate' : 'Activate' }}
             </button>

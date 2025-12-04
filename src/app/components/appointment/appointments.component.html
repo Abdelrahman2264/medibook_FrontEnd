@@ -3,7 +3,7 @@
     <div class="appointment-list-page">
       <div class="page-title-bar">
         <h1 class="page-title">Appointments Management</h1>
-        <button class="add-appointment-btn" (click)="navigateToBookAppointment()">
+        <button *ngIf="!isDoctor && !isNurse" class="add-appointment-btn" (click)="navigateToBookAppointment()">
           <i class="fas fa-plus"></i> Book New Appointment
         </button>
       </div>
@@ -87,7 +87,7 @@
           <i class="fas fa-calendar-times fa-4x"></i>
           <h2>No Appointments Found</h2>
           <p>There are no appointments scheduled yet.</p>
-          <button class="add-appointment-btn" (click)="navigateToBookAppointment()">
+          <button *ngIf="!isDoctor && !isNurse" class="add-appointment-btn" (click)="navigateToBookAppointment()">
             <i class="fas fa-plus"></i> Schedule First Appointment
           </button>
         </div>
@@ -164,34 +164,39 @@
                     </div>
                 </div>
 
-                <div class="appointment-actions">
-                    <button 
-                    *ngIf="!appointment.nurseId && !appointment.roomId && appointment.status === 'Scheduled'"
-                    class="assign-btn" 
-                    (click)="navigateToAssign(appointment)">
-                    <i class="fas fa-user-nurse"></i> Assign
-                    </button>
+          <!-- Action Buttons -->
+          <div class="appointment-actions">
+            <!-- Assign Button (for scheduled appointments without assignment) - Not for users or nurses -->
+            <button 
+              *ngIf="!isUser && !isNurse && !appointment.nurseId && !appointment.roomId && appointment.status === 'Scheduled'"
+              class="assign-btn" 
+              (click)="navigateToAssign(appointment)">
+              <i class="fas fa-user-nurse"></i> Assign
+            </button>
 
-                    <button 
-                    *ngIf="(appointment.status === 'In Progress' || appointment.status === 'Assigned') && appointment.nurseId && appointment.roomId"
-                    class="close-btn" 
-                    (click)="confirmClose(appointment)">
-                    <i class="fas fa-check-circle"></i> Close
-                    </button>
+            <!-- Close Button (for in progress or assigned appointments with nurse and room) - Not for users or nurses -->
+            <button 
+              *ngIf="!isUser && !isNurse && (appointment.status === 'In Progress' || appointment.status === 'Assigned') && appointment.nurseId && appointment.roomId"
+              class="close-btn" 
+              (click)="confirmClose(appointment)">
+              <i class="fas fa-check-circle"></i> Close
+            </button>
 
-                    <button 
-                    *ngIf="['Pending', 'Scheduled'].includes(appointment.status)"
-                    class="cancel-btn" 
-                    (click)="confirmCancel(appointment)">
-                    <i class="fas fa-times-circle"></i> Cancel
-                    </button>
+            <!-- Cancel Button (for pending/scheduled appointments) - Not for nurses -->
+            <button 
+              *ngIf="!isNurse && ['Pending', 'Scheduled'].includes(appointment.status)"
+              class="cancel-btn" 
+              (click)="confirmCancel(appointment)">
+              <i class="fas fa-times-circle"></i> Cancel
+            </button>
 
-                    <button 
-                    *ngIf="appointment.status === 'Completed' && !hasFeedback(appointment.appointmentId)"
-                    class="feedback-btn" 
-                    (click)="openFeedbackModal(appointment)">
-                    <i class="fas fa-comment-dots"></i> Add Feedback
-                    </button>
+            <!-- Add Feedback Button (for completed appointments without existing feedback) - Not for doctors or nurses -->
+            <button 
+              *ngIf="!isDoctor && !isNurse && appointment.status === 'Completed' && !hasFeedback(appointment.appointmentId)"
+              class="feedback-btn" 
+              (click)="openFeedbackModal(appointment)">
+              <i class="fas fa-comment-dots"></i> Add Feedback
+            </button>
 
                     <button class="view-btn" (click)="navigateToDetails(appointment)">
                     <i class="fas fa-eye"></i> Details
