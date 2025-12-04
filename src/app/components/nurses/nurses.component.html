@@ -12,15 +12,15 @@
 
       <!-- Top Stats Cards -->
       <div class="top-cards-container">
-        <div class="top-card light-purple">
+        <div class="top-card light-blue">
           <h3>Total Nurses</h3>
           <p>{{ nurses.length }}</p>
         </div>
-        <div class="top-card light-gray">
+        <div class="top-card light-green">
           <h3>Active Nurses</h3>
           <p>{{ countActive() }}</p>
         </div>
-        <div class="top-card light-purple">
+        <div class="top-card light-orange">
           <h3>Inactive Nurses</h3>
           <p>{{ countInactive() }}</p>
         </div>
@@ -104,7 +104,6 @@
         <div
           class="nurse-card"
           *ngFor="let nurse of filteredNurses(); let i = index"
-          [style.background-color]="getCardColor(i)"
         >
           <div class="nurse-photo-wrapper">
             <img 
@@ -113,7 +112,7 @@
               class="nurse-photo"
               (error)="$event.target.src='assets/images/nurse-placeholder.png'"
             />
-            <div class="status-badge" [class.active]="nurse.isActive">
+            <div class="status-badge" [class.active]="nurse.isActive" [class.inactive]="!nurse.isActive">
               <i [class]="nurse.isActive ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
               {{ nurse.isActive ? 'Active' : 'Inactive' }}
             </div>
@@ -150,28 +149,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Banner Advertisement -->
-      <div class="banner-advertisement">
-        <div class="banner-content">
-          <div class="banner-text">
-            <h2>👩‍⚕️ Nursing Excellence!</h2>
-            <p>Join our premium nursing program and enhance your medical career with advanced training and certifications</p>
-            <div class="banner-features">
-              <span><i class="fas fa-check"></i> Advanced Training</span>
-              <span><i class="fas fa-check"></i> Career Development</span>
-              <span><i class="fas fa-check"></i> Certification Programs</span>
-            </div>
-          </div>
-          <div class="banner-offer">
-            <div class="offer-badge">30% OFF</div>
-            <p class="offer-text">Training Programs</p>
-            <button class="banner-cta">Enroll Now</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Nurse Form Modal -->
   <app-nurse-form-modal
