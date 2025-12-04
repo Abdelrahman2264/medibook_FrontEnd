@@ -88,6 +88,11 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
     // Then load from API to get latest data
     this.loadCurrentUser();
     this.loadCurrentRole();
+
+    // Build initial menu immediately to avoid showing the loading skeleton
+    // while the role is being fetched. The menu will refresh when the role
+    // observable emits a definitive value.
+    this.updateMenuItems();
     
     // Subscribe to route changes to update active menu
     this.routerSubscription = this.router.events
@@ -124,29 +129,27 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * Update menu items based on current role
+   * This method builds a reasonable default immediately (to avoid a persistent loading spinner)
+   * and then refreshes when the real role becomes available.
    */
   updateMenuItems() {
-    // Guard: Don't update menu if role is not yet loaded
-    if (!this.roleLoaded) {
-      console.warn('⚠️ Role not yet loaded, skipping menu update');
-      return;
-    }
-
     const role = this.roleService.getCurrentRole();
-    
-    // Guard: Don't proceed if role is still null
-    if (!role) {
-      console.warn('⚠️ Role is null, skipping menu update');
-      return;
+    const isAuthenticated = this.authService.isAuthenticated();
+
+    // If role is not yet loaded but user is authenticated, assume the minimal 'user' role
+    // for the initial menu render to avoid leaking admin items. When the real role
+    // arrives the subscription will refresh the menu.
+    let effectiveRole: string | null = role;
+    if (!effectiveRole) {
+      effectiveRole = isAuthenticated ? 'user' : null;
     }
 
-    const isUser = this.roleService.isUser();
-    const isDoctor = this.roleService.isDoctor();
-    const isNurse = this.roleService.isNurse();
-    const isAuthenticated = this.authService.isAuthenticated();
-    
-    console.log('🔄 Updating menu items for role:', role, {isUser, isDoctor, isNurse, isAuthenticated});
-    
+    const isUser = effectiveRole === 'user';
+    const isDoctor = effectiveRole === 'doctor';
+    const isNurse = effectiveRole === 'nurse';
+
+    console.log('🔄 Updating menu items for effectiveRole:', effectiveRole, {isUser, isDoctor, isNurse, isAuthenticated});
+
     // Base menu items (main navigation)
     const allMenuItems: MenuItem[] = [
       { name: 'Dashboard', icon: 'fas fa-chart-line', route: '/dashboard', active: false },
@@ -162,40 +165,40 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
     ];
     
     // Quick action items (only shown when authenticated)
+    // Keep Home separate so we can place it as the first menu item
+    const homeItem: MenuItem = { name: 'Home', icon: 'fas fa-home', route: '/home', active: false, isQuickAction: true };
+
     const quickActionItems: MenuItem[] = [
-      { name: 'Home', icon: 'fas fa-home', route: '/home', active: false, isQuickAction: true },
       { name: 'About', icon: 'fas fa-info-circle', route: '/about', active: false, isQuickAction: true },
       { name: 'Contact Us', icon: 'fas fa-envelope', route: '/contact', active: false, isQuickAction: true },
       { name: 'Meet Our Team', icon: 'fas fa-users', route: '/about', active: false, isQuickAction: true }, // Navigate to about page with team section
       { name: 'Signout', icon: 'fas fa-sign-out-alt', route: '/signout', active: false, isQuickAction: true }
     ];
     
-    // Filter menu items based on role
+    // Filter menu items based on effective role
     let filteredMenuItems: MenuItem[] = [];
-    if (isUser) {
-      // User role: hide Dashboard, Patients, Rooms, and Reports
-      console.log('✅ User role detected - filtering menu for Patient');
+    if (!effectiveRole) {
+      // Not authenticated: show a minimal public menu
+      filteredMenuItems = allMenuItems.filter(item => 
+        item.name === 'Doctors' || item.name === 'About' || item.name === 'Contact Us' || item.name === 'Profile' || item.name === 'Feedbacks'
+      );
+    } else if (isUser) {
+      // Authenticated patient/user: hide Dashboard and admin pages
       filteredMenuItems = allMenuItems.filter(item => 
         item.name !== 'Dashboard' && 
         item.name !== 'Patients' && 
         item.name !== 'Rooms' && 
-        item.name !== 'Reports'
+        item.name !== 'Reports' &&
+        item.name !== 'Admins'
       );
     } else if (isDoctor) {
       // Doctor role: hide Reports only
-      console.log('✅ Doctor role detected - filtering menu for Doctor');
-      filteredMenuItems = allMenuItems.filter(item => 
-        item.name !== 'Reports'
-      );
+      filteredMenuItems = allMenuItems.filter(item => item.name !== 'Reports');
     } else if (isNurse) {
       // Nurse role: hide Reports only
-      console.log('✅ Nurse role detected - filtering menu for Nurse');
-      filteredMenuItems = allMenuItems.filter(item => 
-        item.name !== 'Reports'
-      );
+      filteredMenuItems = allMenuItems.filter(item => item.name !== 'Reports');
     } else {
-      // Admin: show all items
-      console.log('✅ Admin role detected - showing full menu');
+      // Admin or other: show all items
       filteredMenuItems = allMenuItems;
     }
     
@@ -204,11 +207,13 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
       item.name !== 'Unauthorized' && item.route !== '/unauthorized'
     );
     
-    // Combine main menu items with quick actions (only if authenticated)
+    // Place Home as the first item in the sidebar, then the filtered main items,
+    // and keep About/Contact/Meet Our Team/Signout at the end as quick actions.
     if (isAuthenticated) {
-      this.menuItems = [...filteredMenuItems, ...quickActionItems];
+      this.menuItems = [homeItem, ...filteredMenuItems, ...quickActionItems];
     } else {
-      this.menuItems = filteredMenuItems;
+      // Even for anonymous users, show Home first and then the rest
+      this.menuItems = [homeItem, ...filteredMenuItems];
     }
     
     console.log('📋 Menu items updated:', this.menuItems.map(m => m.name));

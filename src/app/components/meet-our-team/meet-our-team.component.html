@@ -1,0 +1,137 @@
+<section class="team-section section-top-space">
+  <div class="container">
+    <!-- Header Section -->
+    <div class="section-header">
+      <div class="header-content">
+        <h1 class="section-title">Meet Our Team</h1>
+        <p class="section-subtitle">The talented developers behind Medibook project</p>
+        
+        <!-- Team Stats -->
+        <div class="team-stats">
+          <div class="stat-card">
+            <span class="stat-number">{{ stats.total }}</span>
+            <span class="stat-label">Total Members</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">{{ stats.frontend }}</span>
+            <span class="stat-label">Frontend</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">{{ stats.backend }}</span>
+            <span class="stat-label">Backend</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">{{ stats.fullStack }}</span>
+            <span class="stat-label">Full-Stack</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="filter-controls">
+        <div class="btn-group filter-buttons" role="group">
+          <button 
+            type="button" 
+            class="btn btn-outline-primary" 
+            [class.active]="activeFilter === 'all'"
+            (click)="filterTeam('all')">
+            All Team
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-primary" 
+            [class.active]="activeFilter === 'leadership'"
+            (click)="filterTeam('leadership')">
+            Leadership
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-primary" 
+            [class.active]="activeFilter === 'frontend'"
+            (click)="filterTeam('frontend')">
+            Frontend Team
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-primary" 
+            [class.active]="activeFilter === 'backend'"
+            (click)="filterTeam('backend')">
+            Backend Team
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Hierarchy View -->
+    <div class="team-hierarchy" *ngIf="activeFilter === 'all'">
+      <!-- Leadership Section -->
+      <div class="hierarchy-section leadership-section">
+        <h2 class="hierarchy-title">
+          <i class="bi bi-star-fill"></i>
+          Project Leadership
+        </h2>
+        <div class="team-grid">
+          <div class="grid-item leadership-item" *ngFor="let leader of leadershipTeam">
+            <app-team-card [member]="leader" [showDetails]="true"></app-team-card>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Heads -->
+      <div class="hierarchy-section section-heads">
+        <h2 class="hierarchy-title">
+          <i class="bi bi-diagram-3-fill"></i>
+          Section Heads
+        </h2>
+        <div class="team-grid">
+          <div class="grid-item" *ngFor="let head of teamMembers | sectionHeadFilter">
+            <app-team-card [member]="head" [showDetails]="true"></app-team-card>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frontend Team -->
+      <div class="hierarchy-section frontend-section">
+        <div class="section-header">
+          <h2 class="hierarchy-title">
+            <i class="bi bi-layout-wtf"></i>
+            Frontend Team ({{ frontendTeam.length }} Members)
+          </h2>
+          <div class="section-badge frontend-badge">
+            Angular | TypeScript | SCSS
+          </div>
+        </div>
+        <div class="team-grid">
+          <div class="grid-item" *ngFor="let member of frontendTeam">
+            <app-team-card [member]="member" [showDetails]="true"></app-team-card>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backend Team -->
+      <div class="hierarchy-section backend-section">
+        <div class="section-header">
+          <h2 class="hierarchy-title">
+            <i class="bi bi-database-fill"></i>
+            Backend Team ({{ backendTeam.length }} Members)
+          </h2>
+          <div class="section-badge backend-badge">
+            .NET | API | Database
+          </div>
+        </div>
+        <div class="team-grid">
+          <div class="grid-item" *ngFor="let member of backendTeam">
+            <app-team-card [member]="member" [showDetails]="true"></app-team-card>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtered Grid View -->
+    <div class="team-grid filtered-view" *ngIf="activeFilter !== 'all'">
+      <div class="grid-item" *ngFor="let member of getFilteredMembers()">
+        <app-team-card [member]="member" [showDetails]="true"></app-team-card>
+      </div>
+    </div>
+  </div>
+</section>
