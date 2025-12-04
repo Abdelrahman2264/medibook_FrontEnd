@@ -4,8 +4,8 @@
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
-  color:var(--text-primary) ;
+  background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
+  color: var(--text-primary);
   padding: 80px 0;
   text-align: center;
 }
@@ -16,16 +16,15 @@
   margin-bottom: 1rem;
   color: var(--primary-50);
   text-shadow: 0 0 10px var(--primary-300),
-              0 0 30px var(--primary-300),
-              0 0 40px var(--primary-300)
-              ;
-  
+               0 0 30px var(--primary-300),
+               0 0 40px var(--primary-300);
 }
+
 .hero-title::after {
-    content: "";
-    animation-name: about-section;
-    animation-duration: 10s;
-    animation-iteration-count: infinite;
+  content: "";
+  animation-name: about-section;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
 }
 
 .hero-subtitle {
@@ -74,7 +73,6 @@
   right: 0;
   height: 4px;
   background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
-
 }
 
 .mission-card:hover {
@@ -90,8 +88,8 @@
 
 .mission-card h3 {
   background-clip: text;
-   color:transparent;
-   background-image: linear-gradient(135deg,var(--secondary-600),var(--primary-600)70% 100%);
+  color: transparent;
+  background-image: linear-gradient(135deg, var(--secondary-600), var(--primary-600) 70% 100%);
   margin-bottom: 1rem;
   font-size: 1.5rem;
   font-weight: 600;
@@ -112,8 +110,8 @@
   text-align: center;
   font-size: 2.5rem;
   background-clip: text;
-   color:transparent;
-   background-image: linear-gradient(135deg,var(--secondary-600),var(--primary-600)70% 100%);
+  color: transparent;
+  background-image: linear-gradient(135deg, var(--secondary-600), var(--primary-600) 70% 100%);
   margin-bottom: 3rem;
   width: max-content;
   margin-inline: auto;
@@ -145,8 +143,7 @@
   left: 0;
   right: 0;
   height: 4px;
-    background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
-
+  background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
 }
 
 .feature-card:hover {
@@ -162,8 +159,8 @@
 
 .feature-card h4 {
   background-clip: text;
-   color:transparent;
-   background-image: linear-gradient(135deg,var(--secondary-600),var(--primary-600)70% 100%);
+  color: transparent;
+  background-image: linear-gradient(135deg, var(--secondary-600), var(--primary-600) 70% 100%);
   margin-bottom: 1rem;
   font-size: 1.3rem;
   font-weight: 600;
@@ -176,8 +173,7 @@
 
 /* Stats Section */
 .stats-section {
-    background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
-
+  background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
   padding: 60px 0;
   color: white;
 }
@@ -237,8 +233,7 @@
   left: 0;
   right: 0;
   height: 4px;
-   background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
-
+  background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
 }
 
 .team-card:hover {
@@ -247,15 +242,24 @@
   border-color: var(--primary-600);
 }
 
-.team-avatar {
-  font-size: 4rem;
-  margin-bottom: 1.5rem;
+.team-avatar img,
+.team-avatar-img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 20px;
+  border: 3px solid var(--primary-300);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  background: #fff;
 }
+
 
 .team-card h4 {
   background-clip: text;
-   color:transparent;
-   background-image: linear-gradient(135deg,var(--secondary-600),var(--primary-600)70% 100%);
+  color: transparent;
+  background-image: linear-gradient(135deg, var(--secondary-600), var(--primary-600) 70% 100%);
   margin-bottom: 0.5rem;
   font-size: 1.3rem;
   font-weight: 600;
@@ -268,12 +272,11 @@
 
 .team-role {
   background-clip: text;
-   color:transparent;
-   background-image: linear-gradient(135deg,var(--secondary-500),var(--primary-500)70% 100%);
+  color: transparent;
+  background-image: linear-gradient(135deg, var(--secondary-500), var(--primary-500) 70% 100%);
   font-weight: 500;
 }
 
-/* Utilities */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -285,15 +288,15 @@
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.2rem;
   }
-  
+
   .section-title {
     font-size: 2rem;
   }
-  
+
   .mission-grid,
   .features-grid,
   .stats-grid,

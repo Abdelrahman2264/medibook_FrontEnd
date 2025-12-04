@@ -12,7 +12,7 @@
 
       <!-- Top Stats Cards -->
       <div class="top-cards-container">
-        <div class="top-card light-purple">
+        <div class="top-card light-red">
           <h3>Total Admins</h3>
           <p>{{ admins.length }}</p>
         </div>
@@ -20,7 +20,7 @@
           <h3>Active Admins</h3>
           <p>{{ countActive() }}</p>
         </div>
-        <div class="top-card light-gray">
+        <div class="top-card light-blue">
           <h3>Inactive Admins</h3>
           <p>{{ countInactive() }}</p>
         </div>
@@ -103,7 +103,7 @@
         <div
           class="admin-card"
           *ngFor="let admin of filteredAdmins(); let i = index"
-          [style.background-color]="getCardColor(i)"
+          
         >
           <div class="admin-photo-wrapper">
             <img 

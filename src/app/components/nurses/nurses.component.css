@@ -569,7 +569,120 @@
 }
 
 .activate-btn.active:hover {
-  background: var(--success-700, #15803d);
+  background: #219a52; /* Original hover color preserved */
+}
+
+/* Banner Advertisement */
+.banner-advertisement {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  border-radius: 20px;
+  padding: 40px;
+  margin-top: 20px;
+  box-shadow: var(--shadow-lg);
+  color: var(--text-inverse);
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-advertisement::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 1%);
+  background-size: 20px 20px;
+  transform: rotate(30deg);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: rotate(30deg) translateY(0); }
+  50% { transform: rotate(30deg) translateY(-10px); }
+}
+
+.banner-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.banner-text h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #ffd93d; /* Original color preserved */
+}
+
+.banner-text p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  opacity: 0.9;
+  max-width: 500px;
+}
+
+.banner-features {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.banner-features span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.1); /* Original color preserved */
+  padding: 8px 15px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.banner-features i {
+  color: #4cd137; /* Original color preserved */
+}
+
+.banner-offer {
+  text-align: center;
+  min-width: 200px;
+}
+
+.offer-badge {
+  background: linear-gradient(135deg, #ffd93d, #ffcd00); /* Original colors preserved */
+  color: var(--text-primary);
+  padding: 15px 25px;
+  border-radius: 15px;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 15px rgba(255, 217, 61, 0.4); /* Original shadow preserved */
+}
+
+.offer-text {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.banner-cta {
+  background: var(--text-inverse);
+  color: var(--secondary-500);
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.banner-cta:hover {
+  background: #ffd93d; /* Original hover color preserved */
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* Original hover shadow preserved */
 }
 
 /* Animations */

@@ -175,7 +175,9 @@
 .status-badge.active {
   background: rgba(76, 175, 80, 0.9);
   color: var(--text-inverse);
+  transform: translateY(10px);
 }
+
 
 .status-badge.inactive {
   background: rgba(244, 67, 54, 0.9);
@@ -353,7 +355,7 @@
 }
 
 .btn-primary:hover {
-  background: #5a52d5;
+  background: var(--primary-700);
 }
 
 .btn-secondary {
@@ -384,12 +386,12 @@
 }
 
 .btn-edit {
-  background: #17a2b8;
+  background: var(--primary-600);
   color: var(--text-inverse);
 }
 
 .btn-edit:hover {
-  background: #138496;
+  background: var(--primary-700);
 }
 
 /* Edit Input Styles */
