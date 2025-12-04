@@ -70,7 +70,7 @@
   background: var(--error-50);
   padding: 40px;
   border-radius: 12px;
-  border: 1px solid var(--error-200);
+  border: 1px solid var(--error-100);
   max-width: 500px;
   color: var(--error-700);
 }
@@ -169,10 +169,8 @@
 }
 
 .profile-image:hover {
-  border-color: #3b82f6;
-  box-shadow: 
-    0 10px 20px rgba(0, 0, 0, 0.12),
-    0 2px 6px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary-500);
+  box-shadow: var(--shadow-md);
 }
 
 /* Status Badge */
@@ -221,14 +219,16 @@
   font-size: 1.4em;
   margin: 0 0 5px 0;
   opacity: 0.9;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-inverse);
+  opacity: 0.9;
 }
 
 .doctor-type {
   font-size: 1.1em;
   margin: 0 0 20px 0;
   opacity: 0.8;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-inverse);
+  opacity: 0.8;
 }
 
 .rating-experience {
@@ -242,7 +242,8 @@
   align-items: center;
   gap: 8px;
   font-size: 1em;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-inverse);
+  opacity: 0.9;
 }
 
 .experience i, .doctor-id i {
@@ -412,7 +413,7 @@
 }
 
 .btn-edit {
-  background: var(--info-600, #0891b2);
+  background: var(--info-500, #0891b2);
   color: var(--text-inverse);
 }
 
@@ -430,7 +431,7 @@
 }
 
 .btn-deactivate {
-  background: var(--error-600, #dc2626);
+  background: var(--error-500, #dc2626);
   color: var(--text-inverse);
 }
 
@@ -439,7 +440,7 @@
 }
 
 .btn-info {
-  background: var(--info-600, #0891b2);
+  background: var(--info-500, #0891b2);
   color: var(--text-inverse);
 }
 
@@ -452,7 +453,7 @@
   font-size: 12px;
 }
 
-/* Debug Section (يمكن حذفه) */
+/* Debug Section */
 .debug-section {
   background: var(--surface-03);
   padding: 15px;

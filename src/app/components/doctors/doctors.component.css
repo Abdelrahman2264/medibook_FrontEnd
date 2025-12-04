@@ -249,12 +249,12 @@
 }
 
 .status-badge.active {
-  background: rgba(76, 175, 80, 0.9);
+  background: var(--success-500);
   color: var(--text-inverse);
 }
 
 .status-badge.inactive {
-  background: rgba(244, 67, 54, 0.9);
+  background: var(--error-500);
   color: var(--text-inverse);
 }
 
@@ -366,7 +366,7 @@
 }
 
 .activate-btn {
-  background: var(--error-600, #dc2626);
+  background: var(--error-500, #dc2626);
   color: var(--text-inverse);
 }
 
@@ -377,11 +377,11 @@
 }
 
 .activate-btn.active {
-  background: var(--success-700);
+  background: var(--success-600, #16a34a);
 }
 
 .activate-btn.active:hover {
-  background: var(--success-800, #15803d);
+  background: var(--success-700, #15803d);
 }
 
 /* Results Bar Styles */
@@ -424,7 +424,7 @@
   font-size: 1.1rem;
 }
 
-/* زر Clear All الجديد */
+/* Clear All  */
 .clear-all-btn {
   padding: 12px 20px;
   border: 2px solid var(--error-500);
@@ -444,7 +444,7 @@
   background: var(--error-500);
   color: var(--text-inverse);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(var(--error-500-rgb, 239, 68, 68), 0.3);
+
 }
 
 /* Modal Styles */

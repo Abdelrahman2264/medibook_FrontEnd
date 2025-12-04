@@ -192,7 +192,7 @@
 }
 
 .sort-btn:hover {
-  background: var(--primary-700); /* Original hover color preserved */
+  background: var(--primary-700); 
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
@@ -206,7 +206,7 @@
   background: var(--error-500);
   color: var(--text-inverse);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(var(--error-500-rgb, 239, 68, 68), 0.3);
+  
 }
 
 /* Loading State */
@@ -554,7 +554,7 @@
 }
 
 .activate-btn {
-  background: var(--error-600, #dc2626);
+  background: var(--error-500, #dc2626);
   color: var(--text-inverse);
 }
 
