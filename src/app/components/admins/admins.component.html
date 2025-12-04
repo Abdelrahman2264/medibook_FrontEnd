@@ -5,7 +5,7 @@
       <!-- Title -->
       <div class="page-title-bar">
         <h1 class="page-title">Admins List</h1>
-        <button class="add-admin-btn" (click)="openCreateModal()">
+        <button *ngIf="roleLoaded && canManage" class="add-admin-btn" (click)="openCreateModal()">
           <i class="fas fa-plus"></i> Add New Admin
         </button>
       </div>
@@ -92,7 +92,7 @@
           <i class="fas fa-user-shield fa-4x"></i>
           <h2>No Admins Found</h2>
           <p>There are no admins in the system yet.</p>
-          <button class="add-admin-btn" (click)="openCreateModal()">
+          <button *ngIf="canManage" class="add-admin-btn" (click)="openCreateModal()">
             <i class="fas fa-plus"></i> Add First Admin
           </button>
         </div>
@@ -147,10 +147,12 @@
             <button class="view-btn" [routerLink]="['/admins', admin.id]">
               <i class="fas fa-eye"></i> View Profile
             </button>
-            <button class="edit-btn" (click)="openEditModal(admin)">
+            <!-- Edit button - only if admin can edit (their own profile) -->
+            <button *ngIf="roleLoaded && canEdit(admin.id)" class="edit-btn" (click)="openEditModal(admin)">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button class="activate-btn" [ngClass]="{ active: admin.isActive }" (click)="toggleActive(admin)">
+            <!-- Activate/Deactivate button - admins can manage other admins -->
+            <button *ngIf="roleLoaded && canManage" class="activate-btn" [ngClass]="{ active: admin.isActive }" (click)="toggleActive(admin)">
               <i [class]="admin.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
               {{ admin.isActive ? 'Deactivate' : 'Activate' }}
             </button>

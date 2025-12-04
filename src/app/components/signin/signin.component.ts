@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
+import { RoleService } from '../../services/role.service';
 import { PatientsService } from '../../services/patients.service';
 import { AdminsService } from '../../services/admins.service';
 import { DoctorsService } from '../../services/doctors.service';
@@ -37,7 +38,8 @@ export class SigninComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private roleService: RoleService
   ) {}
 
   togglePassword() {
@@ -62,8 +64,8 @@ export class SigninComponent {
           if (this.rememberMe) {
             // You can add additional logic here if needed
           }
-          // Redirect to dashboard after login
-          this.router.navigate(['/dashboard']);
+          // Redirect based on role
+          this.redirectAfterLogin();
           // Load profile data in background
           this.loadProfileInBackground();
         }
@@ -84,7 +86,8 @@ export class SigninComponent {
           if (this.rememberMe) {
             // Additional logic for remember me
           }
-          this.router.navigate(['/dashboard']);
+          // Redirect based on role
+          this.redirectAfterLogin();
           // Load profile data in background
           this.loadProfileInBackground();
         }
@@ -115,6 +118,28 @@ export class SigninComponent {
   onPasswordResetSuccess() {
     this.closeForgetPasswordModal();
     // Optionally show a success message or redirect
+  }
+
+  /**
+   * Redirect user to appropriate page based on their role after login
+   */
+  private redirectAfterLogin(): void {
+    // Wait a bit for role service to initialize
+    setTimeout(() => {
+      const storedUser = this.authService.getCurrentUser();
+      const role = storedUser?.role?.toLowerCase()?.trim() || '';
+      
+      if (role === 'user' || role === 'patient') {
+        // User role: redirect to appointments
+        this.router.navigate(['/appointments'], { replaceUrl: true });
+      } else if (role === 'admin' || role === 'doctor' || role === 'nurse') {
+        // Admin, Doctor, Nurse: redirect to dashboard
+        this.router.navigate(['/dashboard'], { replaceUrl: true });
+      } else {
+        // Unknown role: default to appointments
+        this.router.navigate(['/appointments'], { replaceUrl: true });
+      }
+    }, 100);
   }
 
   /**

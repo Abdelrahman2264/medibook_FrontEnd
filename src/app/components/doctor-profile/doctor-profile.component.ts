@@ -3,9 +3,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DoctorsService } from '../../services/doctors.service';
+import { RoleService } from '../../services/role.service';
 import { Doctor, UpdateDoctorDto } from '../../models/doctor.model';
 import { DoctorFormModalComponent } from '../Shared/doctor-form-modal/doctor-form-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
+import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
 
 @Component({
   selector: 'app-doctor-profile',
@@ -13,7 +15,7 @@ import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirm
   styleUrls: ['./doctor-profile.component.css'],
   imports: [CommonModule, RouterModule, ConfirmationModalComponent, DoctorFormModalComponent]
 })
-export class DoctorProfileComponent implements OnInit {
+export class DoctorProfileComponent extends BaseRoleAwareComponent implements OnInit {
   doctor: Doctor | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
@@ -26,20 +28,40 @@ export class DoctorProfileComponent implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  canManage: boolean = false;
+  canAssignAppointment: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private doctorsService: DoctorsService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    roleService: RoleService,
+    cdr: ChangeDetectorRef
+  ) {
+    super(roleService, cdr);
+  }
 
-  ngOnInit() {
+  override ngOnInit() {
     console.log('🔄 DoctorProfileComponent initialized');
+    // Wait for role to load before setting permissions
+    super.ngOnInit();
+  }
+
+  /**
+   * Called after role is loaded
+   */
+  protected override onRoleLoaded(role: string): void {
+    console.log('🔄 Role loaded, setting permissions for doctor profile');
+    // Doctors can only view other doctors, not manage them
+    // Nurses can only view doctors, not manage them
+    this.canManage = this.roleService.canManageDoctors();
+    this.canAssignAppointment = this.roleService.isDoctor();
     this.loadDoctor();
   }
 
   // Force update method
-  forceUpdate() {
+  protected override forceUpdate() {
     console.log('🔄 Force updating doctor profile...');
     this.cdr.detectChanges();
     console.log('✅ Force update completed');
@@ -306,5 +328,17 @@ export class DoctorProfileComponent implements OnInit {
       showConfirmationModal: this.showConfirmationModal
     });
     this.forceUpdate();
+  }
+
+  // Doctor-specific action: Assign appointment
+  assignAppointment() {
+    if (!this.doctor) {
+      console.error('❌ Cannot assign appointment: doctor is null');
+      return;
+    }
+
+    console.log('🔄 Doctor assigning appointment for:', this.doctor.fullName);
+    // Navigate to assign-appointment page
+    this.router.navigate(['/assign-appointment', this.doctor.doctorId]);
   }
 }

@@ -23,15 +23,16 @@
   </div>
 
   <!-- Navigation Menu -->
-  <nav class="main-menu">
+  <nav class="main-menu" *ngIf="roleLoaded; else loadingMenu">
     <ul>
       <li 
         *ngFor="let item of menuItems" 
         [class.active]="item.active"
       >
         <i [class]="item.icon"></i>
+        <!-- Regular menu items with router links -->
         <a 
-          *ngIf="item.name !== 'Signout'" 
+          *ngIf="!item.isQuickAction" 
           [routerLink]="item.route"
           routerLinkActive="active-link"
           [routerLinkActiveOptions]="getRouterLinkActiveOptions(item.route)"
@@ -39,12 +40,29 @@
         >
           <span class="menu-text">{{ item.name }}</span>
         </a>
-        <span *ngIf="item.name === 'Signout'" (click)="signOut()" style="cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%;">
+        <!-- Quick action items (click handlers) -->
+        <span 
+          *ngIf="item.isQuickAction" 
+          (click)="handleQuickAction(item)" 
+          style="cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%;"
+        >
           <span class="menu-text">{{ item.name }}</span>
         </span>
       </li>
     </ul>
   </nav>
+
+  <!-- Loading state template -->
+  <ng-template #loadingMenu>
+    <nav class="main-menu">
+      <ul>
+        <li class="loading-skeleton">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span class="menu-text">Loading menu...</span>
+        </li>
+      </ul>
+    </nav>
+  </ng-template>
 </div>
 
 

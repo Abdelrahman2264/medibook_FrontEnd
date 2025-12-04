@@ -71,36 +71,44 @@ export class RoomsService {
   }
 
   // Get all ACTIVE rooms with delay and better error handling
-getAllActiveRooms(): Observable<Room[]> {
-  return this.http.get<any>(`${this.baseUrl}/Rooms/active`).pipe(
-    delay(500), // Add delay for better UX
-    map(response => {
-      console.log('📥 Raw ACTIVE rooms data from API:', response);
+  getAllActiveRooms(appointmentDate?: Date): Observable<Room[]> {
+    let url = `${this.baseUrl}/Rooms/active`;
+    const params: any = {};
+    
+    if (appointmentDate) {
+      params.appointmentDate = appointmentDate.toISOString();
+      console.log('📅 Fetching active rooms filtered by date:', params.appointmentDate);
+    }
+    
+    return this.http.get<any>(url, { params }).pipe(
+      delay(500), // Add delay for better UX
+      map(response => {
+        console.log('📥 Raw ACTIVE rooms data from API:', response);
 
-      // Handle both array response and wrapped response
-      const roomsArray = Array.isArray(response)
-        ? response
-        : response.data
-        ? response.data
-        : response;
+        // Handle both array response and wrapped response
+        const roomsArray = Array.isArray(response)
+          ? response
+          : response.data
+          ? response.data
+          : response;
 
-      if (!Array.isArray(roomsArray)) {
-        console.error('❌ Unexpected API response format:', response);
-        throw new Error('Invalid API response format');
-      }
+        if (!Array.isArray(roomsArray)) {
+          console.error('❌ Unexpected API response format:', response);
+          throw new Error('Invalid API response format');
+        }
 
-      const mapped = roomsArray.map(dto => {
-        const room = mapRoomDetailsDtoToRoom(dto);
-        console.log('✅ Mapped ACTIVE room:', { roomId: room.roomId, roomName: room.roomName });
-        return room;
-      });
+        const mapped = roomsArray.map(dto => {
+          const room = mapRoomDetailsDtoToRoom(dto);
+          console.log('✅ Mapped ACTIVE room:', { roomId: room.roomId, roomName: room.roomName });
+          return room;
+        });
 
-      console.log('📊 Total ACTIVE rooms mapped:', mapped.length);
-      return mapped;
-    }),
-    catchError(error => this.handleError('fetching ACTIVE rooms', error))
-  );
-}
+        console.log('📊 Total ACTIVE rooms mapped:', mapped.length);
+        return mapped;
+      }),
+      catchError(error => this.handleError('fetching ACTIVE rooms', error))
+    );
+  }
 
 
   // Get active rooms
@@ -115,6 +123,27 @@ getAllActiveRooms(): Observable<Room[]> {
         return roomsArray.map((dto: any) => mapRoomDetailsDtoToRoom(dto));
       }),
       catchError(error => this.handleError('fetching active rooms', error))
+    );
+  }
+
+  // Get active rooms without appointments on a specific date
+  getActiveRoomsByDate(appointmentDate: Date): Observable<Room[]> {
+    // Format date as ISO string for the API
+    const dateParam = appointmentDate.toISOString();
+    console.log('📅 Fetching active rooms for date:', dateParam);
+    
+    return this.http.get<any>(`${this.baseUrl}/Rooms/active`, {
+      params: { appointmentDate: dateParam }
+    }).pipe(
+      delay(300),
+      map(response => {
+        console.log('📥 Raw active rooms data from API (filtered by date):', response);
+        const roomsArray = Array.isArray(response) ? response : 
+                          response.data ? response.data : 
+                          response;
+        return roomsArray.map((dto: any) => mapRoomDetailsDtoToRoom(dto));
+      }),
+      catchError(error => this.handleError('fetching active rooms by date', error))
     );
   }
 
