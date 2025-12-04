@@ -1,11 +1,7 @@
 /* ============================================
    ADMINS PAGE STYLES
-   نفس ألوان وتصميم صفحة الـ Patients
 ============================================ */
 
-/* --------------------
-   Layout & Containers
----------------------- */
 .admins-page-container {
   padding: 20px;
   background-color: var(--bg-secondary);
@@ -72,7 +68,6 @@
 .top-card {
   padding: 20px;
   border-radius: 15px;
-  background: var(--surface-02);
   border-left: 6px solid var(--primary-500);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
@@ -83,22 +78,22 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Light Purple */
-.top-card.light-purple {
-  background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
-  border-left-color: var(--primary-600);
+/* Light red */
+.top-card.light-red {
+  background: linear-gradient(135deg, var(--bg-red-opacity-20), var(--bg-red-opacity-20));
+  border-left-color: var(--error-500);
 }
 
 /* Light Green */
 .top-card.light-green {
-  background: linear-gradient(135deg, var(--success-50), var(--success-100));
+  background: linear-gradient(135deg, var(--bg-green-opacity-20), var(--bg-green-opacity-20));
   border-left-color: var(--success-600);
 }
 
-/* Light Gray */
-.top-card.light-gray {
-  background: linear-gradient(135deg, var(--surface-02), var(--surface-03));
-  border-left-color: var(--text-secondary);
+/* Light blue */
+.top-card.light-blue {
+  background: linear-gradient(135deg, var(--bg-blue-opacity-20), var(--bg-blue-opacity-20));
+  border-left-color: var(--primary-600);
 }
 
 .top-card h3 {
@@ -251,7 +246,7 @@
 
 /* Individual Admin Card */
 .admin-card {
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   border-radius: 15px;
   padding: 25px;
   box-shadow: var(--shadow-md);
@@ -325,10 +320,11 @@
 .admin-info {
   text-align: center;
   margin-bottom: 20px;
+  color:var(--text-inverse);
 }
 
 .admin-name {
-  color: var(--text-primary);
+  color: var(--text-inverse);
   margin: 0 0 8px 0;
   font-size: 1.6rem;
   font-weight: 700;
@@ -336,7 +332,7 @@
 }
 
 .admin-id {
-  color: var(--text-tertiary);
+  color: var(--text-inverse);
   font-size: 0.95rem;
   margin: 0 0 25px 0;
   font-weight: 500;
@@ -634,27 +630,9 @@
     color: var(--text-inverse);
   }
   
-  /* ============================================
-     تعديلات الكروت العلوية - نفس الخلفية ولون الكلام
-  ============================================ */
- /* Light Purple */
-.top-card.light-purple {
-  background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
-  border-left-color: var(--primary-600);
-}
-
-/* Light Green */
-.top-card.light-green {
-  background: linear-gradient(135deg, var(--success-50), var(--success-100));
-  border-left-color: var(--success-600);
-}
-
-/* Light Gray */
-.top-card.light-gray {
-  background: linear-gradient(135deg, var(--surface-02), var(--surface-03));
-  border-left-color: var(--text-secondary);
-}
-
+  .admin-info {
+ color:var(--text-primary);
+  }
 .top-card h3 {
   margin: 0 0 10px;
   font-size: 1.1rem;
@@ -669,34 +647,12 @@
   color: var(--text-primary);
 }
 
-/* ============================================
-   DARK MODE OVERRIDES - نفس الخلفية للكل
-============================================ */
-@media (prefers-color-scheme: dark) {
-  /* تجعل الثلاث كروت نفس الخلفية */
-  .top-card.light-purple,
-  .top-card.light-green,
-  .top-card.light-gray {
-    background: linear-gradient(135deg, var(--bg-green-opacity-20), var(--bg-gray-opacity-20));
-    border-left-color: var(--text-tertiary);
-  }
-  
-  /* نفس ألوان النصوص للكل */
-  .top-card h3 {
-    color: var(--text-secondary);
-  }
-  
-  .top-card p {
-    color: var(--text-primary);
-  }
-}
 
-/* إذا كنت تستخدم data-theme بدلاً من prefers-color-scheme */
-:root[data-theme='dark'] .top-card.light-purple,
+:root[data-theme='dark'] .top-card.light-red,
 :root[data-theme='dark'] .top-card.light-green,
-:root[data-theme='dark'] .top-card.light-gray {
-  background: linear-gradient(135deg, var(--surface-02), var(--surface-03));
-  border-left-color: var(--text-tertiary);
+:root[data-theme='dark'] .top-card.light-blue {
+  background: linear-gradient(135deg, var(--surface-01), var(--surface-03));
+  border-left-color: var(--text-inverse);
 }
 
 :root[data-theme='dark'] .top-card h3 {
@@ -704,11 +660,11 @@
 }
 
 :root[data-theme='dark'] .top-card p {
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
   
   .top-card p {
-    color: var(--text-primary); /* نفس لون النص */
+    color: var(--text-secondary); 
   }
   
   /* ============================================

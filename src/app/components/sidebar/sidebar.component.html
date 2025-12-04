@@ -23,7 +23,7 @@
   </div>
 
   <!-- Navigation Menu -->
-  <nav class="main-menu" *ngIf="roleLoaded; else loadingMenu">
+  <nav class="main-menu">
     <ul>
       <li 
         *ngFor="let item of menuItems" 
@@ -51,18 +51,6 @@
       </li>
     </ul>
   </nav>
-
-  <!-- Loading state template -->
-  <ng-template #loadingMenu>
-    <nav class="main-menu">
-      <ul>
-        <li class="loading-skeleton">
-          <i class="fas fa-spinner fa-spin"></i>
-          <span class="menu-text">Loading menu...</span>
-        </li>
-      </ul>
-    </nav>
-  </ng-template>
 </div>
 
 
