@@ -2,20 +2,20 @@
   <div class="signup-container row flex-column flex-md-row rounded-5">
     <div class="signup-left col-md-4">
       <div class="illustration">
-        <div class="medical-icon">👨‍⚕️</div>
+        <div class="medical-icon"></div>
         <h2>Join MediBook Today</h2>
         <p>Create your account and start managing your healthcare journey</p>
         <div class="features">
           <div class="feature">
-            <span class="feature-icon">✅</span>
+            <span class="feature-icon"></span>
             <span>Book appointments easily</span>
           </div>
           <div class="feature">
-            <span class="feature-icon">✅</span>
+            <span class="feature-icon"></span>
             <span>Access medical history</span>
           </div>
           <div class="feature">
-            <span class="feature-icon">✅</span>
+            <span class="feature-icon"></span>
             <span>Connect with top doctors</span>
           </div>
         </div>
@@ -155,13 +155,15 @@
               <div class="input-container">
                 <i class="fas fa-calendar input-icon"></i>
                 <input
-                  type="date"
-                  id="dateOfBirth"
-                  [(ngModel)]="userData.dateOfBirth"
-                  name="dateOfBirth"
-                  class="date-input"
-                  required
-                />
+                    type="date"
+                   id="dateOfBirth"
+                    [(ngModel)]="userData.dateOfBirth"
+                      name="dateOfBirth"
+                       class="date-input"
+                       required
+                        max="2025-12-31"
+                         />
+
               </div>
             </div>
           </div>

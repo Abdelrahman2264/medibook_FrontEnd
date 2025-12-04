@@ -543,7 +543,7 @@
 
 /* Banner Advertisement */
 .banner-advertisement {
-  background: linear-gradient(135deg, var(--secondary-500), var(--primary-600));
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
   border-radius: 20px;
   padding: 40px;
   margin-top: 20px;
