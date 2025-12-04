@@ -209,10 +209,10 @@
 }
 
 /* Cards Grid - 2 Cards Per Row */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
+.cards-flex {
+  display:flex ;
+  flex-direction: column;
+  row-gap: 2rem;
 }
 
 /* Info Cards */
@@ -279,7 +279,7 @@
 
 .detail-item p {
   margin: 0;
-  color: var(--text-primary);
+  color: var(--text-tertiary);
   font-size: 1rem;
   line-height: 1.6;
 }
@@ -339,6 +339,15 @@
 
 .stars i {
   font-size: 1.5rem;
+  color: #ffc107
+;
+  transition: all 0.3s ease;
+}
+.stars i:hover{
+  color: #fff64b
+;
+  
+;
 }
 
 .rating-value {

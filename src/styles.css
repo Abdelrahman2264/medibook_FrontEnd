@@ -145,6 +145,7 @@ body {
   --success-300: #86efac;
   --success-400: #4ade80;
   --success-500: #22c55e;
+  --success-600: #16a34a;
   /* Confirmed appointments */
   --success-700: #15803d;
 
@@ -154,6 +155,7 @@ body {
   --warning-300: #fcd34d;
   --warning-400: #fbbf24;
   --warning-500: #f59e0b;
+  --warning-600: #ea580c;
   /* Pending/Rescheduled */
   --warning-700: #b45309;
 
@@ -188,6 +190,11 @@ body {
   --bg-card: #1e293b;
   --bg-sidebar: #1e293b;
   --bg-header: #1e293b;
+  --bg-green-opacity-20: rgba(0, 128, 0, 0.05);
+  --bg-red-opacity-20: rgba(255, 0, 0, 0.05);
+  --bg-warning-opacity-20: rgba(255, 165, 0, 0.05);
+    --bg-blue-opacity-20: rgba(0, 0, 255, 0.05);
+  
 
   /* Surface Colors */
   --surface-01: #1e293b;
@@ -313,6 +320,7 @@ body {
   --success-300: #86efac;
   --success-400: #4ade80;
   --success-500: #22c55e;
+  --success-600: #16a34a;
   /* Confirmed appointments */
   --success-700: #15803d;
 
@@ -322,6 +330,7 @@ body {
   --warning-300: #fcd34d;
   --warning-400: #fbbf24;
   --warning-500: #f59e0b;
+  --warning-600: #ea580c;
   /* Pending/Rescheduled */
   --warning-700: #b45309;
 
@@ -356,6 +365,12 @@ body {
   --bg-card: #ffffff;
   --bg-sidebar: #f1f5f9;
   --bg-header: #ffffff;
+  --bg-green-opacity-20: rgba(0, 128, 0, 0.05);
+  --bg-red-opacity-20: rgba(255, 0, 0, 0.05);
+  --bg-warning-opacity-20: rgba(255, 165, 0, 0.05);
+  --bg-blue-opacity-20: rgba(0, 0, 255, 0.05);
+
+  
 
   /* Surface Colors */
   --surface-01: #ffffff;

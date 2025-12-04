@@ -1,129 +1,198 @@
 <div class="feedbacks-container">
+
   <div class="feedbacks-header">
+
     <h1>Feedbacks</h1>
+
     <p>View patient feedbacks and reviews</p>
+
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="isLoading && feedbacks.length === 0" class="loading-container">
+
     <div class="loading-spinner">
       <i class="fas fa-spinner fa-spin fa-3x"></i>
       <p>Loading feedbacks...</p>
+
       <div class="loading-dots">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span> <span></span> <span></span>
       </div>
+
     </div>
+
   </div>
 
-  <!-- Error Message -->
   <div *ngIf="errorMessage && !isLoading" class="error-message">
-    <i class="fas fa-exclamation-circle"></i>
-    {{ errorMessage }}
-    <button (click)="loadFeedbacks()" class="btn btn-retry" style="margin-left: 10px;">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+    <button (click)="loadFeedbacks()" class="btn btn-retry"
+      style="margin-left: 10px">
       <i class="fas fa-redo"></i> Retry
     </button>
+
   </div>
 
-  <!-- Results Bar -->
   <div class="results-bar" *ngIf="!isLoading && feedbacks.length > 0">
+
     <div class="results-info">
-      <i class="fas fa-comments"></i>
-      Showing <span class="highlight">{{ feedbacks.length }}</span> feedback{{ feedbacks.length !== 1 ? 's' : '' }}
+      <i class="fas fa-comments"></i> Showing
+      <span class="highlight">{{ feedbacks.length }}</span> feedback{{
+      feedbacks.length !== 1 ? 's' : ''
+      }}
+
     </div>
+
   </div>
 
-  <!-- Empty State -->
   <div *ngIf="!isLoading && feedbacks.length === 0" class="empty-state">
+
     <div class="empty-state-content">
       <i class="fas fa-comment-slash fa-4x"></i>
       <h2>No Feedbacks Found</h2>
+
       <p>There are no feedbacks available yet.</p>
+
     </div>
+
   </div>
 
-  <!-- Feedbacks List -->
   <div class="feedbacks-list" *ngIf="!isLoading && feedbacks.length > 0">
-    <div *ngFor="let feedback of feedbacks" class="feedback-card">
-      <div class="feedback-header">
-        <div class="feedback-patient">
-          <h3>
-            <i class="fas fa-user-injured"></i> {{ feedback.patientName }}
-            <span class="favourite-badge" *ngIf="feedback.isFavourite" title="Favourite">
-              <i class="fas fa-star"></i>
-            </span>
-          </h3>
-          <div class="feedback-rating">
-            <i *ngFor="let star of [1,2,3,4,5]" 
-               [class]="star <= feedback.rate ? 'fas fa-star' : 'far fa-star'"
-               [style.color]="star <= feedback.rate ? '#ffc107' : '#ddd'"></i>
-            <span class="rating-value">{{ feedback.rate }}/5</span>
-          </div>
-          <div class="feedback-meta">
-            <span><i class="fas fa-user-md"></i> Dr. {{ feedback.doctorName }}</span>
-            <span><i class="fas fa-stethoscope"></i> {{ feedback.doctorSpecialization }}</span>
-            <span><i class="fas fa-calendar"></i> {{ feedback.formattedFeedbackDate }}</span>
+
+    <div
+      *ngFor="let feedback of feedbacks"
+      class="feedback-card"
+      [class.expanded]="feedback.isExpanded">
+
+      <div class="feedback-summary-header"
+        (click)="toggleFeedbackDetails(feedback)">
+        <div class="feedback-header-main">
+          <div class="feedback-patient">
+
+            <h3>
+              <i class="fas fa-user-injured"></i> {{ feedback.patientName }}
+
+              <span class="favourite-badge" *ngIf="feedback.isFavourite"
+                title="Favourite">
+                <i class="fas fa-star"></i>
+              </span>
+
+            </h3>
+
+            <div class="feedback-rating mt-3">
+
+              <i
+                *ngFor="let star of [1, 2, 3, 4, 5]"
+                [class]="star <= feedback.rate ? 'fas fa-star' : 'far fa-star'"
+                class="fa-beat"></i>
+              <span class="rating-value">{{ feedback.rate }}/5</span>
+            </div>
+
           </div>
         </div>
+
+        <div class="feedback-header-meta">
+          <span><i class="fas fa-user-md"></i> Dr. {{ feedback.doctorName
+            }}</span>
+          <span><i class="fas fa-stethoscope"></i> {{
+            feedback.doctorSpecialization }}</span>
+          <span><i class="fas fa-calendar"></i> {{
+            feedback.formattedFeedbackDate }}</span>
+        </div>
+
+        <i
+          class="fas accordion-toggle-icon"
+          [class.fa-chevron-down]="!feedback.isExpanded"
+          [class.fa-chevron-up]="feedback.isExpanded"></i>
+
       </div>
 
-      <div class="feedback-content">
-        <div class="feedback-comment">
-          <p>{{ feedback.comment }}</p>
+      <div class="feedback-accordion-body"
+        [class.expanded-body]="feedback.isExpanded">
+
+        <div class="feedback-meta full-details-meta">
+          <span><i class="fas fa-user-md"></i> Dr. {{ feedback.doctorName
+            }}</span>
+          <span><i class="fas fa-stethoscope"></i> {{
+            feedback.doctorSpecialization }}</span>
+
+          <span><i class="fas fa-calendar"></i> {{
+            feedback.formattedFeedbackDate }}</span>
         </div>
 
-        <div class="doctor-reply" *ngIf="feedback.doctorReply">
-          <div class="reply-header">
-            <i class="fas fa-user-md"></i>
-            <strong>Doctor Reply:</strong>
-            <span class="reply-date">{{ feedback.formattedReplyDate }}</span>
+        <div class="feedback-content">
+
+          <div class="feedback-comment">
+
+            <p>{{ feedback.comment }}</p>
+
           </div>
-          <p class="reply-content">{{ feedback.doctorReply }}</p>
+
+          <div class="doctor-reply" *ngIf="feedback.doctorReply">
+
+            <div class="reply-header">
+              <i class="fas fa-user-md"></i>
+              <strong>Doctor Reply:</strong>
+              <span class="reply-date">{{ feedback.formattedReplyDate }}</span>
+            </div>
+
+            <p class="reply-content">{{ feedback.doctorReply }}</p>
+
+          </div>
+
+          <div class="appointment-info">
+
+            <p>
+              <i class="fas fa-calendar-check"></i> Appointment Date:
+              {{ feedback.formattedAppointmentDate }}
+            </p>
+
+          </div>
+
         </div>
 
-        <div class="appointment-info">
-          <p><i class="fas fa-calendar-check"></i> Appointment Date: {{ feedback.formattedAppointmentDate }}</p>
+        <div class="feedback-actions">
+
+          <button
+            class="action-btn favourite-btn"
+            [class.active]="feedback.isFavourite"
+            (click)="onToggleFavourite(feedback); $event.stopPropagation()"
+            [disabled]="isLoading"
+            [title]="feedback.isFavourite ? 'Remove from favourites' : 'Add to favourites'">
+            <i
+              [class]="feedback.isFavourite ? 'fas fa-star' : 'far fa-star'"></i>
+            {{ feedback.isFavourite ? 'Favourite' : 'Add to Favourite' }}
+          </button>
+
+          <button
+            class="action-btn edit-btn"
+            (click)="openEditModal(feedback); $event.stopPropagation()"
+            [disabled]="isLoading">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+
+          <button
+            class="action-btn reply-btn"
+            (click)="openReplyModal(feedback); $event.stopPropagation()"
+            [disabled]="isLoading">
+            <i class="fas fa-reply"></i>
+            {{ feedback.doctorReply ? 'Update Reply' : 'Doctor Reply' }}
+          </button>
+
+          <button
+            class="action-btn delete-btn"
+            (click)="confirmDelete(feedback); $event.stopPropagation()"
+            [disabled]="isLoading">
+            <i class="fas fa-trash-alt"></i> Delete
+          </button>
+
         </div>
+
       </div>
 
-      <div class="feedback-actions">
-        <button 
-          class="action-btn favourite-btn" 
-          [class.active]="feedback.isFavourite"
-          (click)="onToggleFavourite(feedback)"
-          [disabled]="isLoading"
-          [title]="feedback.isFavourite ? 'Remove from favourites' : 'Add to favourites'">
-          <i [class]="feedback.isFavourite ? 'fas fa-star' : 'far fa-star'"></i>
-          {{ feedback.isFavourite ? 'Favourite' : 'Add to Favourite' }}
-        </button>
-
-        <button 
-          class="action-btn edit-btn" 
-          (click)="openEditModal(feedback)"
-          [disabled]="isLoading">
-          <i class="fas fa-edit"></i> Edit
-        </button>
-
-        <button 
-          class="action-btn reply-btn" 
-          (click)="openReplyModal(feedback)"
-          [disabled]="isLoading">
-          <i class="fas fa-reply"></i> {{ feedback.doctorReply ? 'Update Reply' : 'Doctor Reply' }}
-        </button>
-
-        <button 
-          class="action-btn delete-btn" 
-          (click)="confirmDelete(feedback)"
-          [disabled]="isLoading">
-          <i class="fas fa-trash-alt"></i> Delete
-        </button>
-      </div>
     </div>
+
   </div>
 </div>
 
-<!-- Edit Feedback Modal -->
 <app-feedback-edit-modal
   [isVisible]="showEditModal"
   [selectedFeedback]="selectedFeedback"
@@ -132,7 +201,6 @@
   (save)="onUpdateFeedback($event)">
 </app-feedback-edit-modal>
 
-<!-- Doctor Reply Modal -->
 <app-doctor-reply-modal
   [isVisible]="showReplyModal"
   [selectedFeedback]="selectedFeedback"
@@ -141,7 +209,6 @@
   (save)="onAddDoctorReply($event)">
 </app-doctor-reply-modal>
 
-<!-- Confirmation Modal -->
 <app-confirmation-modal
   [isVisible]="showConfirmationModal"
   [title]="confirmationConfig.title"

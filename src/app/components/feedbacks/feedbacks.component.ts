@@ -7,6 +7,11 @@ import { FeedbackEditModalComponent } from '../Shared/feedback-edit-modal/feedba
 import { DoctorReplyModalComponent } from '../Shared/doctor-reply-modal/doctor-reply-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 
+// Define an interface extending the original Feedback model to include accordion state
+interface ExpandedFeedback extends Feedback {
+  isExpanded: boolean;
+}
+
 @Component({
   selector: 'app-feedbacks',
   standalone: true,
@@ -15,7 +20,8 @@ import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirm
   styleUrls: ['./feedbacks.component.css']
 })
 export class FeedbacksComponent implements OnInit {
-  feedbacks: Feedback[] = [];
+  // استخدام الواجهة الموسعة الجديدة التي تتضمن isExpanded
+  feedbacks: ExpandedFeedback[] = [];
   isLoading: boolean = false;
   errorMessage: string = '';
   
@@ -23,7 +29,8 @@ export class FeedbacksComponent implements OnInit {
   showEditModal: boolean = false;
   showReplyModal: boolean = false;
   showConfirmationModal: boolean = false;
-  selectedFeedback: Feedback | null = null;
+  // تحديث نوع المتغير
+  selectedFeedback: ExpandedFeedback | null = null;
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
@@ -52,7 +59,11 @@ export class FeedbacksComponent implements OnInit {
     this.feedbacksService.getAllFeedbacks().subscribe({
       next: (data: Feedback[]) => {
         console.log('✅ Feedbacks loaded:', data.length);
-        this.feedbacks = data;
+        // Map the fetched data to the extended type, initializing isExpanded to false
+        this.feedbacks = data.map(feedback => ({
+          ...feedback,
+          isExpanded: false
+        })) as ExpandedFeedback[];
         this.isLoading = false;
         this.forceUpdate();
       },
@@ -65,7 +76,18 @@ export class FeedbacksComponent implements OnInit {
     });
   }
 
-  openEditModal(feedback: Feedback) {
+  /**
+   * Toggles the expansion state of a feedback card (Accordion functionality).
+   * @param feedback The feedback object to toggle.
+   */
+  toggleFeedbackDetails(feedback: ExpandedFeedback) {
+    feedback.isExpanded = !feedback.isExpanded;
+    this.forceUpdate();
+    console.log(`👁️ Feedback ${feedback.feedbackId} expansion toggled: ${feedback.isExpanded}`);
+  }
+
+
+  openEditModal(feedback: ExpandedFeedback) {
     console.log('📝 Opening edit modal for feedback:', feedback.feedbackId);
     this.selectedFeedback = feedback;
     this.showEditModal = true;
@@ -75,7 +97,7 @@ export class FeedbacksComponent implements OnInit {
     }, 100);
   }
 
-  openReplyModal(feedback: Feedback) {
+  openReplyModal(feedback: ExpandedFeedback) {
     console.log('💬 Opening reply modal for feedback:', feedback.feedbackId);
     this.selectedFeedback = feedback;
     this.showReplyModal = true;
@@ -134,7 +156,7 @@ export class FeedbacksComponent implements OnInit {
     });
   }
 
-  onToggleFavourite(feedback: Feedback) {
+  onToggleFavourite(feedback: ExpandedFeedback) {
     console.log('⭐ Toggling favourite for feedback:', feedback.feedbackId);
     this.isLoading = true;
     this.forceUpdate();
@@ -153,7 +175,8 @@ export class FeedbacksComponent implements OnInit {
     });
   }
 
-  confirmDelete(feedback: Feedback) {
+  confirmDelete(feedback: ExpandedFeedback) {
+    this.selectedFeedback = feedback;
     this.confirmationConfig = {
       title: 'Delete Feedback',
       message: `Are you sure you want to delete the feedback from <strong>${feedback.patientName}</strong>? This action cannot be undone.`,
@@ -169,7 +192,7 @@ export class FeedbacksComponent implements OnInit {
     this.forceUpdate();
   }
 
-  deleteFeedback(feedback: Feedback) {
+  deleteFeedback(feedback: ExpandedFeedback) {
     console.log('🔄 Deleting feedback:', feedback.feedbackId);
     this.isLoading = true;
     this.forceUpdate();

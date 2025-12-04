@@ -7,7 +7,7 @@
 .sidebar {
   width: 300px;
   background: linear-gradient(135deg, var(--primary-400, #38bdf8), var(--primary-700, #0369a1));
-  color: var(--text-inverse, #ffffff);
+  color: white;
   padding: 30px 20px;
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@
   border-radius: 50%;
   border: none;
   background: var(--hover-overlay, rgba(255, 255, 255, 0.15));
-  color: var(--text-inverse, #ffffff);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
