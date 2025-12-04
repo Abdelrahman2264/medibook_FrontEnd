@@ -16,13 +16,13 @@
   align-items: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: var(--surface-01);
+  background: var(--primary-500);
   border-radius: 10px;
   box-shadow: var(--shadow-sm);
 }
 
 .page-title {
-  color: var(--text-primary);
+  color: var(--text-inverse);
   margin: 0;
   font-size: 2rem;
   font-weight: 600;
@@ -42,7 +42,9 @@
   font-weight: 500;
 }
 
-/* Top Cards */
+/* -----------------------------
+   NEW TOP CARDS (UPDATED STYLE)
+------------------------------*/
 .top-cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -51,35 +53,58 @@
 }
 
 .top-card {
-  padding: 25px;
-  border-radius: 10px;
-  text-align: center;
-  color: var(--text-inverse);
+  padding: 20px;
+  border-radius: 15px;
+  border-left: 6px solid var(--primary-500);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.top-card:hover {
+  transform: translateY(-5px);
   box-shadow: var(--shadow-md);
 }
 
-.top-card.light-blue {
-  background: linear-gradient(135deg, var(--primary-400), var(--primary-500));
+/* Light Purple */
+.top-card.light-purple {
+  background: linear-gradient(135deg, var(--bg-green-opacity-20-50), var(--bg-green-opacity-20-50));
+  border-left-color: var(--primary-600);
 }
 
-.top-card.light-green {
-  background: linear-gradient(135deg, var(--success-400), var(--success-500));
-}
-
+/* Light Gray */
 .top-card.light-gray {
-  background: linear-gradient(135deg, var(--gray-400), var(--gray-500));
+  background: linear-gradient(135deg, var(--surface-02), var(--surface-03));
+  border-left-color: var(--text-secondary);
 }
 
 .top-card h3 {
-  margin: 0 0 10px 0;
+  margin: 0 0 10px;
   font-size: 1.1rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .top-card p {
   margin: 0;
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ---------------------------
+   Rest of your original code
+--------------------------- */
+
+.cards-container {
+  grid-template-columns: 1fr;
+}
+
+.doctor-info {
+  text-align: center;
+}
+
+.doctor-info h3 {
+  text-align: center;
 }
 
 /* Controls */
@@ -171,10 +196,11 @@
 .patients-table {
   width: 100%;
   border-collapse: collapse;
+  border: 1px solid var(--border-light);
 }
 
 .patients-table th {
-  background: linear-gradient(135deg, var(--primary-400), var(--primary-500));
+  background: var(--primary-500);
   color: var(--text-inverse);
   padding: 15px;
   text-align: left;
@@ -182,12 +208,26 @@
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.patients-table th:last-child {
+  border-right: none;
 }
 
 .patients-table td {
   padding: 15px;
   border-bottom: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
   vertical-align: top;
+}
+
+.patients-table td:last-child {
+  border-right: none;
+}
+
+.patients-table tr:last-child td {
+  border-bottom: none;
 }
 
 .patient-row:hover {
@@ -207,7 +247,7 @@
   border: 2px solid var(--border-light);
 }
 
-/* Patient Name */
+/* Name Info */
 .name-info {
   display: flex;
   flex-direction: column;
@@ -271,7 +311,7 @@
 }
 
 .status-badge.inactive {
-  background: var(--error-50);
+  background:  var(--error-600);
   color: var(--error-700);
 }
 
@@ -337,59 +377,7 @@
   background: var(--error-100);
 }
 
-/* Loading and Error States */
-.loading-container, .error-message, .empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  background: var(--surface-01);
-  border-radius: 10px;
-  margin: 20px 0;
-}
-
-.loading-spinner {
-  color: var(--primary-400);
-}
-
-.error-message {
-  background: var(--error-50);
-  color: var(--error-700);
-  border: 1px solid var(--error-200);
-}
-
-.empty-state-content {
-  color: var(--text-tertiary);
-}
-
-.empty-state-content i {
-  margin-bottom: 20px;
-  color: var(--border-light);
-}
-
-/* Results Bar */
-.results-bar {
-  background: var(--surface-01);
-  padding: 15px 20px;
-  border-radius: 10px 10px 0 0;
-  border-bottom: 1px solid var(--border-light);
-  margin-bottom: 0;
-}
-
-.results-info {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-.highlight {
-  color: var(--primary-600);
-  font-weight: 600;
-}
-
-.total {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
   .patients-page-container {
     padding: 10px;
@@ -427,5 +415,13 @@
   .btn-view, .btn-edit, .btn-toggle {
     flex: 1;
     min-width: 80px;
+  }
+
+  .patients-table td {
+    border-right: none;
+  }
+
+  .patients-table th {
+    border-right: none;
   }
 }
