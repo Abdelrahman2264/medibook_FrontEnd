@@ -68,7 +68,6 @@
 .top-card {
   padding: 20px;
   border-radius: 15px;
-  background: var(--surface-02);
   border-left: 6px solid var(--primary-500);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
@@ -247,7 +246,7 @@
 
 /* Individual Admin Card */
 .admin-card {
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   border-radius: 15px;
   padding: 25px;
   box-shadow: var(--shadow-md);
