@@ -66,15 +66,19 @@
 }
 
 /* Light Purple */
-.top-card.light-red {
+.top-card.light-blue {
+  background: linear-gradient(135deg, var(--bg-blue-opacity-20), var(--bg-blue-opacity-20));
+  border-left-color: var(--info-700);
+}
+.top-card.light-red{
   background: linear-gradient(135deg, var(--bg-red-opacity-20), var(--bg-red-opacity-20));
-  border-left-color: var(--primary-600);
+  border-left-color: var(--error-700);
 }
 
-/* Light Gray */
-.top-card.light-gray {
-  background: linear-gradient(135deg, var(--surface-02), var(--surface-03));
-  border-left-color: var(--text-secondary);
+/* Light green */
+.top-card.light-green {
+  background: linear-gradient(135deg, var(--bg-green-opacity-20), var(--bg-green-opacity-20));
+  border-left-color: var(--success-700);
 }
 
 .top-card h3 {
