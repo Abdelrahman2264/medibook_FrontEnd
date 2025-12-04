@@ -35,10 +35,39 @@ export class NursesService {
   }
 
   // Get active nurses - returns mapped Nurse[] from NurseDetailsDto[]
-  getActiveNurses(): Observable<Nurse[]> {
-    return this.http.get<any>(`${this.baseUrl}/Nurses/active`).pipe(
+  getActiveNurses(appointmentDate?: Date): Observable<Nurse[]> {
+    let url = `${this.baseUrl}/Nurses/active`;
+    const params: any = {};
+    
+    if (appointmentDate) {
+      params.appointmentDate = appointmentDate.toISOString();
+      console.log('📅 Fetching active nurses filtered by date:', params.appointmentDate);
+    }
+    
+    return this.http.get<any>(url, { params }).pipe(
       map(response => {
         console.log('📥 Raw active nurses data from API:', response);
+        const arr = Array.isArray(response) ? response : (response.data ? response.data : response);
+        if (!Array.isArray(arr)) {
+          console.error('❌ Unexpected active nurses response format:', response);
+          return [] as Nurse[];
+        }
+        return arr.map((dto: any) => mapNurseDetailsDtoToNurse(dto));
+      })
+    );
+  }
+
+  // Get active nurses without appointments on a specific date
+  getActiveNursesByDate(appointmentDate: Date): Observable<Nurse[]> {
+    // Format date as ISO string for the API
+    const dateParam = appointmentDate.toISOString();
+    console.log('📅 Fetching active nurses for date:', dateParam);
+    
+    return this.http.get<any>(`${this.baseUrl}/Nurses/active`, {
+      params: { appointmentDate: dateParam }
+    }).pipe(
+      map(response => {
+        console.log('📥 Raw active nurses data from API (filtered by date):', response);
         const arr = Array.isArray(response) ? response : (response.data ? response.data : response);
         if (!Array.isArray(arr)) {
           console.error('❌ Unexpected active nurses response format:', response);

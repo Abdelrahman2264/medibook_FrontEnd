@@ -4,9 +4,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DoctorsService } from '../../services/doctors.service';
+import { RoleService } from '../../services/role.service';
 import { Doctor, CreateDoctorDto, UpdateDoctorDto } from '../../models/doctor.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { DoctorFormModalComponent } from '../Shared/doctor-form-modal/doctor-form-modal.component';
+import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
 
 @Component({
   selector: 'app-doctors',
@@ -14,7 +16,7 @@ import { DoctorFormModalComponent } from '../Shared/doctor-form-modal/doctor-for
   styleUrls: ['./doctors.component.css'],
   imports: [CommonModule, FormsModule, RouterModule, ConfirmationModalComponent, DoctorFormModalComponent]
 })
-export class DoctorsComponent implements OnInit {
+export class DoctorsComponent extends BaseRoleAwareComponent implements OnInit {
   searchTerm: string = '';
   selectedSpecialty: string = '';
   selectedState: string = '';
@@ -37,18 +39,34 @@ export class DoctorsComponent implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  canManage: boolean = false;
+
   constructor(
     private doctorsService: DoctorsService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    roleService: RoleService,
+    cdr: ChangeDetectorRef
+  ) {
+    super(roleService, cdr);
+  }
 
-  ngOnInit() {
+  override ngOnInit() {
     console.log('🔄 DoctorsComponent initialized');
+    // Wait for role to load before setting canManage
+    super.ngOnInit();
+  }
+
+  /**
+   * Called after role is loaded
+   */
+  protected override onRoleLoaded(role: string): void {
+    console.log('🔄 Role loaded, setting permissions for doctors list');
+    this.canManage = this.roleService.canManageDoctors();
     this.loadDoctors();
   }
 
   // Force update method
-  forceUpdate() {
+  protected override forceUpdate() {
     console.log('🔄 Force updating component...');
     this.cdr.detectChanges();
     console.log('✅ Force update completed');

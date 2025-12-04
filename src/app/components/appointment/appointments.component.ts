@@ -7,13 +7,17 @@ import { DoctorsService } from '../../services/doctors.service';
 import { NursesService } from '../../services/nurses.service';
 import { RoomsService } from '../../services/rooms.service';
 import { FeedbacksService } from '../../services/feedbacks.service';
+import { RoleService } from '../../services/role.service';
 import { Appointment, CreateAppointmentDto, CancelAppointmentDto, AssignAppointmentDto, CloseAppointmentDto } from '../../models/appointment.model';
 import { Doctor } from '../../models/doctor.model';
-import { Nurse } from '../../models/nurse.model';
-import { Room } from '../../models/room.model';
 import { CreateFeedbackDto, Feedback } from '../../models/feedback.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { FeedbackFormModalComponent } from '../Shared/feedback-form-modal/feedback-form-modal.component';
+
+// لتجنب الأخطاء في TypeScript، سنضيف خاصية isExpanded إلى نوع Appointment محليًا.
+// هذه الطريقة تفترض أن واجهة Appointment الأصلية تسمح بالخصائص الإضافية.
+// في حالة عدم السماح، يمكن استخدام (Appointment & { isExpanded: boolean })
+// لكن للتبسيط والعملية، سنستخدم التعديل على مستوى الكائن في loadAppointments.
 
 @Component({
   selector: 'app-appointments',
@@ -26,7 +30,8 @@ export class AppointmentsComponent implements OnInit {
   selectedStatus: string = '';
   selectedDoctor: string = '';
 
-  appointments: Appointment[] = [];
+  // تعديل نوع appointments ليكون مجرد قائمة من Appointment (مع إضافة isExpanded في loadAppointments)
+  appointments: (Appointment & { isExpanded: boolean })[] = []; 
   doctors: Doctor[] = [];
   statuses: string[] = ['Pending', 'Scheduled', 'Confirmed', 'Assigned', 'In Progress', 'Completed', 'Cancelled'];
   
@@ -41,7 +46,7 @@ export class AppointmentsComponent implements OnInit {
   showCancelModal: boolean = false;
   showCloseModal: boolean = false;
   showFeedbackModal: boolean = false;
-  selectedAppointment: Appointment | null = null;
+  selectedAppointment: (Appointment & { isExpanded: boolean }) | null = null;
   cancelReason: string = '';
   closeNotes: string = '';
   closeMedicine: string = '';
@@ -51,18 +56,86 @@ export class AppointmentsComponent implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  currentRole: string | null = null;
+  currentUserId: number | null = null;
+  currentDoctorId: number | null = null;
+  currentNurseId: number | null = null;
+  isUser: boolean = false;
+  isDoctor: boolean = false;
+  isNurse: boolean = false;
+
   constructor(
     private appointmentsService: AppointmentsService,
     private doctorsService: DoctorsService,
     private nursesService: NursesService,
     private roomsService: RoomsService,
     private feedbacksService: FeedbacksService,
+    private roleService: RoleService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     console.log('🔄 AppointmentsComponent initialized');
+    
+    // Get current role and user ID
+    this.currentRole = this.roleService.getCurrentRole();
+    this.currentUserId = this.roleService.getCurrentUserId();
+    this.currentDoctorId = this.roleService.getCurrentDoctorId();
+    this.currentNurseId = this.roleService.getCurrentNurseId();
+    this.isUser = this.roleService.isUser();
+    this.isDoctor = this.roleService.isDoctor();
+    this.isNurse = this.roleService.isNurse();
+    
+    // Subscribe to role changes
+    this.roleService.getCurrentRole$().subscribe(role => {
+      this.currentRole = role;
+      this.isUser = this.roleService.isUser();
+      this.isDoctor = this.roleService.isDoctor();
+      this.isNurse = this.roleService.isNurse();
+    });
+    
+    this.roleService.getCurrentUserId$().subscribe(userId => {
+      this.currentUserId = userId;
+      // If doctor, load doctor ID
+      if (this.isDoctor && userId) {
+        this.doctorsService.getDoctorByUserId(userId).subscribe({
+          next: (doctor) => {
+            if (doctor && doctor.doctorId) {
+              this.currentDoctorId = doctor.doctorId;
+              this.loadAppointments(); // Reload appointments with doctor ID
+            }
+          },
+          error: (error) => {
+            console.error('Error loading doctor ID:', error);
+          }
+        });
+      }
+      // If nurse, load nurse ID
+      if (this.isNurse && userId) {
+        this.nursesService.getNurseByUserId(userId).subscribe({
+          next: (nurse) => {
+            if (nurse && nurse.nurseId) {
+              this.currentNurseId = nurse.nurseId;
+              this.loadAppointments(); // Reload appointments with nurse ID
+            }
+          },
+          error: (error) => {
+            console.error('Error loading nurse ID:', error);
+          }
+        });
+      }
+    });
+    
+    this.roleService.getCurrentDoctorId$().subscribe(doctorId => {
+      this.currentDoctorId = doctorId;
+    });
+    
+    this.roleService.getCurrentNurseId$().subscribe(nurseId => {
+      this.currentNurseId = nurseId;
+    });
+    
     this.loadAppointments();
     this.loadDoctors();
     this.loadFeedbacks();
@@ -82,10 +155,25 @@ export class AppointmentsComponent implements OnInit {
     
     this.forceUpdate();
 
-    this.appointmentsService.getAllAppointments().subscribe({
+    // If user role, load only their appointments
+    // If doctor role, load only their appointments
+    // If nurse role, load only their appointments (where they're involved)
+    const request = (this.isUser && this.currentUserId) 
+      ? this.appointmentsService.getAppointmentsByPatientId(this.currentUserId)
+      : (this.isDoctor && this.currentDoctorId)
+      ? this.appointmentsService.getAppointmentsByDoctorId(this.currentDoctorId)
+      : (this.isNurse && this.currentNurseId)
+      ? this.appointmentsService.getAppointmentsByNurseId(this.currentNurseId)
+      : this.appointmentsService.getAllAppointments();
+
+    request.subscribe({
       next: (data: Appointment[]) => {
         console.log('✅ Appointments loaded:', data.length);
-        this.appointments = data;
+        // تعيين isExpanded: false لكل موعد عند التحميل
+        this.appointments = data.map(app => ({
+          ...app,
+          isExpanded: false // افتراضيًا، جميع البطاقات مغلقة
+        })) as (Appointment & { isExpanded: boolean })[]; // التأكيد على النوع الجديد
         this.isLoading = false;
         this.forceUpdate();
       },
@@ -113,7 +201,13 @@ export class AppointmentsComponent implements OnInit {
 
   loadFeedbacks() {
     console.log('🔄 Loading feedbacks to check existing feedbacks...');
-    this.feedbacksService.getAllFeedbacks().subscribe({
+    
+    // If user role, load only their feedbacks
+    const request = (this.isUser && this.currentUserId)
+      ? this.feedbacksService.getFeedbacksByPatient(this.currentUserId)
+      : this.feedbacksService.getAllFeedbacks();
+    
+    request.subscribe({
       next: (feedbacks: Feedback[]) => {
         console.log('✅ Feedbacks loaded:', feedbacks.length);
         // Create a set of appointment IDs that have feedback
@@ -134,10 +228,16 @@ export class AppointmentsComponent implements OnInit {
     return this.appointmentsWithFeedback.has(appointmentId);
   }
 
+  // دالة لتبديل حالة الفتح/الإغلاق
+  toggleCard(appointment: (Appointment & { isExpanded: boolean })) {
+    appointment.isExpanded = !appointment.isExpanded;
+    this.forceUpdate();
+  }
+  
   // Modal functions
   openCancelModal(appointment: Appointment) {
     console.log('📝 Opening cancel modal for:', appointment.patientName);
-    this.selectedAppointment = appointment;
+    this.selectedAppointment = appointment as (Appointment & { isExpanded: boolean });
     this.cancelReason = '';
     this.showCancelModal = true;
     
@@ -148,7 +248,7 @@ export class AppointmentsComponent implements OnInit {
 
   openCloseModal(appointment: Appointment) {
     console.log('📝 Opening close modal for:', appointment.patientName);
-    this.selectedAppointment = appointment;
+    this.selectedAppointment = appointment as (Appointment & { isExpanded: boolean });
     this.closeNotes = '';
     this.closeMedicine = '';
     this.showCloseModal = true;
@@ -172,7 +272,7 @@ export class AppointmentsComponent implements OnInit {
 
   openFeedbackModal(appointment: Appointment) {
     console.log('📝 Opening feedback modal for:', appointment.patientName);
-    this.selectedAppointment = appointment;
+    this.selectedAppointment = appointment as (Appointment & { isExpanded: boolean });
     this.showFeedbackModal = true;
     
     setTimeout(() => {
@@ -283,13 +383,13 @@ export class AppointmentsComponent implements OnInit {
 
   getCardColor(status: string, index: number): string {
     const statusLower = status.toLowerCase();
-    if (statusLower === 'cancelled') return '#ffebee';
-    if (statusLower === 'completed') return '#e8f5e8';
-    if (statusLower === 'in progress') return '#f3e5f5';
-    return index % 2 === 0 ? '#e6ccff' : '#f2f2f2';
+    if (statusLower === 'cancelled') return 'var(--bg-red-opacity-20)';
+    if (statusLower === 'completed') return 'var(--bg-green-opacity-20)';
+    if (statusLower === 'in progress') return 'var(--bg-warning-opacity-20)';
+    return index % 2 === 0 ? 'var(--bg-blue-opacity-20)' : 'var(--bg-blue-opacity-20)';
   }
 
-  filteredAppointments(): Appointment[] {
+  filteredAppointments(): (Appointment & { isExpanded: boolean })[] { // تعديل نوع الإرجاع
     const filtered = this.appointments
       .filter(a => a.patientName?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                   a.doctorName?.toLowerCase().includes(this.searchTerm.toLowerCase()))

@@ -25,25 +25,129 @@
   gap: 15px;
 }
 
+/* 1. Accordion Container (The Card) */
 .feedback-card {
-  background: var(--bg-card);
+  background: var(--bg-tertiary);
   border-radius: 15px;
-  padding: 25px;
+  padding: 0;
+  /* تم التعديل: إزالة الـ padding من الكارد الرئيسي */
   box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* 2. Accordion Header (Summary part) */
+.feedback-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px;
+  /* تم الإضافة: تطبيق الـ padding هنا */
+  cursor: pointer;
+  border-radius: 15px;
   transition: all 0.3s ease;
 }
 
 .feedback-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Original hover shadow preserved */
+  transform: none;
+  /* تم التعديل: إزالة تأثير hover من الكارد الرئيسي */
+  box-shadow: var(--shadow-md);
 }
 
-.feedback-header {
+/* تأثير الـ hover على الجزء القابل للنقر */
+.feedback-summary-header:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* عند الفتح، إزالة الحدود السفلية من الـ Header */
+.feedback-card.expanded .feedback-summary-header {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background-color: var(--bg-tertiary);
+  transform: none;
+}
+
+/* تفاصيل التنسيق داخل الـ Header */
+.feedback-header-main {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.feedback-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 0 30px;
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+}
+
+.feedback-header-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.feedback-header-meta i {
+  color: var(--primary-400);
+}
+
+/* أيقونة الفتح/الإغلاق */
+.accordion-toggle-icon {
+  font-size: 1.1rem;
+  color: var(--primary-400);
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+/* 3. Accordion Body (Collapsible Details) */
+.feedback-accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 25px;
+  /* تطبيق الـ padding الأفقي */
+  /* تحويل سلس للفتح والإغلاق */
+  transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+/* عند الفتح */
+.feedback-card.expanded .feedback-accordion-body {
+  max-height: 1000px;
+  /* قيمة كبيرة بما يكفي لاستيعاب المحتوى */
+  padding-bottom: 25px;
+  padding-top: 15px;
+  transition: max-height 0.5s ease-in, padding 0.4s ease-in;
+}
+
+/* إخفاء الهيكل القديم للـ header */
+.feedback-card>.feedback-header {
+  display: none;
+}
+
+/* تفاصيل إضافية داخل الـ Body */
+.feedback-meta.full-details-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+  margin-top: 5px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-light);
   margin-bottom: 15px;
 }
+
+.feedback-meta.full-details-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 
 .feedback-patient h3 {
   font-size: 1.3rem;
@@ -56,9 +160,13 @@
   gap: 3px;
 }
 
-.feedback-date {
-  color: var(--text-tertiary);
-  font-size: 0.9rem;
+.feedback-rating i {
+  color: #ffc107;
+  transition: all 0.3s ease;
+}
+
+.feedback-rating i:hover {
+  color: #fff64b;
 }
 
 .feedback-comment {
@@ -80,27 +188,9 @@
   font-weight: 600;
 }
 
-.feedback-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 10px;
-  font-size: 0.9rem;
-  color: var(--text-tertiary);
-}
-
-.feedback-meta span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.feedback-meta i {
-  color: var(--primary-400);
-}
-
 .feedback-content {
-  margin-top: 15px;
+  margin-top: 0;
+  /* تم التعديل */
 }
 
 .doctor-reply {
@@ -225,7 +315,9 @@
 }
 
 /* Loading and Error States */
-.loading-container, .error-message, .empty-state {
+.loading-container,
+.error-message,
+.empty-state {
   text-align: center;
   padding: 60px 20px;
   background: var(--bg-card);
@@ -296,7 +388,35 @@
   background: var(--primary-600);
 }
 
+/* Media Query adjustments for Accordion */
 @media (max-width: 768px) {
+
+  /* Accordion Header Adjustments */
+  .feedback-summary-header {
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  .feedback-header-main {
+    margin-bottom: 10px;
+  }
+
+  .feedback-header-meta {
+    margin: 0;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .accordion-toggle-icon {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    margin-left: 0;
+  }
+
+  /* Existing Mobile Styles */
   .feedback-actions {
     flex-direction: column;
   }
@@ -306,8 +426,10 @@
     justify-content: center;
   }
 
-  .feedback-meta {
+  .feedback-meta.full-details-meta {
     flex-direction: column;
     gap: 8px;
+    padding-top: 0;
+    border-top: none;
   }
 }

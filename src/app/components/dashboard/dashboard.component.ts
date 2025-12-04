@@ -15,6 +15,7 @@ import { AdminsService } from '../../services/admins.service';
 import { AppointmentsService } from '../../services/appointments.service';
 import { FeedbacksService } from '../../services/feedbacks.service';
 import { RoomsService } from '../../services/rooms.service';
+import { RoleService } from '../../services/role.service';
 import { Doctor } from '../../models/doctor.model';
 import { Nurse } from '../../models/nurse.model';
 import { Patient } from '../../models/patient.model';
@@ -216,6 +217,10 @@ export class DashboardComponent implements OnInit {
     }
   };
 
+  currentRole: string | null = null;
+  currentUserId: number | null = null;
+  currentDoctorId: number | null = null;
+
   constructor(
     private doctorsService: DoctorsService,
     private nursesService: NursesService,
@@ -224,11 +229,44 @@ export class DashboardComponent implements OnInit {
     private appointmentsService: AppointmentsService,
     private feedbacksService: FeedbacksService,
     private roomsService: RoomsService,
+    private roleService: RoleService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     console.log('🚀 Dashboard component initialized, isLoading:', this.isLoading);
+    
+    // Get current role and user ID
+    this.currentRole = this.roleService.getCurrentRole();
+    this.currentUserId = this.roleService.getCurrentUserId();
+    this.currentDoctorId = this.roleService.getCurrentDoctorId();
+    
+    // Subscribe to role changes
+    this.roleService.getCurrentRole$().subscribe(role => {
+      this.currentRole = role;
+    });
+    
+    this.roleService.getCurrentUserId$().subscribe(userId => {
+      this.currentUserId = userId;
+      // If doctor, load doctor ID
+      if (this.currentRole === 'doctor' && userId) {
+        this.doctorsService.getDoctorByUserId(userId).subscribe({
+          next: (doctor) => {
+            if (doctor && doctor.doctorId) {
+              this.currentDoctorId = doctor.doctorId;
+            }
+          },
+          error: (error) => {
+            console.error('Error loading doctor ID:', error);
+          }
+        });
+      }
+    });
+    
+    this.roleService.getCurrentDoctorId$().subscribe(doctorId => {
+      this.currentDoctorId = doctorId;
+    });
+    
     this.loadDashboardData();
   }
 
@@ -267,14 +305,20 @@ export class DashboardComponent implements OnInit {
           return of([]);
         })
       ),
-      appointments: this.appointmentsService.getAllAppointments().pipe(
+      appointments: (this.currentRole === 'user' && this.currentUserId 
+        ? this.appointmentsService.getAppointmentsByPatientId(this.currentUserId)
+        : this.appointmentsService.getAllAppointments()
+      ).pipe(
         timeout(10000),
         catchError(error => {
           console.error('❌ Error loading appointments:', error);
           return of([]);
         })
       ),
-      feedbacks: this.feedbacksService.getAllFeedbacks().pipe(
+      feedbacks: (this.currentRole === 'user' && this.currentUserId 
+        ? this.feedbacksService.getFeedbacksByPatient(this.currentUserId)
+        : this.feedbacksService.getAllFeedbacks()
+      ).pipe(
         timeout(10000),
         catchError(error => {
           console.error('❌ Error loading feedbacks:', error);

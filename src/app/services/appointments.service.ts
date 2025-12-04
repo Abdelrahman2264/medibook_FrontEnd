@@ -97,6 +97,105 @@ export class AppointmentsService {
     );
   }
 
+  // Get appointments by patient ID
+  getAppointmentsByPatientId(patientId: number): Observable<Appointment[]> {
+    console.log('🔍 Fetching appointments for patient ID:', patientId);
+    return this.http.get<any>(`${this.API_BASE_URL}/Appointments/patient/${patientId}`).pipe(
+      delay(300),
+      map(response => {
+        console.log('📥 Raw appointments data from API:', response);
+        
+        const appointmentsArray = Array.isArray(response) ? response : 
+                                response.data ? response.data : 
+                                response;
+        
+        if (!Array.isArray(appointmentsArray)) {
+          console.error('❌ Unexpected API response format:', response);
+          throw new Error('Invalid API response format');
+        }
+        
+        const mapped = appointmentsArray.map(dto => {
+          const appointment = mapAppointmentDetailsDtoToAppointment(dto);
+          console.log('✅ Mapped appointment:', { 
+            appointmentId: appointment.appointmentId, 
+            patientName: appointment.patientName 
+          });
+          return appointment;
+        });
+        
+        console.log('📊 Total appointments mapped for patient:', mapped.length);
+        return mapped;
+      }),
+      catchError(error => this.handleError(`fetching appointments for patient ${patientId}`, error))
+    );
+  }
+
+  // Get appointments by doctor ID
+  getAppointmentsByDoctorId(doctorId: number): Observable<Appointment[]> {
+    console.log('🔍 Fetching appointments for doctor ID:', doctorId);
+    return this.http.get<any>(`${this.API_BASE_URL}/Appointments/doctor/${doctorId}`).pipe(
+      delay(300),
+      map(response => {
+        console.log('📥 Raw appointments data from API:', response);
+        
+        const appointmentsArray = Array.isArray(response) ? response : 
+                                response.data ? response.data : 
+                                response;
+        
+        if (!Array.isArray(appointmentsArray)) {
+          console.error('❌ Unexpected API response format:', response);
+          throw new Error('Invalid API response format');
+        }
+        
+        const mapped = appointmentsArray.map(dto => {
+          const appointment = mapAppointmentDetailsDtoToAppointment(dto);
+          console.log('✅ Mapped appointment:', { 
+            appointmentId: appointment.appointmentId, 
+            patientName: appointment.patientName 
+          });
+          return appointment;
+        });
+        
+        console.log('📊 Total appointments mapped for doctor:', mapped.length);
+        return mapped;
+      }),
+      catchError(error => this.handleError(`fetching appointments for doctor ${doctorId}`, error))
+    );
+  }
+
+  // Get appointments by nurse ID
+  getAppointmentsByNurseId(nurseId: number): Observable<Appointment[]> {
+    console.log('🔍 Fetching appointments for nurse ID:', nurseId);
+    return this.http.get<any>(`${this.API_BASE_URL}/Appointments/nurse/${nurseId}`).pipe(
+      delay(300),
+      map(response => {
+        console.log('📥 Raw appointments data from API:', response);
+        
+        const appointmentsArray = Array.isArray(response) ? response : 
+                                response.data ? response.data : 
+                                response;
+        
+        if (!Array.isArray(appointmentsArray)) {
+          console.error('❌ Unexpected API response format:', response);
+          throw new Error('Invalid API response format');
+        }
+        
+        const mapped = appointmentsArray.map(dto => {
+          const appointment = mapAppointmentDetailsDtoToAppointment(dto);
+          console.log('✅ Mapped appointment:', { 
+            appointmentId: appointment.appointmentId, 
+            patientName: appointment.patientName 
+          });
+          return appointment;
+        });
+        
+        console.log('📊 Total appointments mapped for nurse:', mapped.length);
+        return mapped;
+      }),
+      catchError(error => this.handleError(`fetching appointments for nurse ${nurseId}`, error))
+    );
+  }
+
   // Get available dates for a doctor
   getAvailableDates(doctorId: number): Observable<AvailableDateDto[]> {
     return this.http.get<any>(`${this.API_BASE_URL}/Appointments/available-dates/${doctorId}`).pipe(

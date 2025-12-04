@@ -155,6 +155,30 @@ export class FeedbacksService {
     );
   }
 
+  // Get feedbacks by nurse ID
+  getFeedbacksByNurse(nurseId: number): Observable<Feedback[]> {
+    return this.http.get<any>(`${this.API_BASE_URL}/Feedbacks/nurse/${nurseId}`).pipe(
+      delay(500),
+      map(response => {
+        console.log('📥 Raw nurse feedbacks data from API:', response);
+        
+        const feedbacksArray = Array.isArray(response) ? response : 
+                                response.data ? response.data : 
+                                response;
+        
+        if (!Array.isArray(feedbacksArray)) {
+          console.error('❌ Unexpected API response format:', response);
+          throw new Error('Invalid API response format');
+        }
+        
+        const mapped = feedbacksArray.map(dto => mapFeedbackDetailsDtoToFeedback(dto));
+        console.log('📊 Total nurse feedbacks mapped:', mapped.length);
+        return mapped;
+      }),
+      catchError(error => this.handleError(`fetching feedbacks for nurse ${nurseId}`, error))
+    );
+  }
+
   // Update feedback
   updateFeedback(body: UpdateFeedbackDto): Observable<any> {
     console.log('🔄 Updating feedback with data:', body);

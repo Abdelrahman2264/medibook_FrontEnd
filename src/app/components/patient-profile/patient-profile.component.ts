@@ -3,9 +3,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PatientsService } from '../../services/patients.service';
+import { RoleService } from '../../services/role.service';
 import { Patient, UpdatePatientDto } from '../../models/patient.model';
 import { PatientFormModalComponent } from '../Shared/patient-form-modal/patient-form-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
+import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
 
 @Component({
   selector: 'app-patient-profile',
@@ -13,7 +15,7 @@ import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirm
   styleUrls: ['./patient-profile.component.css'],
   imports: [CommonModule, RouterModule, ConfirmationModalComponent, PatientFormModalComponent]
 })
-export class PatientProfile implements OnInit {
+export class PatientProfile extends BaseRoleAwareComponent implements OnInit {
   patient: Patient | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
@@ -26,20 +28,36 @@ export class PatientProfile implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  canManage: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private patientsService: PatientsService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    roleService: RoleService,
+    cdr: ChangeDetectorRef
+  ) {
+    super(roleService, cdr);
+  }
 
-  ngOnInit() {
+  override ngOnInit() {
     console.log('🔄 PatientProfileComponent initialized');
+    // Wait for role to load before setting canManage and loading patient
+    super.ngOnInit();
+  }
+
+  /**
+   * Called after role is loaded
+   */
+  protected override onRoleLoaded(role: string): void {
+    console.log('🔄 Role loaded, setting canManage for patient profile');
+    this.canManage = this.roleService.canManagePatients();
     this.loadPatient();
   }
 
   // Force update method
-  forceUpdate() {
+  protected override forceUpdate() {
     console.log('🔄 Force updating patient profile...');
     this.cdr.detectChanges();
     console.log('✅ Force update completed');

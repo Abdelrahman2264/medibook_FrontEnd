@@ -36,11 +36,14 @@
       <button class="back-btn" (click)="goBack()">
         <i class="fas fa-arrow-left"></i> Back to Admins
       </button>
-      <div class="header-actions">
-        <button class="btn btn-edit" (click)="editAdmin()">
+      <div class="header-actions" *ngIf="roleLoaded && (canManage || canEdit)">
+        <!-- Edit button - only if admin can edit (their own profile) -->
+        <button *ngIf="canEdit" class="btn btn-edit" (click)="editAdmin()">
           <i class="fas fa-edit"></i> Edit Profile
         </button>
+        <!-- Activate/Deactivate button - admins can manage other admins -->
         <button 
+          *ngIf="canManage"
           class="btn" 
           [class.btn-activate]="!admin.isActive" 
           [class.btn-deactivate]="admin.isActive" 
@@ -179,10 +182,13 @@
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="btn btn-primary" (click)="editAdmin()">
+        <!-- Edit button - only if admin can edit (their own profile) -->
+        <button *ngIf="canEdit" class="btn btn-primary" (click)="editAdmin()">
           <i class="fas fa-edit"></i> Edit Profile
         </button>
+        <!-- Activate/Deactivate button - admins can manage other admins -->
         <button 
+          *ngIf="canManage"
           class="btn" 
           [class.btn-success]="!admin.isActive" 
           [class.btn-warning]="admin.isActive" 

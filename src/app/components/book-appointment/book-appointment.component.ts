@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DoctorsService } from '../../services/doctors.service';
 import { AppointmentsService } from '../../services/appointments.service';
+import { RoleService } from '../../services/role.service';
+import { AuthService } from '../../services/auth.service';
 import { Doctor } from '../../models/doctor.model';
 import { AvailableDateDto, CreateAppointmentDto } from '../../models/appointment.model';
 
@@ -20,7 +22,7 @@ export class BookAppointmentComponent implements OnInit {
   availableDates: AvailableDateDto[] = [];
   selectedDate: string = '';
   selectedTime: string = '';
-  patientId: number = 1;
+  patientId: number | null = null;
   
   showBookingModal: boolean = false;
   doctorsLoading: boolean = false;
@@ -33,12 +35,36 @@ export class BookAppointmentComponent implements OnInit {
     private doctorsService: DoctorsService,
     private appointmentsService: AppointmentsService,
     public router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private roleService: RoleService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     console.log('🔧 BookAppointmentComponent initialized');
+    this.loadCurrentPatientId();
     this.loadDoctors();
+  }
+
+  loadCurrentPatientId() {
+    // Get current user ID from role service
+    const userId = this.roleService.getCurrentUserId();
+    
+    if (userId) {
+      this.patientId = userId;
+      console.log('✅ Current patient ID loaded:', this.patientId);
+    } else {
+      // Fallback: try to get from auth service
+      const storedUser = this.authService.getCurrentUser();
+      if (storedUser) {
+        this.patientId = storedUser.id || storedUser.userId || null;
+        console.log('✅ Patient ID loaded from auth service:', this.patientId);
+      } else {
+        console.error('❌ Could not get current patient ID');
+        // Redirect to signin if not authenticated
+        this.router.navigate(['/signin']);
+      }
+    }
   }
 
   forceUpdate() {
@@ -127,6 +153,14 @@ export class BookAppointmentComponent implements OnInit {
   confirmBooking() {
     if (!this.selectedDoctor || !this.selectedDate || !this.selectedTime) {
       alert('Please select a date and time');
+      return;
+    }
+
+    // Ensure we have a valid patient ID
+    if (!this.patientId) {
+      console.error('❌ Patient ID is not available');
+      alert('Unable to identify patient. Please log in again.');
+      this.router.navigate(['/signin']);
       return;
     }
 

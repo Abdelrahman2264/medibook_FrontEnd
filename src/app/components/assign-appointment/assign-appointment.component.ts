@@ -7,7 +7,7 @@ import { RoomsService } from '../../services/rooms.service';
 import { AppointmentsService } from '../../services/appointments.service';
 import { Nurse } from '../../models/nurse.model';
 import { Room } from '../../models/room.model';
-import { AssignAppointmentDto } from '../../models/appointment.model';
+import { AssignAppointmentDto, Appointment } from '../../models/appointment.model';
 
 @Component({
   selector: 'app-assign-appointment',
@@ -18,6 +18,7 @@ import { AssignAppointmentDto } from '../../models/appointment.model';
 })
 export class AssignAppointmentComponent implements OnInit {
   appointmentId: number = 0;
+  appointmentDate: Date | null = null;
   nurses: Nurse[] = [];
   rooms: Room[] = [];
   selectedNurseId: number | null = null;
@@ -39,12 +40,46 @@ export class AssignAppointmentComponent implements OnInit {
 
   ngOnInit() {
     this.appointmentId = +this.route.snapshot.paramMap.get('id')!;
-    this.loadNurses();
-    this.loadRooms();
+    this.loadAppointmentDetails();
   }
 
   forceUpdate() {
     this.cdr.detectChanges();
+  }
+
+  loadAppointmentDetails() {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.forceUpdate();
+
+    this.appointmentsService.getAppointmentById(this.appointmentId).subscribe({
+      next: (appointment) => {
+        console.log('✅ Appointment loaded:', appointment);
+        
+        // Parse the appointment date
+        if (appointment.appointmentDate) {
+          this.appointmentDate = new Date(appointment.appointmentDate);
+          console.log('📅 Appointment date:', this.appointmentDate);
+        } else {
+          console.warn('⚠️ No appointment date found, loading all active nurses and rooms');
+        }
+        
+        // Load nurses and rooms with the appointment date
+        this.loadNurses();
+        this.loadRooms();
+        this.isLoading = false;
+        this.forceUpdate();
+      },
+      error: (error) => {
+        console.error('❌ Error loading appointment:', error);
+        this.errorMessage = 'Failed to load appointment details. Please try again.';
+        this.isLoading = false;
+        // Still try to load nurses and rooms without date filter
+        this.loadNurses();
+        this.loadRooms();
+        this.forceUpdate();
+      }
+    });
   }
 
   loadNurses() {
@@ -52,7 +87,11 @@ export class AssignAppointmentComponent implements OnInit {
     this.errorMessage = '';
     this.forceUpdate();
     
-    this.nursesService.getActiveNurses().subscribe({
+    const request = this.appointmentDate 
+      ? this.nursesService.getActiveNurses(this.appointmentDate)
+      : this.nursesService.getActiveNurses();
+    
+    request.subscribe({
       next: (nurses) => {
         console.log('✅ Active nurses loaded for assignment:', nurses);
         this.nurses = nurses; // already mapped in service, same as Nurses page
@@ -72,7 +111,11 @@ export class AssignAppointmentComponent implements OnInit {
     this.roomsLoading = true;
     this.forceUpdate();
     
-    this.roomsService.getAllActiveRooms().subscribe({
+    const request = this.appointmentDate 
+      ? this.roomsService.getAllActiveRooms(this.appointmentDate)
+      : this.roomsService.getAllActiveRooms();
+    
+    request.subscribe({
       next: (rooms) => {
         console.log('✅ Active rooms loaded for assignment:', rooms);
         this.rooms = rooms;

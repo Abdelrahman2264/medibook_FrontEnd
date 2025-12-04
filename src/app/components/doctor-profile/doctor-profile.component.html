@@ -36,7 +36,7 @@
       <button class="back-btn" (click)="goBack()">
         <i class="fas fa-arrow-left"></i> Back to Doctors
       </button>
-      <div class="header-actions">
+      <div class="header-actions" *ngIf="roleLoaded && canManage">
         <button class="btn btn-edit" (click)="editDoctor()">
           <i class="fas fa-edit"></i> Edit Profile
         </button>
@@ -197,16 +197,20 @@
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="btn btn-primary" (click)="editDoctor()">
+        <button *ngIf="canManage" class="btn btn-primary" (click)="editDoctor()">
           <i class="fas fa-edit"></i> Edit Profile
         </button>
         <button 
+          *ngIf="canManage"
           class="btn" 
           [class.btn-success]="!doctor.isActive" 
           [class.btn-warning]="doctor.isActive" 
           (click)="toggleActive()">
           <i [class]="doctor.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
           {{ doctor.isActive ? 'Deactivate Account' : 'Activate Account' }}
+        </button>
+        <button *ngIf="canAssignAppointment && roleLoaded" class="btn btn-info" (click)="assignAppointment()">
+          <i class="fas fa-calendar-plus"></i> Assign Appointment
         </button>
         <button class="btn btn-secondary" (click)="goBack()">
           <i class="fas fa-arrow-left"></i> Back to List

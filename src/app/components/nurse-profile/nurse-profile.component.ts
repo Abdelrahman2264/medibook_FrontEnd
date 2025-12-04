@@ -3,9 +3,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NursesService } from '../../services/nurses.service';
+import { RoleService } from '../../services/role.service';
 import { Nurse, UpdateNurseDto } from '../../models/nurse.model';
 import { NurseFormModalComponent } from '../Shared/nurse-form-modal/nurse-form-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
+import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
 
 @Component({
   selector: 'app-nurse-profile',
@@ -13,7 +15,7 @@ import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirm
   styleUrls: ['./nurse-profile.component.css'],
   imports: [CommonModule, RouterModule, ConfirmationModalComponent, NurseFormModalComponent]
 })
-export class NurseProfile implements OnInit {
+export class NurseProfile extends BaseRoleAwareComponent implements OnInit {
   nurse: Nurse | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
@@ -26,20 +28,37 @@ export class NurseProfile implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  canManage: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private nursesService: NursesService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    roleService: RoleService,
+    cdr: ChangeDetectorRef
+  ) {
+    super(roleService, cdr);
+  }
 
-  ngOnInit() {
+  override ngOnInit() {
     console.log('🔄 NurseProfileComponent initialized');
+    // Wait for role to load before setting canManage
+    super.ngOnInit();
+  }
+
+  /**
+   * Called after role is loaded
+   */
+  protected override onRoleLoaded(role: string): void {
+    console.log('🔄 Role loaded, setting canManage for nurse profile');
+    // Nurses cannot manage other nurses
+    this.canManage = this.roleService.canManageNurses();
     this.loadNurse();
   }
 
   // Force update method
-  forceUpdate() {
+  protected override forceUpdate() {
     console.log('🔄 Force updating nurse profile...');
     this.cdr.detectChanges();
     console.log('✅ Force update completed');

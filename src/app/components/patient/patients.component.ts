@@ -4,9 +4,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PatientsService } from '../../services/patients.service';
+import { RoleService } from '../../services/role.service';
 import { Patient, UpdatePatientDto } from '../../models/patient.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { PatientFormModalComponent } from '../Shared/patient-form-modal/patient-form-modal.component';
+import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
 
 @Component({
   selector: 'app-patients',
@@ -15,7 +17,7 @@ import { PatientFormModalComponent } from '../Shared/patient-form-modal/patient-
   styleUrls: ['./patients.component.css'],
   imports: [CommonModule, FormsModule, RouterModule, ConfirmationModalComponent, PatientFormModalComponent]
 })
-export class Patients implements OnInit {
+export class Patients extends BaseRoleAwareComponent implements OnInit {
   searchTerm: string = '';
   selectedStatus: string = '';
 
@@ -35,18 +37,36 @@ export class Patients implements OnInit {
   showConfirmationModal: boolean = false;
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
+  
+  // Role-based access
+  canManage: boolean = false;
+  canAdd: boolean = false;
 
   constructor(
     private patientsService: PatientsService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    roleService: RoleService,
+    cdr: ChangeDetectorRef
+  ) {
+    super(roleService, cdr);
+  }
 
-  ngOnInit() {
+  override ngOnInit() {
     console.log('🔄 PatientsComponent initialized');
-    this.loadPatients();
+    // Wait for role to load before loading patients
+    super.ngOnInit();
     
     // Debug: Check API response structure
     this.debugApiResponse();
+  }
+
+  /**
+   * Called after role is loaded
+   */
+  protected override onRoleLoaded(role: string): void {
+    console.log('🔄 Role loaded, setting permissions for patients list');
+    this.canManage = this.roleService.canManagePatients();
+    this.canAdd = !this.roleService.isUser();
+    this.loadPatients();
   }
 
   // Debug method to check API response
@@ -67,7 +87,7 @@ export class Patients implements OnInit {
   }
 
   // Force update method
-  forceUpdate() {
+  protected override forceUpdate() {
     this.cdr.detectChanges();
   }
 

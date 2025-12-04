@@ -1,16 +1,13 @@
 <div class="appointments-page-container">
-  <!-- Main Content -->
   <div class="main-content">
     <div class="appointment-list-page">
-      <!-- Title -->
       <div class="page-title-bar">
         <h1 class="page-title">Appointments Management</h1>
-        <button class="add-appointment-btn" (click)="navigateToBookAppointment()">
+        <button *ngIf="!isDoctor && !isNurse" class="add-appointment-btn" (click)="navigateToBookAppointment()">
           <i class="fas fa-plus"></i> Book New Appointment
         </button>
       </div>
 
-      <!-- Top Stats Cards -->
       <div class="top-cards-container">
         <div class="top-card light-purple">
           <h3>Total Appointments</h3>
@@ -30,7 +27,6 @@
         </div>
       </div>
 
-      <!-- Search -->
       <div class="search-container">
         <input 
           type="text" 
@@ -42,7 +38,6 @@
         <i class="fa fa-search search-icon"></i>
       </div>
 
-      <!-- Filters & Sort -->
       <div class="controls">
         <select [(ngModel)]="selectedStatus" class="filter-select" (change)="forceUpdate()">
           <option value="">Filter by Status</option>
@@ -59,7 +54,6 @@
         </button>
       </div>
 
-      <!-- Loading State -->
       <div *ngIf="isLoading && appointments.length === 0" class="loading-container">
         <div class="loading-spinner">
           <i class="fas fa-spinner fa-spin fa-3x"></i>
@@ -72,7 +66,6 @@
         </div>
       </div>
 
-      <!-- Error Message -->
       <div *ngIf="errorMessage && !isLoading" class="error-message">
         <i class="fas fa-exclamation-circle"></i>
         {{ errorMessage }}
@@ -81,7 +74,6 @@
         </button>
       </div>
 
-      <!-- Results Bar -->
       <div class="results-bar" *ngIf="!isLoading && appointments.length > 0">
         <div class="results-info">
           <i class="fas fa-calendar-check"></i>
@@ -90,145 +82,135 @@
         </div>
       </div>
       
-      <!-- Empty State -->
       <div *ngIf="!isLoading && appointments.length === 0" class="empty-state">
         <div class="empty-state-content">
           <i class="fas fa-calendar-times fa-4x"></i>
           <h2>No Appointments Found</h2>
           <p>There are no appointments scheduled yet.</p>
-          <button class="add-appointment-btn" (click)="navigateToBookAppointment()">
+          <button *ngIf="!isDoctor && !isNurse" class="add-appointment-btn" (click)="navigateToBookAppointment()">
             <i class="fas fa-plus"></i> Schedule First Appointment
           </button>
         </div>
       </div>
 
-      <!-- Appointments Cards Container -->
       <div class="cards-container" *ngIf="!isLoading && appointments.length > 0">
         <div
-          class="appointment-card"
+          class="appointment-card "
           *ngFor="let appointment of filteredAppointments(); let i = index"
           [style.background-color]="getCardColor(appointment.status, i)"
         >
-          <!-- Status Badge -->
-          <div class="status-badge" [style.background-color]="appointment.statusColor">
-            <i [class]="appointment.statusIcon"></i>
-            {{ appointment.status }}
-          </div>
+          <button 
+            class="appointment-header" 
+            (click)="toggleCard(appointment)"
+            [attr.aria-expanded]="appointment.isExpanded"
+            [attr.aria-controls]="'collapse' + appointment.appointmentId"
+          >
+            <div class="header-main-info">
+                <p class="patient-name"><i class="fas fa-user-injured" style="margin-right: 5px; "></i> {{ appointment.patientName }}</p>
+                <p class="doctor-name">Dr. {{ appointment.doctorName }}</p>
+            </div>
+            
+            <div class="header-right-info">
+                <p class="appointment-datetime">
+                    <i class="fas fa-calendar-day"></i> {{ appointment.formattedDate }}
+                    <i class="fas fa-clock" style="margin-left: 10px;"></i> {{ appointment.formattedTime }}
+                </p>
+
+                <div class="status-badge" [style.background-color]="appointment.statusColor">
+                  <i [class]="appointment.statusIcon"></i>
+                  {{ appointment.status }}
+                </div>
+            </div>
+
+            <i class="fas fa-chevron-down accordion-icon" [ngClass]="{'expanded': appointment.isExpanded}"></i>
+
+          </button>
           
-          <div class="appointment-info">
-            <!-- Patient Info -->
-            <div class="info-section">
-              <h3><i class="fas fa-user-injured"></i> Patient</h3>
-              <p class="patient-name">{{ appointment.patientName }}</p>
-              <p class="patient-details">{{ appointment.patientInfo }}</p>
-            </div>
+          <div 
+            [id]="'collapse' + appointment.appointmentId" 
+            [class.expanded-content]="appointment.isExpanded"
+            class="appointment-info-wrapper"
+          >
+            <div class="appointment-info-content"> 
+                <div class="appointment-info">
+                    <div class="info-section">
+                        <h3><i class="fas fa-user-injured"></i> Patient Details</h3>
+                        <p class="patient-details">Patient Info: {{ appointment.patientInfo }}</p>
+                    </div>
 
-            <!-- Doctor Info -->
-            <div class="info-section">
-              <h3><i class="fas fa-user-md"></i> Doctor</h3>
-              <p class="doctor-name">{{ appointment.doctorName }}</p>
-              <p class="doctor-specialty">{{ appointment.doctorSpecialization }}</p>
-            </div>
+                    <div class="info-section">
+                        <h3><i class="fas fa-user-md"></i> Doctor Details</h3>
+                        <p class="doctor-specialty">Specialty: {{ appointment.doctorSpecialization }}</p>
+                    </div>
 
-            <!-- Appointment Details -->
-            <div class="info-section">
-              <h3><i class="fas fa-calendar-alt"></i> Appointment</h3>
-              <p class="appointment-date">
-                <i class="fas fa-calendar-day"></i> {{ appointment.formattedDate }}
-              </p>
-              <p class="appointment-time">
-                <i class="fas fa-clock"></i> {{ appointment.formattedTime }}
-              </p>
-            </div>
+                    <div class="info-section color-gray" *ngIf="appointment.nurseId || appointment.roomId">
+                        <h3><i class="fas fa-clipboard-list"></i> Assignment</h3>
+                        <p *ngIf="appointment.nurseId">
+                        <i class="fas fa-xs fa-user-nurse"></i> Nurse: {{ appointment.nurseName }}
+                        </p>
+                        <p *ngIf="appointment.roomId">
+                        <i class="fas fa-xs fa-door-open"></i> Room: {{ appointment.roomName }}
+                        </p>
+                    </div>
 
-            <!-- Assignment Details -->
-            <div class="info-section" *ngIf="appointment.nurseId || appointment.roomId">
-              <h3><i class="fas fa-clipboard-list"></i> Assignment</h3>
-              <p *ngIf="appointment.nurseId">
-                <i class="fas fa-user-nurse"></i> Nurse: {{ appointment.nurseName }}
-              </p>
-              <p *ngIf="appointment.roomId">
-                <i class="fas fa-door-open"></i> Room: {{ appointment.roomName }}
-              </p>
-            </div>
-
-            <!-- Medical Notes -->
-            <div class="info-section" *ngIf="appointment.medicine || appointment.notes">
-              <h3><i class="fas fa-file-medical"></i> Medical Info</h3>
-              <p *ngIf="appointment.medicine" class="medicine">
-                <i class="fas fa-pills"></i> {{ appointment.medicine }}
-              </p>
-              <p *ngIf="appointment.notes" class="notes">
-                <i class="fas fa-sticky-note"></i> {{ appointment.notes }}
-              </p>
-            </div>
-          </div>
+                    <div class="info-section" *ngIf="appointment.medicine || appointment.notes">
+                        <h3><i class="fas fa-file-medical"></i> Medical Info</h3>
+                        <p *ngIf="appointment.medicine" class="medicine">
+                        <i class="fas fa-pills"></i> Medicine: {{ appointment.medicine }}
+                        </p>
+                        <p *ngIf="appointment.notes" class="notes">
+                        <i class="fas fa-sticky-note"></i> Notes: {{ appointment.notes }}
+                        </p>
+                    </div>
+                </div>
 
           <!-- Action Buttons -->
           <div class="appointment-actions">
-            <!-- Assign Button (for scheduled appointments without assignment) -->
+            <!-- Assign Button (for scheduled appointments without assignment) - Not for users or nurses -->
             <button 
-              *ngIf="!appointment.nurseId && !appointment.roomId && appointment.status === 'Scheduled'"
+              *ngIf="!isUser && !isNurse && !appointment.nurseId && !appointment.roomId && appointment.status === 'Scheduled'"
               class="assign-btn" 
               (click)="navigateToAssign(appointment)">
               <i class="fas fa-user-nurse"></i> Assign
             </button>
 
-            <!-- Close Button (for in progress or assigned appointments with nurse and room) -->
+            <!-- Close Button (for in progress or assigned appointments with nurse and room) - Not for users or nurses -->
             <button 
-              *ngIf="(appointment.status === 'In Progress' || appointment.status === 'Assigned') && appointment.nurseId && appointment.roomId"
+              *ngIf="!isUser && !isNurse && (appointment.status === 'In Progress' || appointment.status === 'Assigned') && appointment.nurseId && appointment.roomId"
               class="close-btn" 
               (click)="confirmClose(appointment)">
               <i class="fas fa-check-circle"></i> Close
             </button>
 
-            <!-- Cancel Button (for pending/scheduled appointments) -->
+            <!-- Cancel Button (for pending/scheduled appointments) - Not for nurses -->
             <button 
-              *ngIf="['Pending', 'Scheduled'].includes(appointment.status)"
+              *ngIf="!isNurse && ['Pending', 'Scheduled'].includes(appointment.status)"
               class="cancel-btn" 
               (click)="confirmCancel(appointment)">
               <i class="fas fa-times-circle"></i> Cancel
             </button>
 
-            <!-- Add Feedback Button (for completed appointments without existing feedback) -->
+            <!-- Add Feedback Button (for completed appointments without existing feedback) - Not for doctors or nurses -->
             <button 
-              *ngIf="appointment.status === 'Completed' && !hasFeedback(appointment.appointmentId)"
+              *ngIf="!isDoctor && !isNurse && appointment.status === 'Completed' && !hasFeedback(appointment.appointmentId)"
               class="feedback-btn" 
               (click)="openFeedbackModal(appointment)">
               <i class="fas fa-comment-dots"></i> Add Feedback
             </button>
 
-            <!-- View Details Button -->
-            <button class="view-btn" (click)="navigateToDetails(appointment)">
-              <i class="fas fa-eye"></i> Details
-            </button>
+                    <button class="view-btn" (click)="navigateToDetails(appointment)">
+                    <i class="fas fa-eye"></i> Details
+                    </button>
+                </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Banner Advertisement -->
-      <div class="banner-advertisement">
-        <div class="banner-content">
-          <div class="banner-text">
-            <h2>🏥 Efficient Appointment Management</h2>
-            <p>Streamline your clinic's scheduling and patient care with our comprehensive appointment system</p>
-            <div class="banner-features">
-              <span><i class="fas fa-check"></i> Real-time Scheduling</span>
-              <span><i class="fas fa-check"></i> Automated Reminders</span>
-              <span><i class="fas fa-check"></i> Staff Assignment</span>
-            </div>
-          </div>
-          <div class="banner-offer">
-            <div class="offer-badge">Smart Clinic</div>
-            <p class="offer-text">Enhanced Patient Care</p>
-            <button class="banner-cta">Learn More</button>
-          </div>
-        </div>
-      </div>
+      
     </div>
   </div>
 
-  <!-- Cancel Appointment Modal -->
   <div class="modal-overlay" *ngIf="showCancelModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -265,7 +247,6 @@
     </div>
   </div>
 
-  <!-- Close Appointment Modal -->
   <div class="modal-overlay" *ngIf="showCloseModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -313,7 +294,6 @@
     </div>
   </div>
 
-  <!-- Confirmation Modal -->
   <app-confirmation-modal
     [isVisible]="showConfirmationModal"
     [title]="confirmationConfig.title"
@@ -327,7 +307,6 @@
     (cancel)="onCancelAction()">
   </app-confirmation-modal>
 
-  <!-- Feedback Form Modal -->
   <app-feedback-form-modal
     [isVisible]="showFeedbackModal"
     [appointment]="selectedAppointment"

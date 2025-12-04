@@ -4,9 +4,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AdminsService } from '../../services/admins.service';
+import { RoleService } from '../../services/role.service';
 import { Admin, CreateAdminDto, UpdateAdminDto } from '../../models/admin.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { AdminFormModalComponent } from '../Shared/admin-form-modal/admin-form-modal.component';
+import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
 
 @Component({
   selector: 'app-admins',
@@ -15,7 +17,7 @@ import { AdminFormModalComponent } from '../Shared/admin-form-modal/admin-form-m
   styleUrls: ['./admins.component.css'],
   imports: [CommonModule, FormsModule, RouterModule, ConfirmationModalComponent, AdminFormModalComponent]
 })
-export class Admins implements OnInit {
+export class Admins extends BaseRoleAwareComponent implements OnInit {
   searchTerm: string = '';
   selectedStatus: string = '';
 
@@ -36,17 +38,34 @@ export class Admins implements OnInit {
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
+  // Role-based access
+  canManage: boolean = false; // For activate/inactivate and create
+  canEdit: (adminId: number) => boolean; // For editing admin data
+
   constructor(
     private adminsService: AdminsService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    roleService: RoleService,
+    cdr: ChangeDetectorRef
+  ) {
+    super(roleService, cdr);
+    // Set up canEdit function
+    this.canEdit = (adminId: number) => this.roleService.canEditAdmin(adminId);
+  }
 
-  ngOnInit() {
+  override ngOnInit() {
     console.log('🔄 AdminsComponent initialized');
+    // Wait for role to load before setting canManage
+    super.ngOnInit();
+  }
+
+  /**
+   * Called after role is loaded
+   */
+  protected override onRoleLoaded(role: string): void {
+    console.log('🔄 Role loaded, setting permissions for admins list');
+    // Admins can manage (activate/inactivate) and create new admins
+    this.canManage = this.roleService.canManageAdmins();
     this.loadAdmins();
-    
-    // Debug: Check API response structure
-    this.debugApiResponse();
   }
 
   // Debug method to check API response
@@ -67,7 +86,7 @@ export class Admins implements OnInit {
   }
 
   // Force update method
-  forceUpdate() {
+  protected override forceUpdate() {
     this.cdr.detectChanges();
   }
 
