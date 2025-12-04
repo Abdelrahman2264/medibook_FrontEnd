@@ -2,7 +2,10 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Roboto Slab', serif;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
 }
 
 /* Loading State */
@@ -10,7 +13,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50vh;
+  height: 60vh;
   flex-direction: column;
   gap: 20px;
 }
@@ -49,9 +52,7 @@
 }
 
 @keyframes bounce {
-  0%,
-  80%,
-  100% {
+  0%, 80%, 100% {
     transform: scale(0);
   }
   40% {
@@ -74,6 +75,7 @@
   border-radius: 12px;
   border: 1px solid var(--error-200);
   max-width: 500px;
+  color: var(--error-700);
 }
 
 .error-message i {
@@ -118,14 +120,14 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  transition: all 0.3s;
+  font-family: 'Roboto Slab', serif;
 }
 
 .back-btn:hover {
-  background: #5a52d5; /* Original hover color preserved */
+  background: var(--primary-700);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .header-actions {
@@ -139,29 +141,40 @@
   border-radius: 12px;
   box-shadow: var(--shadow-md);
   overflow: hidden;
+  border: 1px solid var(--border-light);
 }
 
 .profile-header-section {
   display: flex;
   align-items: center;
   padding: 40px;
-  background: linear-gradient(135deg, var(--secondary-500) 0%, var(--primary-600) 100%);
+  background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
   color: var(--text-inverse);
   gap: 30px;
 }
 
 .profile-image-container {
   position: relative;
+  width: 240px;
+  height: 240px;
   flex-shrink: 0;
 }
 
 .profile-image {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid var(--bg-card);
   box-shadow: var(--shadow-md);
+  background-color: var(--surface-01);
+}
+
+.profile-image:hover {
+  border-color: #3b82f6;
+  box-shadow: 
+    0 10px 20px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .status-badge {
@@ -174,23 +187,22 @@
   font-weight: 600;
   backdrop-filter: blur(10px);
   border: 2px solid var(--bg-card);
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  z-index: 10;
 }
 
 .status-badge.active {
-  background: rgba(76, 175, 80, 0.9); /* Original color preserved */
+  background: var(--success-500);
   color: var(--text-inverse);
 }
 
 .status-badge.inactive {
-  background: rgba(244, 67, 54, 0.9); /* Original color preserved */
+  background: var(--error-500);
   color: var(--text-inverse);
 }
 
 .status-badge i {
   margin-right: 4px;
+  font-size: 0.7rem;
 }
 
 .profile-basic-info {
@@ -202,6 +214,7 @@
   font-weight: 700;
   margin: 0 0 10px 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: var(--text-inverse);
 }
 
 .nurse-id {
@@ -209,7 +222,7 @@
   align-items: center;
   gap: 8px;
   font-size: 1em;
-  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .nurse-id i {
@@ -259,11 +272,13 @@
   background: var(--surface-03);
   border-radius: 8px;
   transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-light);
 }
 
 .detail-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Original hover shadow preserved */
+  box-shadow: var(--shadow-md);
+  background-color: var(--surface-04);
 }
 
 .detail-item i {
@@ -296,6 +311,7 @@
   padding: 20px;
   border-radius: 8px;
   border-left: 4px solid var(--primary-600);
+  border: 1px solid var(--border-light);
 }
 
 .bio-content p {
@@ -316,7 +332,7 @@
   flex-wrap: wrap;
 }
 
-/* Button Styles */
+/* Updated Button Styles with Theme Variables */
 .btn {
   padding: 12px 24px;
   border: none;
@@ -329,11 +345,13 @@
   align-items: center;
   gap: 8px;
   text-decoration: none;
+  font-family: 'Roboto Slab', serif;
 }
 
 .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Original hover shadow preserved */
+  box-shadow: var(--shadow-md);
+  filter: brightness(1.1);
 }
 
 .btn-primary {
@@ -342,61 +360,61 @@
 }
 
 .btn-primary:hover {
-  background: #5a52d5; /* Original hover color preserved */
+  background: var(--primary-700);
 }
 
 .btn-secondary {
-  background: #6c757d; /* Original color preserved */
+  background: var(--secondary-600);
   color: var(--text-inverse);
 }
 
 .btn-secondary:hover {
-  background: #5a6268; /* Original hover color preserved */
+  background: var(--secondary-700);
 }
 
 .btn-success {
-  background: #28a745; /* Original color preserved */
+  background: var(--success-600, #16a34a);
   color: var(--text-inverse);
 }
 
 .btn-success:hover {
-  background: #218838; /* Original hover color preserved */
+  background: var(--success-700, #15803d);
 }
 
 .btn-warning {
-  background: #ffc107; /* Original color preserved */
-  color: #212529; /* Original color preserved */
+  background: var(--warning-600, #d97706);
+  color: var(--gray-900);
 }
 
 .btn-warning:hover {
-  background: #e0a800; /* Original hover color preserved */
+  background: var(--warning-700, #b45309);
 }
 
 .btn-edit {
-  background: #17a2b8; /* Original color preserved */
+  background: var(--info-600, #0891b2);
   color: var(--text-inverse);
 }
 
 .btn-edit:hover {
-  background: #138496; /* Original hover color preserved */
+  background: var(--info-700, #0e7490);
 }
 
 .btn-activate {
-  background: #28a745; /* Original color preserved */
+  background: var(--success-600, #16a34a);
   color: var(--text-inverse);
 }
 
 .btn-activate:hover {
-  background: #218838; /* Original hover color preserved */
+  background: var(--success-700, #15803d);
 }
 
 .btn-deactivate {
-  background: #dc3545; /* Original color preserved */
+  background: var(--error-600, #dc2626);
   color: var(--text-inverse);
 }
 
 .btn-deactivate:hover {
-  background: #c82333; /* Original hover color preserved */
+  background: var(--error-700, #b91c1c);
 }
 
 /* Responsive Design */
@@ -451,6 +469,11 @@
 
   .nurse-name {
     font-size: 1.6em;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
