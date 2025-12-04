@@ -132,6 +132,12 @@ export const routes: Routes = [
         .then(m => m.HomeComponent)
   },
   {
+    path: 'team',
+    loadComponent: () =>
+      import('./components/meet-our-team/meet-our-team.component')
+        .then(m => m.MeetOurTeamComponent)
+  },
+  {
     path: 'feedback',
     loadComponent: () =>
       import('./components/feedback/feedback.component')
