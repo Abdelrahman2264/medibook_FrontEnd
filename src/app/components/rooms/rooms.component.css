@@ -61,24 +61,29 @@
   padding: 25px;
   border-radius: 10px;
   text-align: center;
-  color: var(--text-inverse);
+  color: var(--text-primary);
   box-shadow: var(--shadow-md);
+  border-left: 5px solid;
 }
 
 .top-card.light-blue {
-  background: linear-gradient(135deg, var(--primary-400), var(--primary-500));
+  background: linear-gradient(135deg, var(--bg-blue-opacity-20), var(--bg-blue-opacity-20));
+  border-left-color: var(--primary-600);
 }
 
 .top-card.light-green {
-  background: linear-gradient(135deg, var(--success-400), var(--success-500));
+  background: linear-gradient(135deg, var(--bg-green-opacity-20), var(--bg-green-opacity-20));
+  border-left-color: var(--success-600);
 }
 
 .top-card.light-orange {
-  background: linear-gradient(135deg, var(--warning-400), var(--warning-500));
+  background: linear-gradient(135deg, var(--bg-red-opacity-20), var(--bg-red-opacity-20));
+  border-left-color: var(--error-500);
 }
 
 .top-card.light-purple {
-  background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+  background: linear-gradient(135deg, var(--bg-blue-opacity-20), var(--bg-blue-opacity-20));
+  border-left-color: var(--primary-600);
 }
 
 .top-card h3 {
@@ -180,7 +185,7 @@
 }
 
 .room-card {
-  background: var(--surface-01);
+  background: var(--bg-tertiary);
   border-radius: 15px;
   padding: 25px;
   box-shadow: var(--shadow-md);

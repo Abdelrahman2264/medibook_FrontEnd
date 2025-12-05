@@ -228,7 +228,7 @@
 .doctor-card:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-lg);
-  animation: pulse-medical 2s infinite;
+
 }
 
 /* Status Badge */
@@ -875,20 +875,11 @@
   }
 }
 
-.doctor-card {
-  animation: fadeIn 0.5s ease-out;
-}
 
-/* Medical Theme Animations */
-@keyframes pulse-medical {
-  0% { box-shadow: 0 0 0 0 rgba(var(--primary-600-rgb), 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(var(--primary-600-rgb), 0); }
-  100% { box-shadow: 0 0 0 0 rgba(var(--primary-600-rgb), 0); }
-}
 
-.doctor-card:hover {
-  animation: pulse-medical 2s infinite;
-}
+
+
+
 
 .status-badge i {
   color: inherit !important;
