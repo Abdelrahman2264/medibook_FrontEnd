@@ -1,5 +1,5 @@
 .signin-page {
-  min-height: 150vh;
+  min-height: 100vh;
   background-image: linear-gradient(rgba(var(--primary-600-rgb), 0.3)),
     url(../../../assets/images/health-still-life-with-copy-space.jpg);
   background-position: center;
