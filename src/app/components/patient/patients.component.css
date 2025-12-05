@@ -110,7 +110,9 @@
 .doctor-info h3 {
   text-align: center;
 }
-
+.results-bar{
+  color: var(--text-primary);
+}
 /* Controls */
 .controls-container {
   background: var(--surface-01);
@@ -197,6 +199,11 @@
   width: 100%;
   border-collapse: collapse;
   border: 1px solid var(--border-light);
+  
+}
+.patients-table tbody tr{
+  border-bottom: 2px solid var(--border-light);
+  text-align: center;
 }
 
 .patients-table th {
@@ -208,6 +215,8 @@
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: center;
+  
 }
 
 .patients-table th:last-child {
@@ -217,6 +226,7 @@
 .patients-table td {
   padding: 15px;
   vertical-align: top;
+  
 }
 
 .patients-table td:last-child {

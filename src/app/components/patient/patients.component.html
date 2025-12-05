@@ -125,25 +125,25 @@
                 </div>
               </td>
               <td class="contact-info">
-                <div class="contact-item">
+                <div class="contact-item w-fit  mx-auto">
                   <i class="fa fa-envelope"></i>
                   {{ patient.email }}
                 </div>
-                <div class="contact-item" *ngIf="patient.mobilePhone">
+                <div class="contact-item w-fit mx-auto" *ngIf="patient.mobilePhone">
                   <i class="fa fa-phone"></i>
                   {{ patient.mobilePhone }}
                 </div>
               </td>
               <td class="personal-info">
-                <div class="info-item">
+                <div class="info-item w-fit  mx-auto">
                   <i [class]="getGenderIcon(patient.gender)"></i>
                   {{ patient.gender || 'Not specified' }}
                 </div>
-                <div class="info-item" *ngIf="patient.age">
+                <div class="info-item w-fit  mx-auto" *ngIf="patient.age">
                   <i class="fas fa-birthday-cake"></i>
                   {{ patient.age }} years
                 </div>
-                <div class="info-item" *ngIf="patient.mitrialStatus">
+                <div class="info-item w-fit  mx-auto" *ngIf="patient.mitrialStatus">
                   <i class="fas fa-heart"></i>
                   {{ patient.mitrialStatus }}
                 </div>

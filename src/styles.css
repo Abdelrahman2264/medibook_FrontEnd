@@ -13,6 +13,9 @@ body {
 .section-top-space{
   margin-top: 5rem;
 }
+.w-fit{
+  width: fit-content;
+}
 
 
 .btn-primary {

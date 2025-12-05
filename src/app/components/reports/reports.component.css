@@ -12,11 +12,13 @@
   font-size: 2.5rem;
   color: var(--text-primary);
   margin-bottom: 10px;
+  font-weight: 700;
 }
 
 .reports-header p {
   color: var(--text-secondary);
   font-size: 1.1rem;
+  opacity: 0.9;
 }
 
 /* Error Message */
@@ -60,6 +62,7 @@
 .loading-overlay p {
   margin-top: 15px;
   font-size: 1.1rem;
+  opacity: 0.9;
 }
 
 .spinner {
@@ -113,6 +116,7 @@
   margin-bottom: 20px;
   border-bottom: 2px solid var(--border-light);
   padding-bottom: 10px;
+  font-weight: 600;
 }
 
 .report-category {
@@ -123,11 +127,12 @@
   font-size: 1.4rem;
   color: var(--text-primary);
   margin-bottom: 15px;
+  font-weight: 600;
 }
 
 .button-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
 }
 
@@ -143,6 +148,7 @@
   margin-bottom: 15px;
   color: var(--text-primary);
   font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .report-button-group .btn {
@@ -161,6 +167,7 @@
   gap: 8px;
 }
 
+/* Button Styles with Theme Support */
 .btn-excel {
   background: #217346;
   color: var(--text-inverse);
@@ -217,6 +224,7 @@
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.95rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -229,7 +237,7 @@
 }
 
 .btn-refresh:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -252,12 +260,15 @@
   margin-bottom: 20px;
   border-bottom: 2px solid var(--border-light);
   padding-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .section-header h2 {
   font-size: 1.8rem;
   color: var(--text-primary);
   margin: 0;
+  font-weight: 600;
 }
 
 /* Empty State */
@@ -340,7 +351,7 @@
 }
 
 .report-icon.pdf-color {
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  background: linear-gradient(135deg, var(--error-500) 0%, var(--error-700) 100%);
 }
 
 .report-icon.excel-color {
@@ -353,12 +364,14 @@
 
 .report-content {
   flex: 1;
+  min-width: 0; /* Prevents flex item from overflowing */
 }
 
 .report-content h3 {
   font-size: 1.2rem;
   color: var(--text-primary);
   margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .report-type {
@@ -381,6 +394,7 @@
   color: var(--text-secondary);
   font-size: 0.9rem;
   margin-top: 5px;
+  line-height: 1.5;
 }
 
 .report-period {
@@ -395,6 +409,7 @@
 .report-actions {
   display: flex;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .report-actions .btn {
@@ -402,7 +417,7 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
   color: var(--text-inverse);
 }
@@ -430,26 +445,66 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .reports-container {
-    padding: 15px;
+    padding: 20px;
   }
-
+  
+  .reports-header h1 {
+    font-size: 2rem;
+  }
+  
+  .report-generation-section,
+  .saved-reports-section {
+    padding: 20px;
+  }
+  
   .button-grid {
     grid-template-columns: 1fr;
   }
-
+  
   .report-card {
     flex-direction: column;
     text-align: center;
+    gap: 15px;
   }
-
+  
   .report-actions {
     width: 100%;
     justify-content: center;
   }
-
+  
   .section-header {
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
+  }
+  
+  .report-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .reports-container {
+    padding: 15px;
+  }
+  
+  .reports-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .report-generation-section,
+  .saved-reports-section {
+    padding: 15px;
+  }
+  
+  .report-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .report-actions .btn {
+    width: 100%;
   }
 }

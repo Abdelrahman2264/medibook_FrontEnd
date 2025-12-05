@@ -1,6 +1,6 @@
 .book-appointment-page {
   padding: 30px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
   min-height: 100vh;
 }
 
@@ -15,13 +15,13 @@
 
 .page-header h1 {
   font-size: 2.5rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-weight: 700;
   margin: 0;
 }
 
 .btn-back {
-  background: #6c757d;
+  background: var(--gray-600);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -33,11 +33,17 @@
   align-items: center;
   gap: 8px;
   transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .btn-back:hover {
-  background: #5a6268;
+  background: var(--gray-700);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-back:active {
+  transform: translateY(0);
 }
 
 .doctors-grid {
@@ -48,18 +54,21 @@
 }
 
 .doctor-card {
-  background: white;
+  background: var(--bg-tertiary);
   border-radius: 15px;
   padding: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  border: 1px solid var(--border-light);
+  height: 100%;
 }
 
 .doctor-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-medium);
 }
 
 .doctor-image {
@@ -68,13 +77,42 @@
   border-radius: 50%;
   overflow: hidden;
   margin: 0 auto 20px;
-  border: 4px solid #e9ecef;
+  border: 4px solid var(--border-light);
+  position: relative;
 }
 
 .doctor-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.doctor-card:hover .doctor-image img {
+  transform: scale(1.05);
+}
+
+.doctor-availability {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--surface-01);
+  z-index: 1;
+}
+
+.doctor-availability.available {
+  background: var(--success-500);
+}
+
+.doctor-availability.busy {
+  background: var(--error-500);
+}
+
+.doctor-availability.away {
+  background: var(--warning-500);
 }
 
 .doctor-info {
@@ -84,34 +122,59 @@
 }
 
 .doctor-info h3 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 10px;
   font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .specialization {
-  color: #8a2be2;
+  color: var(--primary-600);
   font-weight: 600;
   margin-bottom: 5px;
+  display: inline-block;
+  background: var(--primary-50);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
 }
 
 .type, .experience {
-  color: #6c757d;
+  color: var(--text-secondary);
   margin-bottom: 5px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: var(--warning-500);
+  margin: 8px 0;
   font-size: 0.9rem;
 }
 
 .bio {
-  color: #495057;
+  color: var(--text-tertiary);
   font-size: 0.9rem;
   margin-top: 10px;
-  line-height: 1.4;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .doctor-actions {
   display: flex;
   gap: 10px;
   justify-content: center;
+  margin-top: auto;
 }
 
 .btn-profile, .btn-book {
@@ -123,26 +186,42 @@
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   font-size: 0.9rem;
+  min-width: 120px;
+  flex: 1;
 }
 
 .btn-profile {
-  background: #6c757d;
+  background: var(--gray-600);
   color: white;
 }
 
 .btn-profile:hover {
-  background: #5a6268;
+  background: var(--gray-700);
+  transform: translateY(-2px);
 }
 
 .btn-book {
-  background: #28a745;
+  background: var(--success-600);
   color: white;
 }
 
 .btn-book:hover {
-  background: #218838;
+  background: var(--success-700);
+  transform: translateY(-2px);
+}
+
+.btn-book:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-book:disabled:hover {
+  background: var(--success-600);
+  transform: none;
 }
 
 /* Modal Styles */
@@ -152,21 +231,35 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(4px);
 }
 
 .modal-content {
-  background: white;
+  background: var(--surface-01);
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-medium);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-header {
@@ -174,27 +267,34 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 25px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .modal-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .close-btn {
   background: none;
   border: none;
   font-size: 1.5rem;
-  color: #6c757d;
+  color: var(--text-tertiary);
   cursor: pointer;
   padding: 5px 10px;
-  transition: color 0.3s;
+  transition: all 0.3s;
+  border-radius: 4px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-btn:hover {
-  color: #e74c3c;
+  color: var(--error-500);
+  background: var(--hover-overlay);
 }
 
 .modal-body {
@@ -208,22 +308,74 @@
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .form-control {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--border-light);
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  transition: all 0.3s;
+  background: var(--surface-02);
+  color: var(--text-primary);
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #8a2be2;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.form-control::placeholder {
+  color: var(--text-disabled);
+}
+
+.form-control:disabled {
+  background: var(--surface-03);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.select-time-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.time-slot {
+  padding: 10px;
+  border: 2px solid var(--border-light);
+  border-radius: 6px;
+  background: var(--surface-02);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.time-slot:hover {
+  border-color: var(--primary-400);
+  background: var(--primary-50);
+}
+
+.time-slot.selected {
+  border-color: var(--primary-600);
+  background: var(--primary-100);
+  color: var(--primary-700);
+  font-weight: 600;
+}
+
+.time-slot.booked {
+  background: var(--error-50);
+  border-color: var(--error-200);
+  color: var(--error-600);
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .inline-loading {
@@ -231,12 +383,12 @@
   align-items: center;
   gap: 8px;
   margin-top: 10px;
-  color: #6c757d;
+  color: var(--text-tertiary);
   font-size: 0.9rem;
 }
 
 .inline-loading i {
-  color: #8a2be2;
+  color: var(--primary-600);
 }
 
 .modal-footer {
@@ -244,7 +396,7 @@
   justify-content: flex-end;
   gap: 15px;
   padding: 20px 25px;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--border-light);
 }
 
 .btn-cancel, .btn-confirm {
@@ -257,29 +409,33 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 100px;
 }
 
 .btn-cancel {
-  background: #6c757d;
+  background: var(--gray-600);
   color: white;
 }
 
 .btn-cancel:hover {
-  background: #5a6268;
+  background: var(--gray-700);
+  transform: translateY(-2px);
 }
 
 .btn-confirm {
-  background: #28a745;
+  background: var(--success-600);
   color: white;
 }
 
 .btn-confirm:hover:not(:disabled) {
-  background: #218838;
+  background: var(--success-700);
+  transform: translateY(-2px);
 }
 
 .btn-confirm:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 /* Loading and Error States */
@@ -295,29 +451,48 @@
 }
 
 .loading-spinner i {
-  color: #8a2be2;
+  color: var(--primary-600);
   margin-bottom: 15px;
+  font-size: 3rem;
 }
 
 .loading-spinner p {
-  color: #6c757d;
+  color: var(--text-secondary);
   margin-bottom: 15px;
 }
 
 .error-message {
-  background: #fee;
-  color: #c33;
+  background: var(--error-50);
+  color: var(--error-700);
   padding: 15px 20px;
   border-radius: 8px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
   gap: 10px;
-  border-left: 4px solid #e74c3c;
+  border-left: 4px solid var(--error-500);
 }
 
 .error-message i {
   font-size: 1.2rem;
+  color: var(--error-500);
+}
+
+.success-message {
+  background: var(--success-50);
+  color: var(--success-700);
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 4px solid var(--success-500);
+}
+
+.success-message i {
+  font-size: 1.2rem;
+  color: var(--success-500);
 }
 
 /* Responsive Design */
@@ -329,10 +504,20 @@
   .page-header {
     flex-direction: column;
     align-items: stretch;
+    gap: 15px;
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
   }
   
   .doctors-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .doctor-card {
+    padding: 20px;
   }
   
   .doctor-actions {
@@ -341,18 +526,50 @@
   
   .btn-profile, .btn-book {
     width: 100%;
-    justify-content: center;
+    min-width: auto;
   }
   
   .modal-content {
     width: 95%;
+    margin: 20px;
   }
   
   .modal-footer {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
   
   .btn-cancel, .btn-confirm {
     width: 100%;
+  }
+  
+  .select-time-slots {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .book-appointment-page {
+    padding: 15px;
+  }
+  
+  .page-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .doctor-image {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-control {
+    padding: 10px 12px;
   }
 }

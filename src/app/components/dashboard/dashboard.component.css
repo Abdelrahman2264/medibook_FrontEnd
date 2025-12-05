@@ -52,7 +52,7 @@
 }
 
 .stat-card {
-  background: var(--bg-card, #ffffff);
+  background: var(--bg-tertiary);
   border-radius: 15px;
   padding: 25px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -107,7 +107,7 @@
 }
 
 .chart-card {
-  background: var(--bg-card, #ffffff);
+  background: var(--bg-tertiary);
   border-radius: 15px;
   padding: 25px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);

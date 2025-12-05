@@ -399,7 +399,7 @@
   position: relative;
   background-color: var(--surface-02);
   border-top-color: var(--primary-600);
-  animation: fadeIn 0.5s ease-out;
+ 
 }
 
 .nurse-card:hover {
@@ -591,11 +591,7 @@
   }
 }
 
-@keyframes pulse-medical {
-  0% { box-shadow: 0 0 0 0 rgba(var(--primary-600-rgb), 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(var(--primary-600-rgb), 0); }
-  100% { box-shadow: 0 0 0 0 rgba(var(--primary-600-rgb), 0); }
-}
+
 
 /* Responsive Design */
 @media (max-width: 1024px) {
