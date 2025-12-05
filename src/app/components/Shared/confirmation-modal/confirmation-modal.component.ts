@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
           <div class="icon-container">
             <i [class]="icon" [style.color]="iconColor"></i>
           </div>
-          <p>{{ message }}</p>
+          <div class="message-container" [innerHTML]="sanitizedMessage"></div>
         </div>
         
         <div class="modal-footer">
@@ -69,7 +69,7 @@ import { CommonModule } from '@angular/common';
 
     .modal-header {
       display: flex;
-      justify-content: between;
+      justify-content: space-between;
       align-items: center;
       padding: 16px 20px;
       border-bottom: 1px solid #e5e5e5;
@@ -110,11 +110,33 @@ import { CommonModule } from '@angular/common';
       font-size: 48px;
     }
 
-    .modal-body p {
-      margin: 0;
+    .message-container {
       font-size: 16px;
       line-height: 1.5;
       color: #555;
+    }
+
+    .message-container p {
+      margin: 0;
+    }
+
+    .message-container strong {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .message-container em {
+      font-style: italic;
+    }
+
+    .message-container u {
+      text-decoration: underline;
+    }
+
+    .message-container .highlight {
+      background-color: #fffacd;
+      padding: 2px 4px;
+      border-radius: 3px;
     }
 
     .modal-footer {
@@ -180,6 +202,51 @@ import { CommonModule } from '@angular/common';
     .btn-info:hover {
       background: #138496;
     }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      .modal-content {
+        background: #2d3748;
+        color: #e2e8f0;
+      }
+
+      .modal-header {
+        border-bottom-color: #4a5568;
+      }
+
+      .modal-header h3 {
+        color: #e2e8f0;
+      }
+
+      .close-btn {
+        color: #a0aec0;
+      }
+
+      .close-btn:hover {
+        background: #4a5568;
+      }
+
+      .message-container {
+        color: #cbd5e0;
+      }
+
+      .message-container strong {
+        color: #e2e8f0;
+      }
+
+      .modal-footer {
+        border-top-color: #4a5568;
+      }
+
+      .btn-cancel {
+        background: #4a5568;
+        color: #e2e8f0;
+      }
+
+      .btn-cancel:hover {
+        background: #5a6578;
+      }
+    }
   `]
 })
 export class ConfirmationModalComponent {
@@ -194,6 +261,18 @@ export class ConfirmationModalComponent {
   
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
+
+  // Method to safely render HTML
+  get sanitizedMessage(): string {
+    // You can use a proper sanitizer here if needed
+    // For basic HTML tags, this is safe enough
+    return this.message
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/&lt;(strong|b|em|i|u|span|div|p|br|small|mark)&gt;/gi, '<$1>')
+      .replace(/&lt;\/(strong|b|em|i|u|span|div|p|br|small|mark)&gt;/gi, '</$1>')
+      .replace(/&lt;(strong|b|em|i|u|span|div|p|br|small|mark)\s+([^&]*)&gt;/gi, '<$1 $2>');
+  }
 
   onConfirm(): void {
     this.confirm.emit();
