@@ -8,6 +8,7 @@ import { Nurse, UpdateNurseDto } from '../../models/nurse.model';
 import { NurseFormModalComponent } from '../Shared/nurse-form-modal/nurse-form-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-nurse-profile',
@@ -36,7 +37,8 @@ export class NurseProfile extends BaseRoleAwareComponent implements OnInit {
     private router: Router,
     private nursesService: NursesService,
     roleService: RoleService,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
     super(roleService, cdr);
   }
@@ -188,7 +190,7 @@ export class NurseProfile extends BaseRoleAwareComponent implements OnInit {
     // Validate nurseId before update
     if (!this.nurse.nurseId || this.nurse.nurseId === 0) {
       console.error('❌ ERROR: Cannot update - nurseId is invalid:', this.nurse);
-      alert('Error: Invalid nurse ID. Cannot update this nurse.');
+      this.toastService.error('Error: Invalid nurse ID. Cannot update this nurse.');
       return;
     }
 
@@ -210,7 +212,7 @@ export class NurseProfile extends BaseRoleAwareComponent implements OnInit {
         console.error('❌ Error updating nurse:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update nurse. Please try again.');
+        this.toastService.error('Failed to update nurse. Please try again.');
       }
     });
   }
@@ -284,7 +286,7 @@ export class NurseProfile extends BaseRoleAwareComponent implements OnInit {
           errorMessage += 'Please try again.';
         }
         
-        alert(errorMessage);
+        this.toastService.error(errorMessage);
       }
     });
   }

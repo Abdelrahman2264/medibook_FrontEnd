@@ -25,6 +25,13 @@ export class DoctorReplyModalComponent implements OnInit, OnChanges {
   };
 
   errorMessage: string = '';
+  submitted = false;
+  fieldErrors: {
+    doctorReply?: string;
+  } = {};
+
+  // Track which fields have been touched
+  touchedFields: Set<string> = new Set();
 
   ngOnInit() {
     this.initializeForm();
@@ -47,30 +54,83 @@ export class DoctorReplyModalComponent implements OnInit, OnChanges {
       };
     }
     this.errorMessage = '';
+    this.submitted = false;
+    this.clearAllFieldErrors();
+    this.touchedFields.clear();
+  }
+
+  private clearAllFieldErrors() {
+    this.fieldErrors = {};
+  }
+
+  // Helper to check if a field should show error
+  shouldShowError(fieldName: keyof typeof this.fieldErrors): boolean {
+    return this.submitted || this.touchedFields.has(fieldName);
+  }
+
+  // Mark a field as touched
+  markFieldAsTouched(fieldName: keyof typeof this.fieldErrors): void {
+    this.touchedFields.add(fieldName);
+  }
+
+  // Handle field input - clear error when user starts typing
+  onFieldInput(fieldName: keyof typeof this.fieldErrors): void {
+    // Clear error for this field when user starts typing
+    if (this.fieldErrors[fieldName]) {
+      this.fieldErrors[fieldName] = '';
+    }
+  }
+
+  // Handle field blur - validate and mark as touched
+  onFieldBlur(fieldName: keyof typeof this.fieldErrors): void {
+    this.markFieldAsTouched(fieldName);
+    // Re-validate the form to show errors for touched fields
+    this.validateForm();
   }
 
   validateForm(): boolean {
-    this.errorMessage = '';
+    // Clear previous errors (but keep them if field was touched or form was submitted)
+    const previousErrors = { ...this.fieldErrors };
+    this.fieldErrors = {};
+    let isValid = true;
 
+    // Validate Doctor Reply
     if (!this.replyForm.doctorReply?.trim()) {
-      this.errorMessage = 'Doctor reply is required';
-      return false;
+      if (this.submitted || this.touchedFields.has('doctorReply')) {
+        this.fieldErrors.doctorReply = 'Doctor reply is required';
+      }
+      isValid = false;
+    } else if (this.replyForm.doctorReply.trim().length < 1) {
+      if (this.submitted || this.touchedFields.has('doctorReply')) {
+        this.fieldErrors.doctorReply = 'Doctor reply must be at least 1 character long';
+      }
+      isValid = false;
+    } else if (this.replyForm.doctorReply.trim().length > 500) {
+      if (this.submitted || this.touchedFields.has('doctorReply')) {
+        this.fieldErrors.doctorReply = 'Doctor reply must be less than 500 characters';
+      }
+      isValid = false;
     }
 
-    if (this.replyForm.doctorReply.trim().length < 1) {
-      this.errorMessage = 'Doctor reply must be at least 1 character long';
-      return false;
+    if (!isValid && this.submitted) {
+      this.errorMessage = 'Please fix all validation errors before submitting';
     }
 
-    if (this.replyForm.doctorReply.trim().length > 500) {
-      this.errorMessage = 'Doctor reply must be less than 500 characters';
-      return false;
-    }
+    return isValid;
+  }
 
-    return true;
+  isFormValid(): boolean {
+    // Only perform full validation on fields that have been touched or when form is submitted
+    if (!this.submitted && this.touchedFields.size === 0) {
+      return false; // Form is not valid until user interacts with it
+    }
+    
+    return this.validateForm();
   }
 
   onSubmit() {
+    this.submitted = true;
+    
     if (!this.validateForm()) {
       return;
     }

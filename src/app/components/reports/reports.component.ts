@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReportsService, ReportListDto } from '../../services/reports.service';
+import { ToastService } from '../../services/toast.service';
+import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ConfirmationModalComponent],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.css']
 })
@@ -15,8 +17,13 @@ export class ReportsComponent implements OnInit {
   loadingList = false;
   generatingReport = false;
   error: string | null = null;
+  showConfirmationModal = false;
+  reportIdToDelete: number | null = null;
 
-  constructor(private reportsService: ReportsService) {}
+  constructor(
+    private reportsService: ReportsService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.loadReports();
@@ -83,12 +90,14 @@ export class ReportsComponent implements OnInit {
 
     reportObservable.subscribe({
       next: (report) => {
+        this.toastService.success('Report generated successfully');
         // Download the file immediately
         this.downloadReportById(report.reportId, report.fileName);
         // Reload the reports list
         this.loadReports();
       },
       error: (error) => {
+        this.toastService.error(error.message || 'Failed to generate report');
         this.error = error.message || 'Failed to generate report';
         this.loading = false;
         this.generatingReport = false;
@@ -112,6 +121,7 @@ export class ReportsComponent implements OnInit {
         this.generatingReport = false;
       },
       error: (error) => {
+        this.toastService.error('Failed to download report. Please try again.');
         this.error = 'Failed to download report';
         this.loading = false;
         this.generatingReport = false;
@@ -135,6 +145,7 @@ export class ReportsComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
+        this.toastService.error('Failed to download report. Please try again.');
         this.error = 'Failed to download report';
         this.loading = false;
         console.error('Error downloading report:', error);
@@ -143,22 +154,36 @@ export class ReportsComponent implements OnInit {
   }
 
   deleteReport(reportId: number): void {
-    if (!confirm('Are you sure you want to delete this report?')) {
-      return;
-    }
+    this.reportIdToDelete = reportId;
+    this.showConfirmationModal = true;
+  }
+
+  confirmDelete(): void {
+    if (!this.reportIdToDelete) return;
 
     this.loadingList = true;
     this.error = null;
-    this.reportsService.deleteReport(reportId).subscribe({
+    this.reportsService.deleteReport(this.reportIdToDelete).subscribe({
       next: () => {
+        this.toastService.success('Report deleted successfully');
         this.loadReports();
+        this.showConfirmationModal = false;
+        this.reportIdToDelete = null;
       },
       error: (error) => {
+        this.toastService.error(error.message || 'Failed to delete report');
         this.error = error.message || 'Failed to delete report';
         this.loadingList = false;
+        this.showConfirmationModal = false;
+        this.reportIdToDelete = null;
         console.error('Error deleting report:', error);
       }
     });
+  }
+
+  cancelDelete(): void {
+    this.showConfirmationModal = false;
+    this.reportIdToDelete = null;
   }
 
   getFileIcon(fileFormat: string): string {

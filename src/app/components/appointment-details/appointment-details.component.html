@@ -372,7 +372,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" (click)="closeModals()">Cancel</button>
-      <button class="btn-save" (click)="onCloseAppointment()" [disabled]="isLoading">
+      <button class="btn-save" (click)="onCloseAppointment()" [disabled]="isLoading || !validateCloseForm()">
         <i class="fas fa-check-circle" *ngIf="!isLoading"></i>
         <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
         {{ isLoading ? 'Closing...' : 'Close Appointment' }}

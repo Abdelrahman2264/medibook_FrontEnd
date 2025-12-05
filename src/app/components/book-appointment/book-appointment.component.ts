@@ -6,6 +6,7 @@ import { DoctorsService } from '../../services/doctors.service';
 import { AppointmentsService } from '../../services/appointments.service';
 import { RoleService } from '../../services/role.service';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
 import { Doctor } from '../../models/doctor.model';
 import { AvailableDateDto, CreateAppointmentDto } from '../../models/appointment.model';
 
@@ -37,7 +38,8 @@ export class BookAppointmentComponent implements OnInit {
     public router: Router,
     private cdr: ChangeDetectorRef,
     private roleService: RoleService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -107,7 +109,8 @@ export class BookAppointmentComponent implements OnInit {
 
   viewDoctorProfile(doctor: Doctor) {
     console.log('View profile for:', doctor.fullName);
-    alert(`Viewing profile for Dr. ${doctor.fullName}\nSpecialization: ${doctor.specialization}\nExperience: ${doctor.experienceYears} years`);
+    // Navigate to doctor profile instead of alert
+    this.router.navigate(['/doctors', doctor.doctorId]);
   }
 
   bookAppointment(doctor: Doctor) {
@@ -152,14 +155,14 @@ export class BookAppointmentComponent implements OnInit {
 
   confirmBooking() {
     if (!this.selectedDoctor || !this.selectedDate || !this.selectedTime) {
-      alert('Please select a date and time');
+      this.toastService.warning('Please select a date and time');
       return;
     }
 
     // Ensure we have a valid patient ID
     if (!this.patientId) {
       console.error('❌ Patient ID is not available');
-      alert('Unable to identify patient. Please log in again.');
+      this.toastService.error('Unable to identify patient. Please log in again.');
       this.router.navigate(['/signin']);
       return;
     }
@@ -179,7 +182,7 @@ export class BookAppointmentComponent implements OnInit {
     this.appointmentsService.createAppointment(appointmentData).subscribe({
       next: (response) => {
         console.log('✅ Appointment created successfully:', response);
-        alert('Appointment booked successfully!');
+        this.toastService.success('Appointment booked successfully!');
         this.showBookingModal = false;
         this.bookingInProgress = false;
         this.forceUpdate();
@@ -187,6 +190,7 @@ export class BookAppointmentComponent implements OnInit {
       },
       error: (error) => {
         console.error('❌ Error creating appointment:', error);
+        this.toastService.error(error.message || 'Failed to book appointment. Please try again.');
         this.errorMessage = 'Failed to book appointment. Please try again.';
         this.bookingInProgress = false;
         this.forceUpdate();

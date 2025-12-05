@@ -92,4 +92,26 @@ export class PatientsService {
   debugPatientApiResponse(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/Users/all`);
   }
+
+  /**
+   * Check if email exists (for uniqueness validation)
+   */
+  checkEmailExists(email: string, userId?: number): Observable<{ exists: boolean; message: string }> {
+    const payload: any = { email };
+    if (userId !== undefined && userId !== null) {
+      payload.userId = userId;
+    }
+    return this.http.post<{ exists: boolean; message: string }>(`${this.baseUrl}/Users/check-email`, payload);
+  }
+
+  /**
+   * Check if phone number exists (for uniqueness validation)
+   */
+  checkPhoneExists(phone: string, userId?: number): Observable<{ exists: boolean; message: string }> {
+    const payload: any = { phone };
+    if (userId !== undefined && userId !== null) {
+      payload.userId = userId;
+    }
+    return this.http.post<{ exists: boolean; message: string }>(`${this.baseUrl}/Users/check-phone`, payload);
+  }
 }

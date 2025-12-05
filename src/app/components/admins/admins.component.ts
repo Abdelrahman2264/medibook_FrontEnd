@@ -9,6 +9,7 @@ import { Admin, CreateAdminDto, UpdateAdminDto } from '../../models/admin.model'
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { AdminFormModalComponent } from '../Shared/admin-form-modal/admin-form-modal.component';
 import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-admins',
@@ -45,7 +46,8 @@ export class Admins extends BaseRoleAwareComponent implements OnInit {
   constructor(
     private adminsService: AdminsService,
     roleService: RoleService,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
     super(roleService, cdr);
     // Set up canEdit function
@@ -153,7 +155,7 @@ export class Admins extends BaseRoleAwareComponent implements OnInit {
     // Validate id before opening modal
     if (!admin.id || admin.id === 0) {
       console.error('❌ ERROR: Cannot open edit modal - admin id is invalid:', admin);
-      alert('Error: Invalid admin ID. Cannot edit this admin.');
+      this.toastService.error('Error: Invalid admin ID. Cannot edit this admin.');
       return;
     }
     
@@ -195,7 +197,7 @@ export class Admins extends BaseRoleAwareComponent implements OnInit {
       // Validate admin id before update
       if (!this.selectedAdmin.id || this.selectedAdmin.id === 0) {
         console.error('❌ ERROR: Cannot update - admin id is invalid:', this.selectedAdmin);
-        alert('Error: Invalid admin ID. Cannot update this admin.');
+        this.toastService.error('Error: Invalid admin ID. Cannot update this admin.');
         this.isLoading = false;
         this.forceUpdate();
         return;
@@ -217,7 +219,7 @@ export class Admins extends BaseRoleAwareComponent implements OnInit {
           console.error('❌ Error updating admin:', error);
           this.isLoading = false;
           this.forceUpdate();
-          alert('Failed to update admin. Please try again.');
+          this.toastService.error('Failed to update admin. Please try again.');
         }
       });
     } else {
@@ -232,7 +234,7 @@ export class Admins extends BaseRoleAwareComponent implements OnInit {
           console.error('❌ Error creating admin:', error);
           this.isLoading = false;
           this.forceUpdate();
-          alert('Failed to create admin. Please try again.');
+          this.toastService.error('Failed to create admin. Please try again.');
         }
       });
     }
@@ -304,7 +306,7 @@ export class Admins extends BaseRoleAwareComponent implements OnInit {
         console.error('❌ Toggle active failed:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update admin status. Please try again.');
+        this.toastService.error('Failed to update admin status. Please try again.');
       }
     });
   }

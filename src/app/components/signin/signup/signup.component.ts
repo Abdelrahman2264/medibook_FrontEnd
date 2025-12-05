@@ -47,6 +47,20 @@ export class SignupComponent {
   isLoading = false;
   errorMessage: string = '';
   profileImagePreview: string = '';
+  
+  // Validation states
+  submitted = false;
+  emailChecking = false;
+  emailExists = false;
+  emailError: string = '';
+  phoneChecking = false;
+  phoneExists = false;
+  phoneError: string = '';
+  passwordError: string = '';
+  dateError: string = '';
+  
+  // Track which fields have been touched
+  touchedFields: Set<string> = new Set();
 
   constructor(
     private authService: AuthService,
@@ -71,9 +85,169 @@ export class SignupComponent {
     const password = this.userData.password;
     if (!password) return '';
     
-    if (password.length < 6) return 'weak';
-    if (password.length < 8) return 'medium';
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const hasMinLength = password.length >= 8;
+    
+    const criteriaCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar, hasMinLength].filter(Boolean).length;
+    
+    if (criteriaCount < 3) return 'weak';
+    if (criteriaCount < 5) return 'medium';
     return 'strong';
+  }
+  
+  validatePasswordComplexity(): boolean {
+    const password = this.userData.password;
+    if (!password) {
+      this.passwordError = 'Password is required';
+      return false;
+    }
+    
+    if (password.length < 8) {
+      this.passwordError = 'Password must be at least 8 characters long';
+      return false;
+    }
+    
+    if (!/[A-Z]/.test(password)) {
+      this.passwordError = 'Password must contain at least one uppercase letter';
+      return false;
+    }
+    
+    if (!/[a-z]/.test(password)) {
+      this.passwordError = 'Password must contain at least one lowercase letter';
+      return false;
+    }
+    
+    if (!/[0-9]/.test(password)) {
+      this.passwordError = 'Password must contain at least one number';
+      return false;
+    }
+    
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      this.passwordError = 'Password must contain at least one special character (!@#$%^&*(),.?":{}|<>)';
+      return false;
+    }
+    
+    this.passwordError = '';
+    return true;
+  }
+  
+  validateDateOfBirth(): boolean {
+    if (!this.userData.dateOfBirth) {
+      this.dateError = 'Date of birth is required';
+      return false;
+    }
+    
+    const selectedDate = new Date(this.userData.dateOfBirth);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate > today) {
+      this.dateError = 'Date of birth cannot be in the future';
+      return false;
+    }
+    
+    // Check if age is reasonable (at least 1 year old, not more than 150 years)
+    const age = today.getFullYear() - selectedDate.getFullYear();
+    if (age < 1) {
+      this.dateError = 'Date of birth must be at least 1 year ago';
+      return false;
+    }
+    
+    if (age > 150) {
+      this.dateError = 'Please enter a valid date of birth';
+      return false;
+    }
+    
+    this.dateError = '';
+    return true;
+  }
+  
+  checkEmailUniqueness(): void {
+    const email = this.userData.email?.trim();
+    
+    if (!email) {
+      this.emailError = '';
+      this.emailExists = false;
+      this.emailChecking = false;
+      return;
+    }
+    
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      if (this.submitted || this.touchedFields.has('email')) {
+        this.emailError = 'Please enter a valid email address';
+      }
+      this.emailExists = false;
+      this.emailChecking = false;
+      return;
+    }
+    
+    this.emailChecking = true;
+    this.emailError = '';
+    
+    // Use the new check-email endpoint from UsersController
+    this.userService.checkEmailExists(email).subscribe({
+      next: (response) => {
+        this.emailExists = response.exists;
+        if (response.exists) {
+          if (this.submitted || this.touchedFields.has('email')) {
+            this.emailError = response.message || 'This email is already registered';
+          }
+        } else {
+          this.emailError = '';
+        }
+        this.emailChecking = false;
+      },
+      error: (error) => {
+        // On error, don't block signup but show warning
+        if (this.submitted || this.touchedFields.has('email')) {
+          this.emailError = 'Unable to verify email. You can continue, but email must be unique.';
+        }
+        this.emailExists = false;
+        this.emailChecking = false;
+      }
+    });
+  }
+
+  checkPhoneUniqueness(): void {
+    const phone = this.userData.mobilePhone?.trim();
+    
+    if (!phone) {
+      this.phoneExists = false;
+      this.phoneError = '';
+      this.phoneChecking = false;
+      return;
+    }
+    
+    this.phoneChecking = true;
+    this.phoneError = '';
+    
+    // Use the new check-phone endpoint from UsersController
+    this.userService.checkPhoneExists(phone).subscribe({
+      next: (response) => {
+        this.phoneExists = response.exists;
+        if (response.exists) {
+          if (this.submitted || this.touchedFields.has('mobilePhone')) {
+            this.phoneError = response.message || 'This phone number is already registered';
+          }
+        } else {
+          this.phoneError = '';
+        }
+        this.phoneChecking = false;
+      },
+      error: (error) => {
+        // On error, don't block signup but show warning
+        if (this.submitted || this.touchedFields.has('mobilePhone')) {
+          this.phoneError = 'Unable to verify phone number. You can continue, but phone must be unique.';
+        }
+        this.phoneExists = false;
+        this.phoneChecking = false;
+      }
+    });
   }
 
   getPasswordStrengthText(): string {
@@ -99,33 +273,193 @@ export class SignupComponent {
     }
   }
 
+  // Helper to check if a field should show error
+  shouldShowError(fieldName: string): boolean {
+    return this.submitted || this.touchedFields.has(fieldName);
+  }
+
+  // Mark a field as touched
+  markFieldAsTouched(fieldName: string): void {
+    this.touchedFields.add(fieldName);
+  }
+
+  // Handle field input - clear error when user starts typing
+  onFieldInput(fieldName: string): void {
+    // Clear error for this field when user starts typing
+    if (fieldName === 'email') {
+      this.emailError = '';
+      this.emailExists = false;
+    } else if (fieldName === 'mobilePhone') {
+      this.phoneError = '';
+      this.phoneExists = false;
+    } else if (fieldName === 'password') {
+      this.passwordError = '';
+    } else if (fieldName === 'dateOfBirth') {
+      this.dateError = '';
+    }
+    this.errorMessage = '';
+  }
+
+  // Handle field blur - validate and mark as touched
+  onFieldBlur(fieldName: string): void {
+    this.markFieldAsTouched(fieldName);
+    // Re-validate the form to show errors for touched fields
+    if (fieldName === 'email') {
+      this.checkEmailUniqueness();
+    } else if (fieldName === 'mobilePhone') {
+      this.checkPhoneUniqueness();
+    } else if (fieldName === 'password') {
+      this.validatePasswordComplexity();
+    } else if (fieldName === 'dateOfBirth') {
+      this.validateDateOfBirth();
+    }
+  }
+
   validateStep1(): boolean {
-    if (!this.userData.firstName || !this.userData.lastName || 
-        !this.userData.email || !this.userData.mobilePhone ||
-        !this.userData.password || !this.userData.dateOfBirth ||
-        !this.userData.gender || !this.userData.mitrialStatus) {
-      this.errorMessage = 'Please fill in all required fields';
-      return false;
+    // Clear previous errors (but keep them if field was touched or form was submitted)
+    let isValid = true;
+    
+    // Check all required fields
+    if (!this.userData.firstName?.trim()) {
+      if (this.submitted || this.touchedFields.has('firstName')) {
+        this.errorMessage = 'First Name is required';
+      }
+      isValid = false;
+    } else if (this.userData.firstName.trim().length > 100) {
+      if (this.submitted || this.touchedFields.has('firstName')) {
+        this.errorMessage = 'First name must not exceed 100 characters';
+      }
+      isValid = false;
+    } else if (!/^[a-zA-Z\s\-']+$/.test(this.userData.firstName.trim())) {
+      if (this.submitted || this.touchedFields.has('firstName')) {
+        this.errorMessage = 'First Name can only contain letters, spaces, hyphens, and apostrophes';
+      }
+      isValid = false;
+    }
+    
+    if (!this.userData.lastName?.trim()) {
+      if (this.submitted || this.touchedFields.has('lastName')) {
+        this.errorMessage = 'Last Name is required';
+      }
+      isValid = false;
+    } else if (this.userData.lastName.trim().length > 100) {
+      if (this.submitted || this.touchedFields.has('lastName')) {
+        this.errorMessage = 'Last name must not exceed 100 characters';
+      }
+      isValid = false;
+    } else if (!/^[a-zA-Z\s\-']+$/.test(this.userData.lastName.trim())) {
+      if (this.submitted || this.touchedFields.has('lastName')) {
+        this.errorMessage = 'Last Name can only contain letters, spaces, hyphens, and apostrophes';
+      }
+      isValid = false;
+    }
+    
+    if (!this.userData.email?.trim()) {
+      if (this.submitted || this.touchedFields.has('email')) {
+        this.emailError = 'Email is required';
+      }
+      isValid = false;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(this.userData.email.trim())) {
+        if (this.submitted || this.touchedFields.has('email')) {
+          this.emailError = 'Please enter a valid email address';
+        }
+        isValid = false;
+      } else if (this.emailExists) {
+        if (this.submitted || this.touchedFields.has('email')) {
+          this.emailError = 'This email is already registered';
+        }
+        isValid = false;
+      }
+    }
+    
+    if (this.emailChecking) {
+      if (this.submitted || this.touchedFields.has('email')) {
+        this.emailError = 'Please wait while we verify your email...';
+      }
+      isValid = false;
+    }
+    
+    if (!this.userData.mobilePhone?.trim()) {
+      if (this.submitted || this.touchedFields.has('mobilePhone')) {
+        this.phoneError = 'Mobile Phone is required';
+      }
+      isValid = false;
+    } else if (this.userData.mobilePhone.trim().length > 50) {
+      if (this.submitted || this.touchedFields.has('mobilePhone')) {
+        this.phoneError = 'Mobile phone must not exceed 50 characters';
+      }
+      isValid = false;
+    } else if (this.phoneExists) {
+      if (this.submitted || this.touchedFields.has('mobilePhone')) {
+        this.phoneError = 'This phone number is already registered';
+      }
+      isValid = false;
+    }
+    
+    if (this.phoneChecking) {
+      if (this.submitted || this.touchedFields.has('mobilePhone')) {
+        this.phoneError = 'Please wait while we verify your phone number...';
+      }
+      isValid = false;
+    }
+    
+    if (!this.userData.password) {
+      if (this.submitted || this.touchedFields.has('password')) {
+        this.passwordError = 'Password is required';
+      }
+      isValid = false;
+    } else if (!this.validatePasswordComplexity()) {
+      // validatePasswordComplexity already sets passwordError
+      isValid = false;
+    }
+    
+    if (!this.userData.confirmPassword) {
+      if (this.submitted || this.touchedFields.has('confirmPassword')) {
+        this.errorMessage = 'Please confirm your password';
+      }
+      isValid = false;
+    } else if (!this.passwordsMatch()) {
+      if (this.submitted || this.touchedFields.has('confirmPassword')) {
+        this.errorMessage = 'Passwords do not match';
+      }
+      isValid = false;
+    }
+    
+    if (!this.userData.dateOfBirth) {
+      if (this.submitted || this.touchedFields.has('dateOfBirth')) {
+        this.dateError = 'Date of birth is required';
+      }
+      isValid = false;
+    } else if (!this.validateDateOfBirth()) {
+      // validateDateOfBirth already sets dateError
+      isValid = false;
+    }
+    
+    if (!this.userData.gender) {
+      if (this.submitted || this.touchedFields.has('gender')) {
+        this.errorMessage = 'Gender is required';
+      }
+      isValid = false;
+    }
+    
+    if (!this.userData.mitrialStatus) {
+      if (this.submitted || this.touchedFields.has('mitrialStatus')) {
+        this.errorMessage = 'Marital Status is required';
+      }
+      isValid = false;
     }
 
-    if (!this.passwordsMatch()) {
-      this.errorMessage = 'Passwords do not match';
-      return false;
-    }
-
+    // Check terms acceptance
     if (!this.acceptTerms) {
-      this.errorMessage = 'Please accept the terms and conditions';
-      return false;
+      if (this.submitted || this.touchedFields.has('acceptTerms')) {
+        this.errorMessage = 'Please accept the terms and conditions';
+      }
+      isValid = false;
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.userData.email)) {
-      this.errorMessage = 'Please enter a valid email address';
-      return false;
-    }
-
-    return true;
+    return isValid;
   }
 
   /**
@@ -135,11 +469,22 @@ export class SignupComponent {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
+  isFormValid(): boolean {
+    // Only perform full validation on fields that have been touched or when form is submitted
+    if (!this.submitted && this.touchedFields.size === 0) {
+      return false; // Form is not valid until user interacts with it
+    }
+    
+    return this.validateStep1();
+  }
+
   onStep1Submit(event?: Event) {
     if (event) {
       event.preventDefault();
     }
     
+    // Mark as submitted to show all errors
+    this.submitted = true;
     this.errorMessage = '';
     
     if (!this.validateStep1()) {
@@ -420,5 +765,9 @@ export class SignupComponent {
     this.verificationCode = '';
     this.verificationError = '';
     this.generatedCode = ''; // Clear generated code
+  }
+
+  getMaxDate(): string {
+    return new Date().toISOString().split('T')[0];
   }
 }

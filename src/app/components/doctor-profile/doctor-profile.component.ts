@@ -8,6 +8,7 @@ import { Doctor, UpdateDoctorDto } from '../../models/doctor.model';
 import { DoctorFormModalComponent } from '../Shared/doctor-form-modal/doctor-form-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-doctor-profile',
@@ -37,7 +38,8 @@ export class DoctorProfileComponent extends BaseRoleAwareComponent implements On
     private router: Router,
     private doctorsService: DoctorsService,
     roleService: RoleService,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
     super(roleService, cdr);
   }
@@ -192,7 +194,7 @@ export class DoctorProfileComponent extends BaseRoleAwareComponent implements On
           errorMessage += 'Please try again.';
         }
         
-        alert(errorMessage);
+        this.toastService.error(errorMessage);
       }
     });
   }
@@ -274,7 +276,7 @@ export class DoctorProfileComponent extends BaseRoleAwareComponent implements On
         console.error('❌ Error updating doctor:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update doctor. Please try again.');
+        this.toastService.error('Failed to update doctor. Please try again.');
       }
     });
   }

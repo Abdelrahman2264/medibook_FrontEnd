@@ -1,7 +1,16 @@
-<div class="sidebar" [class.sidebar-collapsed]="!isSidebarOpen">
+<!-- Mobile Backdrop -->
+<div class="sidebar-backdrop" 
+     [class.active]="isMobileView && sidebarExpandedMobile"
+     (click)="closeMobileSidebar()">
+</div>
+
+<!-- Sidebar -->
+<div [ngClass]="getSidebarClasses()">
   <!-- Sidebar Toggle Button -->
-  <button class="sidebar-toggle-btn" (click)="toggleSidebar()" [title]="isSidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'">
-    <i class="fas" [class]="getSidebarIcon()"></i>
+  <button class="sidebar-toggle-btn" 
+          (click)="toggleSidebar()" 
+          [title]="isSidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'">
+    <i class="fas" [ngClass]="getSidebarIcon()"></i>
   </button>
 
   <!-- User Profile Summary -->
@@ -14,51 +23,36 @@
     <p class="user-role">{{ getUserRole() }}</p>
   </div>
 
-  <!-- Today's Date -->
-  <div class="today-date-section">
-    <div class="date-card">
-      <div class="date-day">{{ getCurrentDay() }}</div>
-      <div class="date-full">{{ getCurrentDate() }}</div>
-    </div>
-  </div>
-
   <!-- Navigation Menu -->
   <nav class="main-menu">
     <ul>
       <li 
         *ngFor="let item of menuItems" 
         [class.active]="item.active"
+        (click)="isMobileView && sidebarExpandedMobile ? closeMobileSidebar() : null"
       >
-        <i [class]="item.icon"></i>
-        <!-- Regular menu items with router links -->
+        <!-- Make entire li clickable for router links -->
         <a 
           *ngIf="!item.isQuickAction" 
           [routerLink]="item.route"
           routerLinkActive="active-link"
           [routerLinkActiveOptions]="getRouterLinkActiveOptions(item.route)"
-          style="color: inherit; text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%;"
+          class="menu-link"
         >
+          <i [class]="item.icon"></i>
           <span class="menu-text">{{ item.name }}</span>
         </a>
-        <!-- Quick action items (click handlers) -->
+        
+        <!-- Make entire li clickable for quick actions -->
         <span 
           *ngIf="item.isQuickAction" 
           (click)="handleQuickAction(item)" 
-          style="cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%;"
+          class="menu-link quick-action"
         >
+          <i [class]="item.icon"></i>
           <span class="menu-text">{{ item.name }}</span>
         </span>
       </li>
     </ul>
   </nav>
 </div>
-
-
-
-
-
-
-
-
-
-

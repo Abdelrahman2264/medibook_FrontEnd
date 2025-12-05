@@ -22,10 +22,17 @@
               [(ngModel)]="patientForm.firstName" 
               name="firstName"
               class="form-control"
-              placeholder="John"
+                [class.error-input]="fieldErrors.firstName && shouldShowError('firstName')"
+                placeholder="John"
+                (blur)="onFieldBlur('firstName')"
+                (input)="onFieldInput('firstName')"
               required
+              maxlength="100"
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.firstName && shouldShowError('firstName')">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.firstName }}
+            </div>
           </div>
           
           <div class="form-group">
@@ -35,46 +42,73 @@
               [(ngModel)]="patientForm.lastName" 
               name="lastName"
               class="form-control"
-              placeholder="Doe"
+                [class.error-input]="fieldErrors.lastName && shouldShowError('lastName')"
+                placeholder="Doe"
+                (blur)="onFieldBlur('lastName')"
+                (input)="onFieldInput('lastName')"
               required
+              maxlength="100"
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.lastName && shouldShowError('lastName')">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.lastName }}
+            </div>
+            <small class="text-muted">Letters, spaces, hyphens, and apostrophes only</small>
           </div>
         </div>
         
         <div class="form-group">
-          <label>Mobile Phone</label>
+          <label>Mobile Phone <span class="required">*</span></label>
           <input 
             type="tel" 
             [(ngModel)]="patientForm.mobilePhone" 
             name="mobilePhone"
             class="form-control"
-            placeholder="01012345678"
+                [class.error-input]="fieldErrors.mobilePhone && shouldShowError('mobilePhone')"
+                placeholder="01012345678"
+                (blur)="onFieldBlur('mobilePhone')"
+                (input)="onFieldInput('mobilePhone')"
+            required
+            maxlength="50"
             [disabled]="isLoading"
           />
+          <div class="field-error" *ngIf="fieldErrors.mobilePhone && shouldShowError('mobilePhone')">
+            <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mobilePhone }}
+          </div>
         </div>
         
         <div class="form-row">
           <div class="form-group">
-            <label>Gender</label>
+            <label>Gender <span class="required">*</span></label>
             <select 
               [(ngModel)]="patientForm.gender" 
               name="gender"
               class="form-control"
+              [class.error-input]="fieldErrors.gender && shouldShowError('gender')"
+              (blur)="onFieldBlur('gender')"
+              (change)="onFieldInput('gender')"
+              required
               [disabled]="isLoading"
             >
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
+            <div class="field-error" *ngIf="fieldErrors.gender && shouldShowError('gender')">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.gender }}
+            </div>
           </div>
           
           <div class="form-group">
-            <label>Marital Status</label>
+            <label>Marital Status <span class="required">*</span></label>
             <select 
               [(ngModel)]="patientForm.mitrialStatus" 
               name="mitrialStatus"
               class="form-control"
+              [class.error-input]="fieldErrors.mitrialStatus && shouldShowError('mitrialStatus')"
+              (blur)="onFieldBlur('mitrialStatus')"
+              (change)="onFieldInput('mitrialStatus')"
+              required
               [disabled]="isLoading"
             >
               <option value="">Select Status</option>
@@ -83,6 +117,9 @@
               <option value="Divorced">Divorced</option>
               <option value="Widowed">Widowed</option>
             </select>
+            <div class="field-error" *ngIf="fieldErrors.mitrialStatus && shouldShowError('mitrialStatus')">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mitrialStatus }}
+            </div>
           </div>
         </div>
         
@@ -131,7 +168,7 @@
           <button 
             type="submit" 
             class="btn-save" 
-            [disabled]="isLoading"
+            [disabled]="isLoading || !isFormValid()"
           >
             <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
             Update Patient

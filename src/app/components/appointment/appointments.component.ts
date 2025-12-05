@@ -13,6 +13,7 @@ import { Doctor } from '../../models/doctor.model';
 import { CreateFeedbackDto, Feedback } from '../../models/feedback.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { FeedbackFormModalComponent } from '../Shared/feedback-form-modal/feedback-form-modal.component';
+import { ToastService } from '../../services/toast.service';
 
 // لتجنب الأخطاء في TypeScript، سنضيف خاصية isExpanded إلى نوع Appointment محليًا.
 // هذه الطريقة تفترض أن واجهة Appointment الأصلية تسمح بالخصائص الإضافية.
@@ -50,6 +51,12 @@ export class AppointmentsComponent implements OnInit {
   cancelReason: string = '';
   closeNotes: string = '';
   closeMedicine: string = '';
+  closeSubmitted = false;
+  closeFieldErrors: {
+    closeNotes?: string;
+    closeMedicine?: string;
+  } = {};
+  closeTouchedFields: Set<string> = new Set();
   
   // Confirmation modal states
   showConfirmationModal: boolean = false;
@@ -73,7 +80,8 @@ export class AppointmentsComponent implements OnInit {
     private feedbacksService: FeedbacksService,
     private roleService: RoleService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -267,6 +275,9 @@ export class AppointmentsComponent implements OnInit {
     this.cancelReason = '';
     this.closeNotes = '';
     this.closeMedicine = '';
+    this.closeSubmitted = false;
+    this.closeFieldErrors = {};
+    this.closeTouchedFields.clear();
     this.forceUpdate();
   }
 
@@ -288,7 +299,7 @@ export class AppointmentsComponent implements OnInit {
   // Action methods
   onCancelAppointment() {
     if (!this.selectedAppointment || !this.cancelReason.trim()) {
-      alert('Please provide a cancellation reason.');
+      this.toastService.warning('Please provide a cancellation reason.');
       return;
     }
 
@@ -311,14 +322,71 @@ export class AppointmentsComponent implements OnInit {
         console.error('❌ Error canceling appointment:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to cancel appointment. Please try again.');
+        this.toastService.error('Failed to cancel appointment. Please try again.');
       }
     });
   }
 
+  validateCloseForm(): boolean {
+    this.closeFieldErrors = {};
+    let isValid = true;
+
+    // Validate Medicine (required)
+    if (!this.closeMedicine?.trim()) {
+      if (this.closeSubmitted || this.closeTouchedFields.has('closeMedicine')) {
+        this.closeFieldErrors.closeMedicine = 'Medicine Prescribed is required';
+      }
+      isValid = false;
+    } else if (this.closeMedicine.trim().length > 1000) {
+      if (this.closeSubmitted || this.closeTouchedFields.has('closeMedicine')) {
+        this.closeFieldErrors.closeMedicine = 'Medicine must not exceed 1000 characters';
+      }
+      isValid = false;
+    }
+
+    // Validate Notes (required)
+    if (!this.closeNotes?.trim()) {
+      if (this.closeSubmitted || this.closeTouchedFields.has('closeNotes')) {
+        this.closeFieldErrors.closeNotes = 'Treatment Notes is required';
+      }
+      isValid = false;
+    } else if (this.closeNotes.trim().length > 2000) {
+      if (this.closeSubmitted || this.closeTouchedFields.has('closeNotes')) {
+        this.closeFieldErrors.closeNotes = 'Treatment Notes must not exceed 2000 characters';
+      }
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  shouldShowCloseError(fieldName: keyof typeof this.closeFieldErrors): boolean {
+    return this.closeSubmitted || this.closeTouchedFields.has(fieldName);
+  }
+
+  markCloseFieldAsTouched(fieldName: keyof typeof this.closeFieldErrors): void {
+    this.closeTouchedFields.add(fieldName);
+  }
+
+  onCloseFieldInput(fieldName: keyof typeof this.closeFieldErrors): void {
+    if (this.closeFieldErrors[fieldName]) {
+      this.closeFieldErrors[fieldName] = '';
+    }
+  }
+
+  onCloseFieldBlur(fieldName: keyof typeof this.closeFieldErrors): void {
+    this.markCloseFieldAsTouched(fieldName);
+    this.validateCloseForm();
+  }
+
   onCloseAppointment() {
+    this.closeSubmitted = true;
+    
     if (!this.selectedAppointment) {
-      alert('No appointment selected.');
+      return;
+    }
+
+    if (!this.validateCloseForm()) {
       return;
     }
 
@@ -335,6 +403,7 @@ export class AppointmentsComponent implements OnInit {
     this.appointmentsService.closeAppointment(closeData).subscribe({
       next: (response: any) => {
         console.log('✅ Appointment closed successfully');
+        this.toastService.success('Appointment closed successfully');
         this.loadAppointments();
         this.closeModals();
       },
@@ -342,7 +411,7 @@ export class AppointmentsComponent implements OnInit {
         console.error('❌ Error closing appointment:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to close appointment. Please try again.');
+        this.toastService.error('Failed to close appointment. Please try again.');
       }
     });
   }
@@ -493,14 +562,14 @@ export class AppointmentsComponent implements OnInit {
         this.appointmentsWithFeedback.add(feedbackData.appointmentId);
         this.isLoading = false;
         this.closeModals();
-        alert('Feedback submitted successfully!');
+        this.toastService.success('Feedback submitted successfully!');
         this.forceUpdate();
       },
       error: (error: any) => {
         console.error('❌ Error creating feedback:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to submit feedback. Please try again.');
+        this.toastService.error('Failed to submit feedback. Please try again.');
       }
     });
   }

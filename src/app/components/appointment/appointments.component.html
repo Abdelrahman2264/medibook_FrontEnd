@@ -261,31 +261,55 @@
           <p><strong>Date:</strong> {{ selectedAppointment?.formattedDate }} at {{ selectedAppointment?.formattedTime }}</p>
         </div>
         
+        <div class="error-message" *ngIf="closeSubmitted && (!validateCloseForm())">
+          <i class="fas fa-exclamation-circle"></i> Please fix the errors before submitting
+        </div>
+        
         <div class="form-group">
-          <label for="closeMedicine">Medicine Prescribed</label>
+          <label for="closeMedicine">Medicine Prescribed <span class="required">*</span></label>
           <textarea 
             id="closeMedicine"
             [(ngModel)]="closeMedicine" 
-            class="form-control" 
+            name="closeMedicine"
+            class="form-control"
+            [class.error-input]="closeFieldErrors.closeMedicine && shouldShowCloseError('closeMedicine')"
             placeholder="Enter medicines prescribed..."
+            (blur)="onCloseFieldBlur('closeMedicine')"
+            (input)="onCloseFieldInput('closeMedicine')"
             rows="3"
+            required
+            maxlength="1000"
+            [disabled]="isLoading"
           ></textarea>
+          <div class="field-error" *ngIf="closeFieldErrors.closeMedicine && shouldShowCloseError('closeMedicine')">
+            <i class="fas fa-exclamation-circle"></i> {{ closeFieldErrors.closeMedicine }}
+          </div>
         </div>
 
         <div class="form-group">
-          <label for="closeNotes">Treatment Notes</label>
+          <label for="closeNotes">Treatment Notes <span class="required">*</span></label>
           <textarea 
             id="closeNotes"
             [(ngModel)]="closeNotes" 
-            class="form-control" 
+            name="closeNotes"
+            class="form-control"
+            [class.error-input]="closeFieldErrors.closeNotes && shouldShowCloseError('closeNotes')"
             placeholder="Enter treatment notes and observations..."
+            (blur)="onCloseFieldBlur('closeNotes')"
+            (input)="onCloseFieldInput('closeNotes')"
             rows="4"
+            required
+            maxlength="2000"
+            [disabled]="isLoading"
           ></textarea>
+          <div class="field-error" *ngIf="closeFieldErrors.closeNotes && shouldShowCloseError('closeNotes')">
+            <i class="fas fa-exclamation-circle"></i> {{ closeFieldErrors.closeNotes }}
+          </div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeModals()">Cancel</button>
-        <button class="btn-save" (click)="onCloseAppointment()" [disabled]="isLoading">
+        <button class="btn-save" (click)="onCloseAppointment()" [disabled]="isLoading || !validateCloseForm()">
           <i class="fas fa-check-circle" *ngIf="!isLoading"></i>
           <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
           {{ isLoading ? 'Closing...' : 'Close Appointment' }}

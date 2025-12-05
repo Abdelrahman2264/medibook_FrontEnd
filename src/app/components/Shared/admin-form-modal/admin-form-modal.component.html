@@ -24,10 +24,17 @@
                 [(ngModel)]="adminForm.firstName" 
                 name="firstName"
                 class="form-control"
+                [class.error-input]="fieldErrors.firstName && shouldShowError('firstName')"
                 placeholder="John"
+                (blur)="onFieldBlur('firstName')"
+                (input)="onFieldInput('firstName')"
                 required
+                maxlength="100"
                 [disabled]="isLoading"
               />
+              <div class="field-error" *ngIf="fieldErrors.firstName && shouldShowError('firstName')">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.firstName }}
+              </div>
             </div>
             
             <div class="form-group">
@@ -37,10 +44,17 @@
                 [(ngModel)]="adminForm.lastName" 
                 name="lastName"
                 class="form-control"
+                [class.error-input]="fieldErrors.lastName && shouldShowError('lastName')"
                 placeholder="Doe"
+                (blur)="onFieldBlur('lastName')"
+                (input)="onFieldInput('lastName')"
                 required
+                maxlength="100"
                 [disabled]="isLoading"
               />
+              <div class="field-error" *ngIf="fieldErrors.lastName && shouldShowError('lastName')">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.lastName }}
+              </div>
             </div>
           </div>
           
@@ -51,10 +65,17 @@
               [(ngModel)]="adminForm.email" 
               name="email"
               class="form-control"
+              [class.error-input]="fieldErrors.email && shouldShowError('email')"
               placeholder="admin@example.com"
+              (blur)="onFieldBlur('email')"
+              (input)="onFieldInput('email')"
               required
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.email && shouldShowError('email')">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.email }}
+            </div>
+            <small class="text-muted">Must be unique across all admins</small>
           </div>
           
           <div class="form-group">
@@ -64,45 +85,71 @@
               [(ngModel)]="adminForm.password" 
               name="password"
               class="form-control"
+              [class.error-input]="fieldErrors.password && shouldShowError('password')"
               placeholder="Enter password"
+              (blur)="onFieldBlur('password')"
+              (input)="onFieldInput('password')"
               required
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.password && shouldShowError('password')">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.password }}
+            </div>
+            <small class="text-muted">Must be at least 8 characters with uppercase, lowercase, number, and special character</small>
           </div>
           
           <div class="form-group">
-            <label>Mobile Phone</label>
+            <label>Mobile Phone <span class="required">*</span></label>
             <input 
               type="tel" 
               [(ngModel)]="adminForm.mobilePhone" 
               name="mobilePhone"
               class="form-control"
+              [class.error-input]="fieldErrors.mobilePhone && shouldShowError('mobilePhone')"
               placeholder="01012345678"
+              (blur)="onFieldBlur('mobilePhone')"
+              (input)="onFieldInput('mobilePhone')"
+              required
+              maxlength="50"
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.mobilePhone && shouldShowError('mobilePhone')">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mobilePhone }}
+            </div>
           </div>
           
           <div class="form-row">
             <div class="form-group">
-              <label>Gender</label>
+              <label>Gender <span class="required">*</span></label>
               <select 
                 [(ngModel)]="adminForm.gender" 
                 name="gender"
                 class="form-control"
+                [class.error-input]="fieldErrors.gender && shouldShowError('gender')"
+                (blur)="onFieldBlur('gender')"
+                (change)="onFieldInput('gender')"
+                required
                 [disabled]="isLoading"
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
+              <div class="field-error" *ngIf="fieldErrors.gender && shouldShowError('gender')">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.gender }}
+              </div>
             </div>
             
             <div class="form-group">
-              <label>Marital Status</label>
+              <label>Marital Status <span class="required">*</span></label>
               <select 
                 [(ngModel)]="adminForm.mitrialStatus" 
                 name="mitrialStatus"
                 class="form-control"
+                [class.error-input]="fieldErrors.mitrialStatus && shouldShowError('mitrialStatus')"
+                (blur)="onFieldBlur('mitrialStatus')"
+                (change)="onFieldInput('mitrialStatus')"
+                required
                 [disabled]="isLoading"
               >
                 <option value="">Select Status</option>
@@ -111,6 +158,9 @@
                 <option value="Divorced">Divorced</option>
                 <option value="Widowed">Widowed</option>
               </select>
+              <div class="field-error" *ngIf="fieldErrors.mitrialStatus && shouldShowError('mitrialStatus')">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mitrialStatus }}
+              </div>
             </div>
           </div>
           
@@ -169,10 +219,17 @@
                 [(ngModel)]="adminForm.firstName" 
                 name="firstName"
                 class="form-control"
+                [class.error-input]="fieldErrors.firstName && shouldShowError('firstName')"
                 placeholder="John"
+                (blur)="onFieldBlur('firstName')"
+                (input)="onFieldInput('firstName')"
                 required
+                maxlength="100"
                 [disabled]="isLoading"
               />
+              <div class="field-error" *ngIf="fieldErrors.firstName && shouldShowError('firstName')">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.firstName }}
+              </div>
             </div>
             
             <div class="form-group">
@@ -182,46 +239,72 @@
                 [(ngModel)]="adminForm.lastName" 
                 name="lastName"
                 class="form-control"
+                [class.error-input]="fieldErrors.lastName && shouldShowError('lastName')"
                 placeholder="Doe"
+                (blur)="onFieldBlur('lastName')"
+                (input)="onFieldInput('lastName')"
                 required
+                maxlength="100"
                 [disabled]="isLoading"
               />
+              <div class="field-error" *ngIf="fieldErrors.lastName && shouldShowError('lastName')">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.lastName }}
+              </div>
             </div>
           </div>
           
           <div class="form-group">
-            <label>Mobile Phone</label>
+            <label>Mobile Phone <span class="required">*</span></label>
             <input 
               type="tel" 
               [(ngModel)]="adminForm.mobilePhone" 
               name="mobilePhone"
               class="form-control"
+              [class.error-input]="fieldErrors.mobilePhone && shouldShowError('mobilePhone')"
               placeholder="01012345678"
+              (blur)="onFieldBlur('mobilePhone')"
+              (input)="onFieldInput('mobilePhone')"
+              required
+              maxlength="50"
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.mobilePhone && shouldShowError('mobilePhone')">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mobilePhone }}
+            </div>
           </div>
           
           <div class="form-row">
             <div class="form-group">
-              <label>Gender</label>
+              <label>Gender <span class="required">*</span></label>
               <select 
                 [(ngModel)]="adminForm.gender" 
                 name="gender"
                 class="form-control"
+                [class.error-input]="fieldErrors.gender && shouldShowError('gender')"
+                (blur)="onFieldBlur('gender')"
+                (change)="onFieldInput('gender')"
+                required
                 [disabled]="isLoading"
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
+              <div class="field-error" *ngIf="fieldErrors.gender && shouldShowError('gender')">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.gender }}
+              </div>
             </div>
             
             <div class="form-group">
-              <label>Marital Status</label>
+              <label>Marital Status <span class="required">*</span></label>
               <select 
                 [(ngModel)]="adminForm.mitrialStatus" 
                 name="mitrialStatus"
                 class="form-control"
+                [class.error-input]="fieldErrors.mitrialStatus && shouldShowError('mitrialStatus')"
+                (blur)="onFieldBlur('mitrialStatus')"
+                (change)="onFieldInput('mitrialStatus')"
+                required
                 [disabled]="isLoading"
               >
                 <option value="">Select Status</option>
@@ -230,6 +313,9 @@
                 <option value="Divorced">Divorced</option>
                 <option value="Widowed">Widowed</option>
               </select>
+              <div class="field-error" *ngIf="fieldErrors.mitrialStatus && shouldShowError('mitrialStatus')">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mitrialStatus }}
+              </div>
             </div>
           </div>
           
@@ -279,7 +365,7 @@
           <button 
             type="submit" 
             class="btn-save" 
-            [disabled]="isLoading"
+            [disabled]="isLoading || !isFormValid()"
           >
             <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
             {{ isEditMode ? 'Update' : 'Create' }} Admin

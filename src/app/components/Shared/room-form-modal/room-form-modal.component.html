@@ -21,10 +21,16 @@
             [(ngModel)]="roomForm.roomName" 
             name="roomName"
             class="form-control"
+            [class.error-input]="fieldErrors.roomName && shouldShowError('roomName')"
             placeholder="e.g., Room 101, ICU Room A"
+            (blur)="onFieldBlur('roomName')"
+            (input)="onFieldInput('roomName')"
             required
             [disabled]="isLoading"
           />
+          <div class="field-error" *ngIf="fieldErrors.roomName && shouldShowError('roomName')">
+            <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.roomName }}
+          </div>
         </div>
         
         <div class="form-group">
@@ -33,12 +39,18 @@
             [(ngModel)]="roomForm.roomType" 
             name="roomType"
             class="form-control"
+            [class.error-input]="fieldErrors.roomType && shouldShowError('roomType')"
+            (blur)="onFieldBlur('roomType')"
+            (change)="onFieldInput('roomType')"
             required
             [disabled]="isLoading"
           >
             <option value="">Select Room Type</option>
             <option *ngFor="let type of roomTypes" [value]="type">{{ type }}</option>
           </select>
+          <div class="field-error" *ngIf="fieldErrors.roomType && shouldShowError('roomType')">
+            <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.roomType }}
+          </div>
         </div>
         
         <div class="modal-footer">
@@ -53,7 +65,7 @@
           <button 
             type="submit" 
             class="btn-save" 
-            [disabled]="isLoading"
+            [disabled]="isLoading || !isFormValid()"
           >
             <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
             {{ getSaveButtonText() }}

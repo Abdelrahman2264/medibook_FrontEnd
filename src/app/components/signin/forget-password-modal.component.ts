@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, ViewEncapsulation, ChangeDetect
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-forget-password-modal',
@@ -42,7 +43,8 @@ export class ForgetPasswordModalComponent {
   constructor(
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private toastService: ToastService
   ) {}
 
   onClose() {
@@ -259,7 +261,7 @@ export class ForgetPasswordModalComponent {
         this.success.emit();
         this.onClose();
         // Show success message (you can add a toast notification here)
-        alert('Password reset successfully! You can now login with your new password.');
+        this.toastService.success('Password reset successfully! You can now login with your new password.');
       },
       error: (error) => {
         this.isResetting = false;

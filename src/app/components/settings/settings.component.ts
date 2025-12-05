@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-settings',
@@ -11,6 +12,8 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent {
+  constructor(private toastService: ToastService) {}
+  
   activeTab: string = 'general';
 
   // User data
@@ -92,31 +95,31 @@ export class SettingsComponent {
   saveGeneralSettings(): void {
     console.log('General settings saved:', this.settings.general);
     this.applyGeneralSettings();
-    alert('General settings saved successfully');
+    this.toastService.success('General settings saved successfully');
   }
 
   saveAccountSettings(): void {
     console.log('Account settings saved:', this.settings.account);
     this.updateUserProfile();
-    alert('Account information updated successfully');
+    this.toastService.success('Account information updated successfully');
   }
 
   saveNotificationSettings(): void {
     console.log('Notification settings saved:', this.settings.notifications);
     this.applyNotificationSettings();
-    alert('Notification settings updated');
+    this.toastService.success('Notification settings updated');
   }
 
   savePrivacySettings(): void {
     console.log('Privacy settings saved:', this.settings.privacy);
     this.applyPrivacySettings();
-    alert('Privacy settings updated');
+    this.toastService.success('Privacy settings updated');
   }
 
   saveAppearanceSettings(): void {
     console.log('Appearance settings saved:', this.settings.appearance);
     this.applyAppearanceSettings();
-    alert('Appearance settings applied');
+    this.toastService.success('Appearance settings applied');
   }
 
   // Save all settings
@@ -126,7 +129,7 @@ export class SettingsComponent {
     this.saveNotificationSettings();
     this.savePrivacySettings();
     this.saveAppearanceSettings();
-    alert('All settings saved successfully!');
+    this.toastService.success('All settings saved successfully!');
   }
 
   // Apply functions - these actually change the behavior
@@ -197,7 +200,7 @@ export class SettingsComponent {
     const newPassword = prompt('Enter new password:');
     if (newPassword) {
       console.log('Password changed to:', newPassword);
-      alert('Password changed successfully');
+      this.toastService.success('Password changed successfully');
     }
   }
 
@@ -205,7 +208,7 @@ export class SettingsComponent {
     const confirmReset = confirm('Are you sure you want to reset your password?');
     if (confirmReset) {
       console.log('Password reset initiated');
-      alert('Password reset instructions sent to your email');
+      this.toastService.info('Password reset instructions sent to your email');
     }
   }
 

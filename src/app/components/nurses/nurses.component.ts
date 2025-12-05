@@ -9,6 +9,7 @@ import { Nurse, CreateNurseDto, UpdateNurseDto } from '../../models/nurse.model'
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { NurseFormModalComponent } from '../Shared/nurse-form-modal/nurse-form-modal.component';
 import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-nurses',
@@ -44,7 +45,8 @@ export class Nurses extends BaseRoleAwareComponent implements OnInit {
   constructor(
     private nursesService: NursesService,
     roleService: RoleService,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
     super(roleService, cdr);
   }
@@ -152,7 +154,7 @@ export class Nurses extends BaseRoleAwareComponent implements OnInit {
     // Validate nurseId before opening modal
     if (!nurse.nurseId || nurse.nurseId === 0) {
       console.error('❌ ERROR: Cannot open edit modal - nurseId is invalid:', nurse);
-      alert('Error: Invalid nurse ID. Cannot edit this nurse.');
+      this.toastService.error('Error: Invalid nurse ID. Cannot edit this nurse.');
       return;
     }
     
@@ -194,7 +196,7 @@ export class Nurses extends BaseRoleAwareComponent implements OnInit {
       // Validate nurseId before update
       if (!this.selectedNurse.nurseId || this.selectedNurse.nurseId === 0) {
         console.error('❌ ERROR: Cannot update - nurseId is invalid:', this.selectedNurse);
-        alert('Error: Invalid nurse ID. Cannot update this nurse.');
+        this.toastService.error('Error: Invalid nurse ID. Cannot update this nurse.');
         this.isLoading = false;
         this.forceUpdate();
         return;
@@ -216,7 +218,7 @@ export class Nurses extends BaseRoleAwareComponent implements OnInit {
           console.error('❌ Error updating nurse:', error);
           this.isLoading = false;
           this.forceUpdate();
-          alert('Failed to update nurse. Please try again.');
+          this.toastService.error('Failed to update nurse. Please try again.');
         }
       });
     } else {
@@ -250,7 +252,7 @@ export class Nurses extends BaseRoleAwareComponent implements OnInit {
             errorMessage += 'Please check the console for details.';
           }
           
-          alert(errorMessage);
+          this.toastService.error(errorMessage);
         }
       });
     }
@@ -316,7 +318,7 @@ export class Nurses extends BaseRoleAwareComponent implements OnInit {
         console.error('❌ Toggle active failed:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update nurse status. Please try again.');
+        this.toastService.error('Failed to update nurse status. Please try again.');
       }
     });
   }

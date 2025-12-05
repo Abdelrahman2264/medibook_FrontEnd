@@ -11,6 +11,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FloatingButtonsComponent } from './components/floating-buttons/floating-buttons.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { NotificationCardComponent } from './components/notification-card/notification-card.component';
+import { ToastComponent } from './components/Shared/toast/toast.component';
 import { AuthService } from './services/auth.service';
 import { ThemeService } from './services/theme.service';
 import { SidebarService } from './services/sidebar.service';
@@ -30,7 +31,8 @@ import { NotificationDetailsDto } from './models/notification.model';
     SidebarComponent,
     FloatingButtonsComponent,
     NotificationsComponent,
-    NotificationCardComponent
+    NotificationCardComponent,
+    ToastComponent
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -46,8 +48,9 @@ export class App implements OnInit, OnDestroy {
   private notificationSubscription?: Subscription;
   private authSubscription?: Subscription;
 
-  // Routes that should show header (public routes)
-  private publicRoutes = ['/signin', '/signup', '/about', '/contact', '/'];
+  // Routes that should show header (public routes) - excluding signin and signup
+  private publicRoutes = ['/about', '/contact', '/'];
+  private authRoutes = ['/signin', '/signup'];
   private sidebarSubscription?: Subscription;
 
   constructor(
@@ -172,6 +175,11 @@ export class App implements OnInit, OnDestroy {
     this.isAuthenticated = this.authService.isAuthenticated();
     const currentRoute = this.router.url;
 
+    // Check if current route is auth route (signin/signup)
+    const isAuthRoute = this.authRoutes.some(route => {
+      return currentRoute === route || currentRoute.startsWith(route + '/');
+    });
+
     // Check if current route is public (exact match or starts with)
     const isPublicRoute = this.publicRoutes.some(route => {
       if (route === '/') {
@@ -180,11 +188,11 @@ export class App implements OnInit, OnDestroy {
       return currentRoute === route || currentRoute.startsWith(route + '/');
     });
 
-    // Show header for public routes or when not authenticated
-    this.showHeader = !this.isAuthenticated || isPublicRoute;
+    // Show header for public routes (but NOT for auth routes)
+    this.showHeader = !isAuthRoute && (!this.isAuthenticated || isPublicRoute);
     
     // Show sidebar for authenticated users on protected routes
-    this.showSidebar = this.isAuthenticated && !isPublicRoute;
+    this.showSidebar = this.isAuthenticated && !isPublicRoute && !isAuthRoute;
   }
 
 }

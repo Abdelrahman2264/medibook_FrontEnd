@@ -15,6 +15,7 @@ import { Room } from '../../models/room.model';
 import { Feedback } from '../../models/feedback.model';
 import { Patient } from '../../models/patient.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-appointment-details',
@@ -40,6 +41,12 @@ export class AppointmentDetailsComponent implements OnInit {
   showConfirmationModal: boolean = false;
   closeNotes: string = '';
   closeMedicine: string = '';
+  closeSubmitted = false;
+  closeFieldErrors: {
+    closeNotes?: string;
+    closeMedicine?: string;
+  } = {};
+  closeTouchedFields: Set<string> = new Set();
   confirmationConfig: any = {};
   pendingAction: () => void = () => {};
 
@@ -52,7 +59,8 @@ export class AppointmentDetailsComponent implements OnInit {
     private roomsService: RoomsService,
     private feedbacksService: FeedbacksService,
     private patientsService: PatientsService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -206,12 +214,72 @@ export class AppointmentDetailsComponent implements OnInit {
     this.showConfirmationModal = false;
     this.closeNotes = '';
     this.closeMedicine = '';
+    this.closeSubmitted = false;
+    this.closeFieldErrors = {};
+    this.closeTouchedFields.clear();
     this.forceUpdate();
   }
 
+  validateCloseForm(): boolean {
+    this.closeFieldErrors = {};
+    let isValid = true;
+
+    // Validate Medicine (required)
+    if (!this.closeMedicine?.trim()) {
+      if (this.closeSubmitted || this.closeTouchedFields.has('closeMedicine')) {
+        this.closeFieldErrors.closeMedicine = 'Medicine Prescribed is required';
+      }
+      isValid = false;
+    } else if (this.closeMedicine.trim().length > 1000) {
+      if (this.closeSubmitted || this.closeTouchedFields.has('closeMedicine')) {
+        this.closeFieldErrors.closeMedicine = 'Medicine must not exceed 1000 characters';
+      }
+      isValid = false;
+    }
+
+    // Validate Notes (required)
+    if (!this.closeNotes?.trim()) {
+      if (this.closeSubmitted || this.closeTouchedFields.has('closeNotes')) {
+        this.closeFieldErrors.closeNotes = 'Treatment Notes is required';
+      }
+      isValid = false;
+    } else if (this.closeNotes.trim().length > 2000) {
+      if (this.closeSubmitted || this.closeTouchedFields.has('closeNotes')) {
+        this.closeFieldErrors.closeNotes = 'Treatment Notes must not exceed 2000 characters';
+      }
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  shouldShowCloseError(fieldName: keyof typeof this.closeFieldErrors): boolean {
+    return this.closeSubmitted || this.closeTouchedFields.has(fieldName);
+  }
+
+  markCloseFieldAsTouched(fieldName: keyof typeof this.closeFieldErrors): void {
+    this.closeTouchedFields.add(fieldName);
+  }
+
+  onCloseFieldInput(fieldName: keyof typeof this.closeFieldErrors): void {
+    if (this.closeFieldErrors[fieldName]) {
+      this.closeFieldErrors[fieldName] = '';
+    }
+  }
+
+  onCloseFieldBlur(fieldName: keyof typeof this.closeFieldErrors): void {
+    this.markCloseFieldAsTouched(fieldName);
+    this.validateCloseForm();
+  }
+
   onCloseAppointment() {
+    this.closeSubmitted = true;
+    
     if (!this.appointment) {
-      alert('No appointment selected.');
+      return;
+    }
+
+    if (!this.validateCloseForm()) {
       return;
     }
 
@@ -228,6 +296,7 @@ export class AppointmentDetailsComponent implements OnInit {
     this.appointmentsService.closeAppointment(closeData).subscribe({
       next: (response: any) => {
         console.log('✅ Appointment closed successfully');
+        this.toastService.success('Appointment closed successfully');
         this.loadAppointmentDetails(); // Reload to get updated status
         this.closeModals();
       },
@@ -235,7 +304,7 @@ export class AppointmentDetailsComponent implements OnInit {
         console.error('❌ Error closing appointment:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to close appointment. Please try again.');
+        this.toastService.error('Failed to close appointment. Please try again.');
       }
     });
   }

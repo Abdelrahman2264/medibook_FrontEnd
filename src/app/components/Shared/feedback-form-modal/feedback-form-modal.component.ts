@@ -28,6 +28,14 @@ export class FeedbackFormModalComponent implements OnInit, OnChanges {
   };
 
   errorMessage: string = '';
+  submitted = false;
+  fieldErrors: {
+    comment?: string;
+    rate?: string;
+  } = {};
+
+  // Track which fields have been touched
+  touchedFields: Set<string> = new Set();
 
   ngOnInit() {
     this.initializeForm();
@@ -45,35 +53,91 @@ export class FeedbackFormModalComponent implements OnInit, OnChanges {
       rate: 5
     };
     this.errorMessage = '';
+    this.submitted = false;
+    this.clearAllFieldErrors();
+    this.touchedFields.clear();
+  }
+
+  private clearAllFieldErrors() {
+    this.fieldErrors = {};
+  }
+
+  // Helper to check if a field should show error
+  shouldShowError(fieldName: keyof typeof this.fieldErrors): boolean {
+    return this.submitted || this.touchedFields.has(fieldName);
+  }
+
+  // Mark a field as touched
+  markFieldAsTouched(fieldName: keyof typeof this.fieldErrors): void {
+    this.touchedFields.add(fieldName);
+  }
+
+  // Handle field input - clear error when user starts typing
+  onFieldInput(fieldName: keyof typeof this.fieldErrors): void {
+    // Clear error for this field when user starts typing
+    if (this.fieldErrors[fieldName]) {
+      this.fieldErrors[fieldName] = '';
+    }
+  }
+
+  // Handle field blur - validate and mark as touched
+  onFieldBlur(fieldName: keyof typeof this.fieldErrors): void {
+    this.markFieldAsTouched(fieldName);
+    // Re-validate the form to show errors for touched fields
+    this.validateForm();
   }
 
   validateForm(): boolean {
-    this.errorMessage = '';
+    // Clear previous errors (but keep them if field was touched or form was submitted)
+    const previousErrors = { ...this.fieldErrors };
+    this.fieldErrors = {};
+    let isValid = true;
 
+    // Validate Comment
     if (!this.feedbackForm.comment?.trim()) {
-      this.errorMessage = 'Comment is required';
-      return false;
+      if (this.submitted || this.touchedFields.has('comment')) {
+        this.fieldErrors.comment = 'Comment is required';
+      }
+      isValid = false;
+    } else if (this.feedbackForm.comment.trim().length < 1) {
+      if (this.submitted || this.touchedFields.has('comment')) {
+        this.fieldErrors.comment = 'Comment must be at least 1 character long';
+      }
+      isValid = false;
+    } else if (this.feedbackForm.comment.trim().length > 500) {
+      if (this.submitted || this.touchedFields.has('comment')) {
+        this.fieldErrors.comment = 'Comment must be less than 500 characters';
+      }
+      isValid = false;
     }
 
-    if (this.feedbackForm.comment.trim().length < 1) {
-      this.errorMessage = 'Comment must be at least 1 character long';
-      return false;
-    }
-
-    if (this.feedbackForm.comment.trim().length > 500) {
-      this.errorMessage = 'Comment must be less than 500 characters';
-      return false;
-    }
-
+    // Validate Rate
     if (this.feedbackForm.rate < 1 || this.feedbackForm.rate > 5) {
-      this.errorMessage = 'Rate must be between 1 and 5';
-      return false;
+      if (this.submitted || this.touchedFields.has('rate')) {
+        this.fieldErrors.rate = 'Please select a rating';
+      }
+      isValid = false;
     }
 
-    return true;
+    if (!isValid && this.submitted) {
+      this.errorMessage = 'Please fix all validation errors before submitting';
+    }
+
+    return isValid;
+  }
+
+  isFormValid(): boolean {
+    // Only perform full validation on fields that have been touched or when form is submitted
+    if (!this.submitted && this.touchedFields.size === 0) {
+      return false; // Form is not valid until user interacts with it
+    }
+    
+    return this.validateForm();
   }
 
   onSubmit() {
+    this.submitted = true;
+    
     if (!this.validateForm()) {
       return;
     }
@@ -105,6 +169,8 @@ export class FeedbackFormModalComponent implements OnInit, OnChanges {
 
   setRate(rate: number) {
     this.feedbackForm.rate = rate;
+    this.markFieldAsTouched('rate');
+    this.onFieldInput('rate');
   }
 }
 

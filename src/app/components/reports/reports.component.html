@@ -229,4 +229,18 @@
       </div>
     </div>
   </div>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal
+    [isVisible]="showConfirmationModal"
+    title="Delete Report"
+    message="Are you sure you want to delete this report? This action cannot be undone."
+    icon="fas fa-trash"
+    iconColor="#dc3545"
+    confirmText="Delete"
+    cancelText="Cancel"
+    confirmButtonClass="btn-confirm"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()">
+  </app-confirmation-modal>
 </div>

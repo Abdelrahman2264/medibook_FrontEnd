@@ -24,10 +24,18 @@
                 [(ngModel)]="doctorForm.firstName" 
                 name="firstName"
                 class="form-control"
+                [class.error-input]="fieldErrors.firstName && (submitted || touchedFields.has('firstName'))"
                 placeholder="John"
+                (blur)="onFieldBlur('firstName')"
+                (input)="onFieldInput('firstName')"
                 required
+                maxlength="100"
                 [disabled]="isLoading"
               />
+              <div class="field-error" *ngIf="fieldErrors.firstName && (submitted || touchedFields.has('firstName'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.firstName }}
+              </div>
+              <small class="text-muted">Letters, spaces, hyphens, and apostrophes only</small>
             </div>
             
             <div class="form-group">
@@ -37,10 +45,18 @@
                 [(ngModel)]="doctorForm.lastName" 
                 name="lastName"
                 class="form-control"
+                [class.error-input]="fieldErrors.lastName && (submitted || touchedFields.has('lastName'))"
                 placeholder="Doe"
+                (blur)="onFieldBlur('lastName')"
+                (input)="onFieldInput('lastName')"
                 required
+                maxlength="100"
                 [disabled]="isLoading"
               />
+              <div class="field-error" *ngIf="fieldErrors.lastName && (submitted || touchedFields.has('lastName'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.lastName }}
+              </div>
+              <small class="text-muted">Letters, spaces, hyphens, and apostrophes only</small>
             </div>
           </div>
           
@@ -51,10 +67,20 @@
               [(ngModel)]="doctorForm.email" 
               name="email"
               class="form-control"
+              [class.error-input]="fieldErrors.email && (submitted || touchedFields.has('email'))"
               placeholder="doctor@example.com"
+              (blur)="onFieldBlur('email')"
+              (input)="onFieldInput('email')"
               required
-              [disabled]="isLoading"
+              [disabled]="isLoading || isEmailValidating"
             />
+            <div class="field-error" *ngIf="fieldErrors.email && (submitted || touchedFields.has('email'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.email }}
+            </div>
+            <small class="text-muted">Must be unique across all doctors</small>
+            <div *ngIf="isEmailValidating" class="validating-indicator">
+              <i class="fas fa-spinner fa-spin"></i> Checking email availability...
+            </div>
           </div>
           
           <div class="form-group">
@@ -64,45 +90,75 @@
               [(ngModel)]="doctorForm.password" 
               name="password"
               class="form-control"
+              [class.error-input]="fieldErrors.password && (submitted || touchedFields.has('password'))"
               placeholder="Enter password"
+              (blur)="onFieldBlur('password')"
+              (input)="onFieldInput('password')"
               required
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.password && (submitted || touchedFields.has('password'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.password }}
+            </div>
+            <small class="text-muted">At least 8 characters with uppercase, lowercase, number, and special character</small>
           </div>
           
           <div class="form-group">
-            <label>Mobile Phone</label>
+            <label>Mobile Phone <span class="required">*</span></label>
             <input 
               type="tel" 
               [(ngModel)]="doctorForm.mobilePhone" 
               name="mobilePhone"
               class="form-control"
+              [class.error-input]="fieldErrors.mobilePhone && (submitted || touchedFields.has('mobilePhone'))"
               placeholder="01012345678"
-              [disabled]="isLoading"
+              (blur)="onFieldBlur('mobilePhone')"
+              (input)="onFieldInput('mobilePhone')"
+              required
+              maxlength="50"
+              [disabled]="isLoading || isPhoneValidating"
             />
+            <div class="field-error" *ngIf="fieldErrors.mobilePhone && (submitted || touchedFields.has('mobilePhone'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mobilePhone }}
+            </div>
+            <small class="text-muted">Must be unique across all doctors</small>
+            <div *ngIf="isPhoneValidating" class="validating-indicator">
+              <i class="fas fa-spinner fa-spin"></i> Checking phone availability...
+            </div>
           </div>
           
           <div class="form-row">
             <div class="form-group">
-              <label>Gender</label>
+              <label>Gender <span class="required">*</span></label>
               <select 
                 [(ngModel)]="doctorForm.gender" 
                 name="gender"
                 class="form-control"
+                [class.error-input]="fieldErrors.gender && (submitted || touchedFields.has('gender'))"
+                (blur)="onFieldBlur('gender')"
+                (change)="onFieldInput('gender')"
+                required
                 [disabled]="isLoading"
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
+              <div class="field-error" *ngIf="fieldErrors.gender && (submitted || touchedFields.has('gender'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.gender }}
+              </div>
             </div>
             
             <div class="form-group">
-              <label>Marital Status</label>
+              <label>Marital Status <span class="required">*</span></label>
               <select 
                 [(ngModel)]="doctorForm.mitrialStatus" 
                 name="mitrialStatus"
                 class="form-control"
+                [class.error-input]="fieldErrors.mitrialStatus && (submitted || touchedFields.has('mitrialStatus'))"
+                (blur)="onFieldBlur('mitrialStatus')"
+                (change)="onFieldInput('mitrialStatus')"
+                required
                 [disabled]="isLoading"
               >
                 <option value="">Select Status</option>
@@ -111,18 +167,31 @@
                 <option value="Divorced">Divorced</option>
                 <option value="Widowed">Widowed</option>
               </select>
+              <div class="field-error" *ngIf="fieldErrors.mitrialStatus && (submitted || touchedFields.has('mitrialStatus'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mitrialStatus }}
+              </div>
             </div>
           </div>
           
           <div class="form-group">
-            <label>Date of Birth</label>
+            <label>Date of Birth <span class="required">*</span></label>
             <input 
               type="date" 
               [(ngModel)]="doctorForm.dateOfBirth" 
               name="dateOfBirth"
               class="form-control"
+              [class.error-input]="fieldErrors.dateOfBirth && (submitted || touchedFields.has('dateOfBirth'))"
+              (blur)="onFieldBlur('dateOfBirth')"
+              (change)="onFieldInput('dateOfBirth')"
+              required
               [disabled]="isLoading"
+              [max]="getMaxDate()"
+              [min]="getMinDate()"
             />
+            <div class="field-error" *ngIf="fieldErrors.dateOfBirth && (submitted || touchedFields.has('dateOfBirth'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.dateOfBirth }}
+            </div>
+            <small class="text-muted">Must be at least 21 years old</small>
           </div>
           
           <div class="form-group">
@@ -131,6 +200,9 @@
               [(ngModel)]="doctorForm.specialization" 
               name="specialization"
               class="form-control"
+              [class.error-input]="fieldErrors.specialization && (submitted || touchedFields.has('specialization'))"
+              (blur)="onFieldBlur('specialization')"
+              (change)="onFieldInput('specialization')"
               required
               [disabled]="isLoading"
             >
@@ -138,62 +210,85 @@
               <option *ngFor="let specialty of specialties" [value]="specialty">
                 {{ specialty }}
               </option>
-              <option value="Cardiology">Cardiology</option>
-              <option value="Dermatology">Dermatology</option>
-              <option value="Neurology">Neurology</option>
-              <option value="Pediatrics">Pediatrics</option>
-              <option value="Orthopedics">Orthopedics</option>
-              <option value="Dentistry">Dentistry</option>
             </select>
+            <div class="field-error" *ngIf="fieldErrors.specialization && (submitted || touchedFields.has('specialization'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.specialization }}
+            </div>
           </div>
           
           <div class="form-group">
-            <label>Type</label>
+            <label>Type <span class="required">*</span></label>
             <input 
               type="text" 
               [(ngModel)]="doctorForm.type" 
               name="type"
               class="form-control"
+              [class.error-input]="fieldErrors.type && (submitted || touchedFields.has('type'))"
               placeholder="e.g., General Practitioner, Specialist"
+              (blur)="onFieldBlur('type')"
+              (input)="onFieldInput('type')"
+              required
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.type && (submitted || touchedFields.has('type'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.type }}
+            </div>
           </div>
           
           <div class="form-group">
-            <label>Experience Years</label>
+            <label>Experience Years <span class="required">*</span></label>
             <input 
               type="number" 
               [(ngModel)]="doctorForm.experienceYears" 
               name="experienceYears"
               class="form-control"
+              [class.error-input]="fieldErrors.experienceYears && (submitted || touchedFields.has('experienceYears'))"
               placeholder="0"
               min="0"
+              max="100"
+              (blur)="onFieldBlur('experienceYears')"
+              (input)="onFieldInput('experienceYears')"
+              required
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.experienceYears && (submitted || touchedFields.has('experienceYears'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.experienceYears }}
+            </div>
+            <small class="text-muted">0-100 years</small>
           </div>
           
           <div class="form-group">
-            <label>Bio</label>
+            <label>Bio <span class="required">*</span></label>
             <textarea 
               [(ngModel)]="doctorForm.bio" 
               name="bio"
               class="form-control"
+              [class.error-input]="fieldErrors.bio && (submitted || touchedFields.has('bio'))"
               rows="3"
               placeholder="Doctor's biography and background..."
+              (blur)="onFieldBlur('bio')"
+              (input)="onFieldInput('bio')"
+              maxlength="1000"
+              required
               [disabled]="isLoading"
             ></textarea>
+            <div class="field-error" *ngIf="fieldErrors.bio && (submitted || touchedFields.has('bio'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.bio }}
+            </div>
+            <small class="text-muted">Maximum 1000 characters</small>
           </div>
           
           <!-- Profile Image Upload -->
           <div class="form-group">
-            <label>Profile Image (Optional)</label>
-            <div class="image-upload-container">
+            <label>Profile Image <span class="required">*</span></label>
+            <div class="image-upload-container" [class.error-input]="fieldErrors.profileImage && (submitted || touchedFields.has('profileImage'))">
               <input
                 type="file"
                 id="profileImage"
                 accept="image/*"
                 (change)="onFileSelected($event)"
                 class="file-input"
+                (click)="markFieldAsTouched('profileImage')"
                 [disabled]="isLoading"
               />
               <div class="image-preview" *ngIf="profileImagePreview">
@@ -210,11 +305,15 @@
               <div class="image-placeholder" *ngIf="!profileImagePreview">
                 <i class="fas fa-user-circle"></i>
                 <p>No image selected</p>
-                <label for="profileImage" class="upload-label" [class.disabled]="isLoading">
+                <label for="profileImage" class="upload-label" [class.disabled]="isLoading" (click)="markFieldAsTouched('profileImage')">
                   Choose Image
                 </label>
               </div>
             </div>
+            <div class="field-error" *ngIf="fieldErrors.profileImage && (submitted || touchedFields.has('profileImage'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.profileImage }}
+            </div>
+            <small class="text-muted">JPEG, PNG, or GIF, max 5MB</small>
           </div>
         </ng-container>
 
@@ -228,10 +327,17 @@
                 [(ngModel)]="doctorForm.firstName" 
                 name="firstName"
                 class="form-control"
+                [class.error-input]="fieldErrors.firstName && (submitted || touchedFields.has('firstName'))"
                 placeholder="John"
+                (blur)="onFieldBlur('firstName')"
+                (input)="onFieldInput('firstName')"
                 required
+                maxlength="100"
                 [disabled]="isLoading"
               />
+              <div class="field-error" *ngIf="fieldErrors.firstName && (submitted || touchedFields.has('firstName'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.firstName }}
+              </div>
             </div>
             
             <div class="form-group">
@@ -241,31 +347,53 @@
                 [(ngModel)]="doctorForm.lastName" 
                 name="lastName"
                 class="form-control"
+                [class.error-input]="fieldErrors.lastName && (submitted || touchedFields.has('lastName'))"
                 placeholder="Doe"
+                (blur)="onFieldBlur('lastName')"
+                (input)="onFieldInput('lastName')"
                 required
+                maxlength="100"
                 [disabled]="isLoading"
               />
+              <div class="field-error" *ngIf="fieldErrors.lastName && (submitted || touchedFields.has('lastName'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.lastName }}
+              </div>
             </div>
           </div>
           
           <div class="form-group">
-            <label>Mobile Phone</label>
+            <label>Mobile Phone <span class="required">*</span></label>
             <input 
               type="tel" 
               [(ngModel)]="doctorForm.mobilePhone" 
               name="mobilePhone"
               class="form-control"
+              [class.error-input]="fieldErrors.mobilePhone && (submitted || touchedFields.has('mobilePhone'))"
               placeholder="01012345678"
-              [disabled]="isLoading"
+              (blur)="onFieldBlur('mobilePhone')"
+              (input)="onFieldInput('mobilePhone')"
+              required
+              maxlength="50"
+              [disabled]="isLoading || isPhoneValidating"
             />
+            <div class="field-error" *ngIf="fieldErrors.mobilePhone && (submitted || touchedFields.has('mobilePhone'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mobilePhone }}
+            </div>
+            <div *ngIf="isPhoneValidating" class="validating-indicator">
+              <i class="fas fa-spinner fa-spin"></i> Checking phone availability...
+            </div>
           </div>
           
           <div class="form-group">
-            <label>Marital Status</label>
+            <label>Marital Status <span class="required">*</span></label>
             <select 
               [(ngModel)]="doctorForm.mitrialStatus" 
               name="mitrialStatus"
               class="form-control"
+              [class.error-input]="fieldErrors.mitrialStatus && (submitted || touchedFields.has('mitrialStatus'))"
+              (blur)="onFieldBlur('mitrialStatus')"
+              (change)="onFieldInput('mitrialStatus')"
+              required
               [disabled]="isLoading"
             >
               <option value="">Select Status</option>
@@ -274,31 +402,43 @@
               <option value="Divorced">Divorced</option>
               <option value="Widowed">Widowed</option>
             </select>
+            <div class="field-error" *ngIf="fieldErrors.mitrialStatus && (submitted || touchedFields.has('mitrialStatus'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mitrialStatus }}
+            </div>
           </div>
           
           <div class="form-group">
-            <label>Experience Years</label>
+            <label>Experience Years <span class="required">*</span></label>
             <input 
               type="number" 
               [(ngModel)]="doctorForm.experienceYears" 
               name="experienceYears"
               class="form-control"
+              [class.error-input]="fieldErrors.experienceYears && (submitted || touchedFields.has('experienceYears'))"
               placeholder="0"
               min="0"
+              max="100"
+              (blur)="onFieldBlur('experienceYears')"
+              (input)="onFieldInput('experienceYears')"
+              required
               [disabled]="isLoading"
             />
+            <div class="field-error" *ngIf="fieldErrors.experienceYears && (submitted || touchedFields.has('experienceYears'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.experienceYears }}
+            </div>
           </div>
           
           <!-- Profile Image Upload -->
           <div class="form-group">
-            <label>Profile Image (Optional)</label>
-            <div class="image-upload-container">
+            <label>Profile Image <span class="required">*</span></label>
+            <div class="image-upload-container" [class.error-input]="fieldErrors.profileImage && (submitted || touchedFields.has('profileImage'))">
               <input
                 type="file"
                 id="profileImageEdit"
                 accept="image/*"
                 (change)="onFileSelected($event)"
                 class="file-input"
+                (click)="markFieldAsTouched('profileImage')"
                 [disabled]="isLoading"
               />
               <div class="image-preview" *ngIf="profileImagePreview">
@@ -315,10 +455,13 @@
               <div class="image-placeholder" *ngIf="!profileImagePreview">
                 <i class="fas fa-user-circle"></i>
                 <p>No image selected</p>
-                <label for="profileImageEdit" class="upload-label" [class.disabled]="isLoading">
+                <label for="profileImageEdit" class="upload-label" [class.disabled]="isLoading" (click)="markFieldAsTouched('profileImage')">
                   Choose Image
                 </label>
               </div>
+            </div>
+            <div class="field-error" *ngIf="fieldErrors.profileImage && (submitted || touchedFields.has('profileImage'))">
+              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.profileImage }}
             </div>
           </div>
         </ng-container>
@@ -335,7 +478,7 @@
           <button 
             type="submit" 
             class="btn-save" 
-            [disabled]="isLoading"
+            [disabled]="isLoading || !isFormValid()"
           >
             <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
             {{ isEditMode ? 'Update' : 'Create' }} Doctor

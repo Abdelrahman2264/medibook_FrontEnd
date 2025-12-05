@@ -8,6 +8,7 @@ import { Admin, UpdateAdminDto } from '../../models/admin.model';
 import { AdminFormModalComponent } from '../Shared/admin-form-modal/admin-form-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-admin-profile',
@@ -37,7 +38,8 @@ export class AdminProfile extends BaseRoleAwareComponent implements OnInit {
     private router: Router,
     private adminsService: AdminsService,
     roleService: RoleService,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
     super(roleService, cdr);
   }
@@ -193,7 +195,7 @@ export class AdminProfile extends BaseRoleAwareComponent implements OnInit {
     // Validate admin id before update
     if (!this.admin.id || this.admin.id === 0) {
       console.error('❌ ERROR: Cannot update - admin id is invalid:', this.admin);
-      alert('Error: Invalid admin ID. Cannot update this admin.');
+      this.toastService.error('Error: Invalid admin ID. Cannot update this admin.');
       return;
     }
 
@@ -215,7 +217,7 @@ export class AdminProfile extends BaseRoleAwareComponent implements OnInit {
         console.error('❌ Error updating admin:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update admin. Please try again.');
+        this.toastService.error('Failed to update admin. Please try again.');
       }
     });
   }
@@ -289,7 +291,7 @@ export class AdminProfile extends BaseRoleAwareComponent implements OnInit {
           errorMessage += 'Please try again.';
         }
         
-        alert(errorMessage);
+        this.toastService.error(errorMessage);
       }
     });
   }
