@@ -244,4 +244,15 @@ export class RoomsService {
       delay(200)
     );
   }
+
+  /**
+   * Check if room name and type combination exists (for uniqueness validation)
+   */
+  checkRoomExists(roomName: string, roomType: string, roomId?: number): Observable<{ exists: boolean; message: string }> {
+    const payload: any = { roomName, roomType };
+    if (roomId !== undefined && roomId !== null) {
+      payload.roomId = roomId;
+    }
+    return this.http.post<{ exists: boolean; message: string }>(`${this.baseUrl}/Rooms/check-room`, payload);
+  }
 }

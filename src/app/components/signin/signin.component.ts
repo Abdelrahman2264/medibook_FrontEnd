@@ -29,6 +29,14 @@ export class SigninComponent {
   isLoading = false;
   errorMessage: string = '';
   showForgetPasswordModal: boolean = false;
+  submitted = false;
+  fieldErrors: {
+    email?: string;
+    password?: string;
+  } = {};
+
+  // Track which fields have been touched
+  touchedFields: Set<string> = new Set();
 
   private patientsService = inject(PatientsService);
   private adminsService = inject(AdminsService);
@@ -46,9 +54,70 @@ export class SigninComponent {
     this.showPassword = !this.showPassword;
   }
 
+  // Helper to check if a field should show error
+  shouldShowError(fieldName: keyof typeof this.fieldErrors): boolean {
+    return this.submitted || this.touchedFields.has(fieldName);
+  }
+
+  // Mark a field as touched
+  markFieldAsTouched(fieldName: keyof typeof this.fieldErrors): void {
+    this.touchedFields.add(fieldName);
+  }
+
+  // Handle field input - clear error when user starts typing
+  onFieldInput(fieldName: keyof typeof this.fieldErrors): void {
+    // Clear error for this field when user starts typing
+    if (this.fieldErrors[fieldName]) {
+      this.fieldErrors[fieldName] = '';
+    }
+    this.errorMessage = '';
+  }
+
+  // Handle field blur - validate and mark as touched
+  onFieldBlur(fieldName: keyof typeof this.fieldErrors): void {
+    this.markFieldAsTouched(fieldName);
+    // Re-validate the form to show errors for touched fields
+    this.validateForm();
+  }
+
+  validateForm(): boolean {
+    // Clear previous errors (but keep them if field was touched or form was submitted)
+    const previousErrors = { ...this.fieldErrors };
+    this.fieldErrors = {};
+    let isValid = true;
+
+    // Validate Email
+    if (!this.credentials.email?.trim()) {
+      if (this.submitted || this.touchedFields.has('email')) {
+        this.fieldErrors.email = 'Email is required';
+      }
+      isValid = false;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(this.credentials.email.trim())) {
+        if (this.submitted || this.touchedFields.has('email')) {
+          this.fieldErrors.email = 'Please enter a valid email address';
+        }
+        isValid = false;
+      }
+    }
+
+    // Validate Password
+    if (!this.credentials.password?.trim()) {
+      if (this.submitted || this.touchedFields.has('password')) {
+        this.fieldErrors.password = 'Password is required';
+      }
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
   onSubmit() {
-    if (!this.credentials.email || !this.credentials.password) {
-      this.errorMessage = 'Please fill in all fields';
+    this.submitted = true;
+    
+    if (!this.validateForm()) {
+      this.errorMessage = 'Please fix the errors before submitting';
       return;
     }
 
@@ -95,8 +164,9 @@ export class SigninComponent {
       error: (error) => {
         this.isLoading = false;
         // Handle error
-        if (error.status === 401) {
-          this.errorMessage = 'Invalid email or password';
+        if (error.status === 401 || error.status === 400) {
+          this.errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+          this.fieldErrors.password = 'Invalid email or password';
         } else if (error.status === 0) {
           this.errorMessage = 'Unable to connect to server. Please check your connection.';
         } else {

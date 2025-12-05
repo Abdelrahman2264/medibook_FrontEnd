@@ -34,13 +34,19 @@
             [(ngModel)]="replyForm.doctorReply" 
             name="doctorReply"
             class="form-control"
+            [class.error-input]="fieldErrors.doctorReply && shouldShowError('doctorReply')"
             placeholder="Enter your reply to the patient's feedback..."
             rows="6"
+            (blur)="onFieldBlur('doctorReply')"
+            (input)="onFieldInput('doctorReply')"
             required
             [disabled]="isLoading"
             maxlength="500"
           ></textarea>
           <div class="char-count">{{ replyForm.doctorReply.length }}/500</div>
+          <div class="field-error" *ngIf="fieldErrors.doctorReply && shouldShowError('doctorReply')">
+            <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.doctorReply }}
+          </div>
         </div>
         
         <div class="modal-footer">
@@ -55,7 +61,7 @@
           <button 
             type="submit" 
             class="btn-save" 
-            [disabled]="isLoading || !replyForm.doctorReply.trim()"
+            [disabled]="isLoading || !isFormValid()"
           >
             <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
             <i class="fas fa-reply" *ngIf="!isLoading"></i>

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
+import { ToastService } from './toast.service';
 
 export interface ReportListDto {
   reportId: number;
@@ -36,7 +37,10 @@ export interface ReportDto {
 export class ReportsService {
   private readonly API_BASE_URL = 'http://localhost:5262/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private toastService: ToastService
+  ) {}
 
   private handleError(operation: string, error: any): never {
     console.error(`❌ Error in ${operation}:`, error);
@@ -188,7 +192,7 @@ export class ReportsService {
       },
       error: (error) => {
         console.error('Error downloading report:', error);
-        alert('Failed to download report. Please try again.');
+        this.toastService.error('Failed to download report. Please try again.');
       }
     });
   }

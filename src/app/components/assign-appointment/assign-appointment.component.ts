@@ -8,6 +8,7 @@ import { AppointmentsService } from '../../services/appointments.service';
 import { Nurse } from '../../models/nurse.model';
 import { Room } from '../../models/room.model';
 import { AssignAppointmentDto, Appointment } from '../../models/appointment.model';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-assign-appointment',
@@ -35,7 +36,8 @@ export class AssignAppointmentComponent implements OnInit {
     private nursesService: NursesService,
     private roomsService: RoomsService,
     private appointmentsService: AppointmentsService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -143,7 +145,7 @@ export class AssignAppointmentComponent implements OnInit {
 
   confirmAssignment() {
     if (!this.selectedNurseId || !this.selectedRoomId) {
-      alert('Please select both a nurse and a room');
+      this.toastService.warning('Please select both a nurse and a room');
       return;
     }
 
@@ -158,7 +160,7 @@ export class AssignAppointmentComponent implements OnInit {
     
     this.appointmentsService.assignAppointment(assignData).subscribe({
       next: (response) => {
-        alert('Appointment assigned successfully!');
+        this.toastService.success('Appointment assigned successfully!');
         this.router.navigate(['/appointments']);
       },
       error: (error) => {

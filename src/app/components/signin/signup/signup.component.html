@@ -47,7 +47,7 @@
         >
           <div class="row">
             <div class="form-group col-6">
-              <label for="firstName">First Name</label>
+              <label for="firstName">First Name <span class="required-asterisk">*</span></label>
               <div class="input-container">
                 <i class="fas fa-user input-icon"></i>
                 <input
@@ -56,13 +56,17 @@
                   placeholder="Enter your first name"
                   [(ngModel)]="userData.firstName"
                   name="firstName"
+                  [class.error-input]="submitted && errorMessage && errorMessage.includes('First Name')"
+                  (blur)="onFieldBlur('firstName')"
+                  (input)="onFieldInput('firstName')"
+                  maxlength="100"
                   required
                 />
               </div>
             </div>
 
             <div class="form-group col-6">
-              <label for="lastName">Last Name</label>
+              <label for="lastName">Last Name <span class="required-asterisk">*</span></label>
               <div class="input-container">
                 <i class="fas fa-user input-icon"></i>
                 <input
@@ -71,13 +75,17 @@
                   placeholder="Enter your last name"
                   [(ngModel)]="userData.lastName"
                   name="lastName"
+                  [class.error-input]="submitted && errorMessage && errorMessage.includes('Last Name')"
+                  (blur)="onFieldBlur('lastName')"
+                  (input)="onFieldInput('lastName')"
+                  maxlength="100"
                   required
                 />
               </div>
             </div>
 
             <div class="form-group col-6">
-              <label for="email">Email Address</label>
+              <label for="email">Email Address <span class="required-asterisk">*</span></label>
               <div class="input-container">
                 <i class="fas fa-envelope input-icon"></i>
                 <input
@@ -86,13 +94,22 @@
                   placeholder="Enter your email"
                   [(ngModel)]="userData.email"
                   name="email"
+                  (blur)="onFieldBlur('email')"
+                  (input)="onFieldInput('email')"
+                  [class.error-input]="(emailError && shouldShowError('email')) || emailExists"
                   required
                 />
+                <i *ngIf="emailChecking" class="fas fa-spinner fa-spin email-check-icon"></i>
+                <i *ngIf="!emailChecking && emailExists" class="fas fa-times-circle email-error-icon"></i>
+                <i *ngIf="!emailChecking && !emailExists && userData.email && !emailError" class="fas fa-check-circle email-success-icon"></i>
+              </div>
+              <div *ngIf="(emailError && shouldShowError('email')) || emailExists" class="field-error">
+                <i class="fas fa-exclamation-circle"></i> {{ emailError || 'This email is already registered' }}
               </div>
             </div>
 
             <div class="form-group col-6">
-              <label for="mobilePhone">Mobile Phone</label>
+              <label for="mobilePhone">Mobile Phone <span class="required-asterisk">*</span></label>
               <div class="input-container">
                 <i class="fas fa-phone input-icon"></i>
                 <input
@@ -101,13 +118,17 @@
                   placeholder="Enter your phone number"
                   [(ngModel)]="userData.mobilePhone"
                   name="mobilePhone"
+                  [class.error-input]="submitted && errorMessage && errorMessage.includes('Mobile Phone')"
+                  (blur)="onFieldBlur('mobilePhone')"
+                  (input)="onFieldInput('mobilePhone')"
+                  maxlength="50"
                   required
                 />
               </div>
             </div>
 
             <div class="form-group col-6">
-              <label for="password">Password</label>
+              <label for="password">Password <span class="required-asterisk">*</span></label>
               <div class="input-container">
                 <i class="fas fa-lock input-icon"></i>
                 <input
@@ -116,6 +137,9 @@
                   placeholder="Create a password"
                   [(ngModel)]="userData.password"
                   name="password"
+                  (blur)="onFieldBlur('password')"
+                  (input)="onFieldInput('password'); validatePasswordComplexity()"
+                  [class.error-input]="passwordError && shouldShowError('password')"
                   required
                 />
                 <button type="button" class="password-toggle" (click)="togglePassword()">
@@ -127,6 +151,12 @@
                   <div class="strength-fill" [class]="getPasswordStrength()"></div>
                 </div>
                 <span class="strength-text">{{ getPasswordStrengthText() }}</span>
+              </div>
+              <div *ngIf="passwordError && shouldShowError('password')" class="field-error">
+                <i class="fas fa-exclamation-circle"></i> {{ passwordError }}
+              </div>
+              <div *ngIf="userData.password && !passwordError" class="password-requirements">
+                <small>Password must contain: at least 8 characters, one uppercase, one lowercase, one number, and one special character</small>
               </div>
             </div>
 
@@ -140,6 +170,9 @@
                   placeholder="Confirm your password"
                   [(ngModel)]="userData.confirmPassword"
                   name="confirmPassword"
+                  [class.error-input]="submitted && errorMessage && errorMessage.includes('Passwords do not match')"
+                  (blur)="onFieldBlur('confirmPassword')"
+                  (input)="onFieldInput('confirmPassword')"
                   required
                 />
                 <button type="button" class="password-toggle" (click)="toggleConfirmPassword()">
@@ -151,7 +184,7 @@
               </div>
             </div>
             <div class="form-group col-12">
-              <label for="dateOfBirth">Date of Birth</label>
+              <label for="dateOfBirth">Date of Birth <span class="required-asterisk">*</span></label>
               <div class="input-container">
                 <i class="fas fa-calendar input-icon"></i>
                 <input
@@ -160,10 +193,16 @@
                     [(ngModel)]="userData.dateOfBirth"
                       name="dateOfBirth"
                        class="date-input"
+                       (blur)="onFieldBlur('dateOfBirth')"
+                       (change)="onFieldInput('dateOfBirth'); validateDateOfBirth()"
+                       [class.error-input]="dateError && shouldShowError('dateOfBirth')"
+                       [max]="getMaxDate()"
                        required
-                        max="2025-12-31"
                          />
 
+              </div>
+              <div *ngIf="dateError && shouldShowError('dateOfBirth')" class="field-error">
+                <i class="fas fa-exclamation-circle"></i> {{ dateError }}
               </div>
             </div>
           </div>
@@ -193,7 +232,7 @@
           <!-- Gender and Marital Status -->
           <div class="d-flex flex-row justify-content-evenly">
             <div class="form-group text-center">
-              <label class="fs-6 fw-medium text-light-emphasis">Gender</label>
+              <label class="fs-6 fw-medium text-light-emphasis">Gender <span class="required-asterisk">*</span></label>
               <div class="radio-group">
                 <input
                   type="radio"
@@ -202,6 +241,7 @@
                   [(ngModel)]="userData.gender"
                   class="btn-check"
                   id="male"
+                  (change)="onFieldInput('gender')"
                   required
                 />
                 <label
@@ -221,6 +261,7 @@
                   [(ngModel)]="userData.gender"
                   class="btn-check"
                   id="female"
+                  (change)="onFieldInput('gender')"
                   required
                 />
                 <label
@@ -237,7 +278,7 @@
             </div>
 
             <div class="form-group text-center">
-              <label class="fs-6 fw-medium text-light-emphasis">Marital Status</label>
+              <label class="fs-6 fw-medium text-light-emphasis">Marital Status <span class="required-asterisk">*</span></label>
               <div class="radio-group">
                 <input
                   type="radio"
@@ -246,6 +287,7 @@
                   [(ngModel)]="userData.mitrialStatus"
                   class="btn-check"
                   id="Sg"
+                  (change)="onFieldInput('mitrialStatus')"
                   required
                 />
                 <label
@@ -265,6 +307,7 @@
                   [(ngModel)]="userData.mitrialStatus"
                   class="btn-check"
                   id="Mg"
+                  (change)="onFieldInput('mitrialStatus')"
                   required
                 />
                 <label
@@ -279,6 +322,50 @@
                   </span>
                   <span class="fs-6">Married</span>
                 </label>
+                <input
+                  type="radio"
+                  name="mitrialStatus"
+                  value="divorced"
+                  [(ngModel)]="userData.mitrialStatus"
+                  class="btn-check"
+                  id="Dv"
+                  (change)="onFieldInput('mitrialStatus')"
+                  required
+                />
+                <label
+                  class="btn btn-outline-warning fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="Dv"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i
+                      class="icon3 fa-solid fa-heart-crack fa-beat fa-stack-1x fa-sm fa-inverse"
+                    ></i>
+                  </span>
+                  <span class="fs-6">Divorced</span>
+                </label>
+                <input
+                  type="radio"
+                  name="mitrialStatus"
+                  value="widowed"
+                  [(ngModel)]="userData.mitrialStatus"
+                  class="btn-check"
+                  id="Wd"
+                  (change)="onFieldInput('mitrialStatus')"
+                  required
+                />
+                <label
+                  class="btn btn-outline-danger fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="Wd"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i
+                      class="icon4 fa-solid fa-heart fa-beat fa-stack-1x fa-sm fa-inverse"
+                    ></i>
+                  </span>
+                  <span class="fs-6">Widowed</span>
+                </label>
               </div>
             </div>
           </div>
@@ -286,7 +373,7 @@
           <!-- Terms and Conditions -->
           <div class="form-options">
             <label class="checkbox-container">
-              <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" required />
+              <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" (change)="onFieldInput('acceptTerms')" required />
               <span class="checkmark"></span>
               I accept the terms and conditions
             </label>
@@ -295,7 +382,7 @@
           <button
             type="submit"
             class="signup-btn"
-            [disabled]="isLoading || !acceptTerms || !passwordsMatch()"
+            [disabled]="isLoading || !isFormValid() || emailChecking"
           >
             <span *ngIf="!isLoading">Continue</span>
             <div *ngIf="isLoading" class="loading-spinner"></div>

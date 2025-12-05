@@ -9,6 +9,7 @@ import { Patient, UpdatePatientDto } from '../../models/patient.model';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { PatientFormModalComponent } from '../Shared/patient-form-modal/patient-form-modal.component';
 import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-patients',
@@ -45,7 +46,8 @@ export class Patients extends BaseRoleAwareComponent implements OnInit {
   constructor(
     private patientsService: PatientsService,
     roleService: RoleService,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
     super(roleService, cdr);
   }
@@ -142,7 +144,7 @@ export class Patients extends BaseRoleAwareComponent implements OnInit {
     // Validate id before opening modal
     if (!patient.id || patient.id === 0) {
       console.error('❌ ERROR: Cannot open edit modal - patient id is invalid:', patient);
-      alert('Error: Invalid patient ID. Cannot edit this patient.');
+      this.toastService.error('Error: Invalid patient ID. Cannot edit this patient.');
       return;
     }
     
@@ -185,7 +187,7 @@ export class Patients extends BaseRoleAwareComponent implements OnInit {
     // Validate patient id before update
     if (!this.selectedPatient.id || this.selectedPatient.id === 0) {
       console.error('❌ ERROR: Cannot update - patient id is invalid:', this.selectedPatient);
-      alert('Error: Invalid patient ID. Cannot update this patient.');
+      this.toastService.error('Error: Invalid patient ID. Cannot update this patient.');
       this.isLoading = false;
       this.forceUpdate();
       return;
@@ -207,7 +209,7 @@ export class Patients extends BaseRoleAwareComponent implements OnInit {
         console.error('❌ Error updating patient:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update patient. Please try again.');
+        this.toastService.error('Failed to update patient. Please try again.');
       }
     });
   }
@@ -278,7 +280,7 @@ export class Patients extends BaseRoleAwareComponent implements OnInit {
         console.error('❌ Toggle active failed:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update patient status. Please try again.');
+        this.toastService.error('Failed to update patient status. Please try again.');
       }
     });
   }

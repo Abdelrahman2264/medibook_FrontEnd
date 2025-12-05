@@ -8,6 +8,7 @@ import { Patient, UpdatePatientDto } from '../../models/patient.model';
 import { PatientFormModalComponent } from '../Shared/patient-form-modal/patient-form-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-patient-profile',
@@ -36,7 +37,8 @@ export class PatientProfile extends BaseRoleAwareComponent implements OnInit {
     private router: Router,
     private patientsService: PatientsService,
     roleService: RoleService,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
     super(roleService, cdr);
   }
@@ -186,7 +188,7 @@ export class PatientProfile extends BaseRoleAwareComponent implements OnInit {
     // Validate patient id before update
     if (!this.patient.id || this.patient.id === 0) {
       console.error('❌ ERROR: Cannot update - patient id is invalid:', this.patient);
-      alert('Error: Invalid patient ID. Cannot update this patient.');
+      this.toastService.error('Error: Invalid patient ID. Cannot update this patient.');
       return;
     }
 
@@ -208,7 +210,7 @@ export class PatientProfile extends BaseRoleAwareComponent implements OnInit {
         console.error('❌ Error updating patient:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update patient. Please try again.');
+        this.toastService.error('Failed to update patient. Please try again.');
       }
     });
   }
@@ -282,7 +284,7 @@ export class PatientProfile extends BaseRoleAwareComponent implements OnInit {
           errorMessage += 'Please try again.';
         }
         
-        alert(errorMessage);
+        this.toastService.error(errorMessage);
       }
     });
   }

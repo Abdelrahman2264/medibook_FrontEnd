@@ -9,6 +9,7 @@ import { Doctor, CreateDoctorDto, UpdateDoctorDto } from '../../models/doctor.mo
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
 import { DoctorFormModalComponent } from '../Shared/doctor-form-modal/doctor-form-modal.component';
 import { BaseRoleAwareComponent } from '../../shared/base-role-aware.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-doctors',
@@ -45,7 +46,8 @@ export class DoctorsComponent extends BaseRoleAwareComponent implements OnInit {
   constructor(
     private doctorsService: DoctorsService,
     roleService: RoleService,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
     super(roleService, cdr);
   }
@@ -169,7 +171,7 @@ export class DoctorsComponent extends BaseRoleAwareComponent implements OnInit {
           console.error('❌ Error updating doctor:', error);
           this.isLoading = false;
           this.forceUpdate();
-          alert('Failed to update doctor. Please try again.');
+          this.toastService.error('Failed to update doctor. Please try again.');
         }
       });
     } else {
@@ -184,7 +186,7 @@ export class DoctorsComponent extends BaseRoleAwareComponent implements OnInit {
           console.error('❌ Error creating doctor:', error);
           this.isLoading = false;
           this.forceUpdate();
-          alert('Failed to create doctor. Please try again.');
+          this.toastService.error('Failed to create doctor. Please try again.');
         }
       });
     }
@@ -263,7 +265,7 @@ export class DoctorsComponent extends BaseRoleAwareComponent implements OnInit {
         console.error('❌ Toggle active failed:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update doctor status. Please try again.');
+        this.toastService.error('Failed to update doctor status. Please try again.');
       }
     });
   }

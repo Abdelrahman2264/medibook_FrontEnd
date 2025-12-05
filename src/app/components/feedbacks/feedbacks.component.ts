@@ -9,6 +9,7 @@ import { Feedback, UpdateFeedbackDto, DoctorReplyDto } from '../../models/feedba
 import { FeedbackEditModalComponent } from '../Shared/feedback-edit-modal/feedback-edit-modal.component';
 import { DoctorReplyModalComponent } from '../Shared/doctor-reply-modal/doctor-reply-modal.component';
 import { ConfirmationModalComponent } from '../Shared/confirmation-modal/confirmation-modal.component';
+import { ToastService } from '../../services/toast.service';
 
 // Define an interface extending the original Feedback model to include accordion state
 interface ExpandedFeedback extends Feedback {
@@ -51,7 +52,8 @@ export class FeedbacksComponent implements OnInit {
     private roleService: RoleService,
     private doctorsService: DoctorsService,
     private nursesService: NursesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -215,7 +217,7 @@ export class FeedbacksComponent implements OnInit {
         console.error('❌ Error updating feedback:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to update feedback. Please try again.');
+        this.toastService.error('Failed to update feedback. Please try again.');
       }
     });
   }
@@ -235,7 +237,7 @@ export class FeedbacksComponent implements OnInit {
         console.error('❌ Error adding doctor reply:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to add doctor reply. Please try again.');
+        this.toastService.error('Failed to add doctor reply. Please try again.');
       }
     });
   }
@@ -254,7 +256,7 @@ export class FeedbacksComponent implements OnInit {
         console.error('❌ Error toggling favourite:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to toggle favourite. Please try again.');
+        this.toastService.error('Failed to toggle favourite. Please try again.');
       }
     });
   }
@@ -291,7 +293,7 @@ export class FeedbacksComponent implements OnInit {
         console.error('❌ Error deleting feedback:', error);
         this.isLoading = false;
         this.forceUpdate();
-        alert('Failed to delete feedback. Please try again.');
+        this.toastService.error('Failed to delete feedback. Please try again.');
       }
     });
   }

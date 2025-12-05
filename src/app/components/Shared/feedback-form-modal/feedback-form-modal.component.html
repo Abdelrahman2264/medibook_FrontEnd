@@ -36,6 +36,9 @@
             </div>
             <span class="rating-text">{{ feedbackForm.rate }} out of 5</span>
           </div>
+          <div class="field-error" *ngIf="fieldErrors.rate && shouldShowError('rate')">
+            <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.rate }}
+          </div>
         </div>
 
         <div class="form-group">
@@ -44,13 +47,19 @@
             [(ngModel)]="feedbackForm.comment" 
             name="comment"
             class="form-control"
+            [class.error-input]="fieldErrors.comment && shouldShowError('comment')"
             placeholder="Please share your experience and feedback..."
             rows="6"
+            (blur)="onFieldBlur('comment')"
+            (input)="onFieldInput('comment')"
             required
             [disabled]="isLoading"
             maxlength="500"
           ></textarea>
           <div class="char-count">{{ feedbackForm.comment.length }}/500</div>
+          <div class="field-error" *ngIf="fieldErrors.comment && shouldShowError('comment')">
+            <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.comment }}
+          </div>
         </div>
         
         <div class="modal-footer">
@@ -65,7 +74,7 @@
           <button 
             type="submit" 
             class="btn-save" 
-            [disabled]="isLoading || !feedbackForm.comment.trim()"
+            [disabled]="isLoading || !isFormValid()"
           >
             <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
             <i class="fas fa-check" *ngIf="!isLoading"></i>

@@ -1,7 +1,7 @@
 .reports-container {
   padding: 30px;
   min-height: 100vh;
-  background-color: var(--bg-secondary, #f5f5f5);
+  background-color: var(--bg-secondary);
 }
 
 .reports-header {
@@ -10,20 +10,20 @@
 
 .reports-header h1 {
   font-size: 2.5rem;
-  color: var(--text-primary, #333);
+  color: var(--text-primary);
   margin-bottom: 10px;
 }
 
 .reports-header p {
-  color: var(--text-secondary, #666);
+  color: var(--text-secondary);
   font-size: 1.1rem;
 }
 
 /* Error Message */
 .error-message {
-  background-color: #fee;
-  border: 1px solid #fcc;
-  color: #c33;
+  background-color: var(--error-50);
+  border: 1px solid var(--error-200);
+  color: var(--error-700);
   padding: 15px 20px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -38,7 +38,7 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #c33;
+  color: var(--error-700);
 }
 
 /* Loading Overlay for Report Generation */
@@ -54,7 +54,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .loading-overlay p {
@@ -64,7 +64,7 @@
 
 .spinner {
   border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid #ffffff;
+  border-top: 4px solid var(--text-inverse);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -72,8 +72,8 @@
 }
 
 .spinner-small {
-  border: 3px solid #e0e0e0;
-  border-top: 3px solid #007bff;
+  border: 3px solid var(--border-light);
+  border-top: 3px solid var(--primary-600);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -90,7 +90,7 @@
 .loading-state {
   text-align: center;
   padding: 60px 20px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .loading-state p {
@@ -100,18 +100,18 @@
 
 /* Report Generation Section */
 .report-generation-section {
-  background: white;
+  background: var(--surface-01);
   border-radius: 15px;
   padding: 30px;
   margin-bottom: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .report-generation-section h2 {
   font-size: 1.8rem;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 20px;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--border-light);
   padding-bottom: 10px;
 }
 
@@ -121,7 +121,7 @@
 
 .report-category h3 {
   font-size: 1.4rem;
-  color: #555;
+  color: var(--text-primary);
   margin-bottom: 15px;
 }
 
@@ -132,15 +132,16 @@
 }
 
 .report-button-group {
-  background: #f9f9f9;
+  background: var(--surface-02);
   padding: 20px;
   border-radius: 10px;
   text-align: center;
+  border: 1px solid var(--border-light);
 }
 
 .report-button-group h4 {
   margin-bottom: 15px;
-  color: #333;
+  color: var(--text-primary);
   font-size: 1.1rem;
 }
 
@@ -162,55 +163,55 @@
 
 .btn-excel {
   background: #217346;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .btn-excel:hover:not(:disabled) {
   background: #1a5a37;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(33, 115, 70, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-excel:disabled {
-  opacity: 0.6;
+  opacity: var(--disabled-opacity);
   cursor: not-allowed;
 }
 
 .btn-pdf {
   background: #dc3545;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .btn-pdf:hover:not(:disabled) {
   background: #c82333;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-pdf:disabled {
-  opacity: 0.6;
+  opacity: var(--disabled-opacity);
   cursor: not-allowed;
 }
 
 .btn-csv {
   background: #ff9800;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .btn-csv:hover:not(:disabled) {
   background: #f57c00;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-csv:disabled {
-  opacity: 0.6;
+  opacity: var(--disabled-opacity);
   cursor: not-allowed;
 }
 
 .btn-refresh {
-  background: #007bff;
-  color: white;
+  background: var(--primary-600);
+  color: var(--text-inverse);
   padding: 10px 20px;
   border: none;
   border-radius: 8px;
@@ -223,7 +224,7 @@
 }
 
 .btn-refresh:hover:not(:disabled) {
-  background: #0056b3;
+  background: var(--primary-700);
   transform: translateY(-2px);
 }
 
@@ -238,10 +239,10 @@
 
 /* Saved Reports Section */
 .saved-reports-section {
-  background: white;
+  background: var(--surface-01);
   border-radius: 15px;
   padding: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .section-header {
@@ -249,13 +250,13 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--border-light);
   padding-bottom: 15px;
 }
 
 .section-header h2 {
   font-size: 1.8rem;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -263,36 +264,36 @@
 .empty-state {
   text-align: center;
   padding: 80px 20px;
-  color: #666;
-  background: #f9f9f9;
+  color: var(--text-secondary);
+  background: var(--surface-02);
   border-radius: 12px;
-  border: 2px dashed #ddd;
+  border: 2px dashed var(--border-medium);
 }
 
 .empty-state i {
   font-size: 5rem;
   margin-bottom: 25px;
   opacity: 0.4;
-  color: #999;
+  color: var(--text-tertiary);
 }
 
 .empty-state h3 {
   font-size: 1.5rem;
-  color: #555;
+  color: var(--text-primary);
   margin-bottom: 15px;
   font-weight: 600;
 }
 
 .empty-state p {
   font-size: 1.1rem;
-  color: #777;
+  color: var(--text-secondary);
   margin-bottom: 10px;
   line-height: 1.6;
 }
 
 .empty-state .empty-hint {
   font-size: 0.95rem;
-  color: #999;
+  color: var(--text-tertiary);
   font-style: italic;
   margin-top: 20px;
 }
@@ -305,19 +306,21 @@
 }
 
 .report-card {
-  background: #f9f9f9;
+  background: var(--surface-02);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   gap: 20px;
   transition: all 0.3s ease;
+  border: 1px solid var(--border-light);
 }
 
 .report-card:hover {
   transform: translateX(5px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
+  background: var(--surface-03);
 }
 
 .report-card.loading-item {
@@ -333,7 +336,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .report-icon.pdf-color {
@@ -354,19 +357,19 @@
 
 .report-content h3 {
   font-size: 1.2rem;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .report-type {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   margin-bottom: 5px;
   font-weight: 600;
 }
 
 .report-date {
-  color: #999;
+  color: var(--text-tertiary);
   font-size: 0.85rem;
   margin-bottom: 5px;
   display: flex;
@@ -375,13 +378,13 @@
 }
 
 .report-description {
-  color: #777;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin-top: 5px;
 }
 
 .report-period {
-  color: #888;
+  color: var(--text-tertiary);
   font-size: 0.85rem;
   margin-top: 5px;
   display: flex;
@@ -401,25 +404,27 @@
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .btn-download {
-  background: #28a745;
+  background: var(--success-500);
 }
 
 .btn-download:hover {
-  background: #218838;
+  background: var(--success-600);
   transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-delete {
-  background: #dc3545;
+  background: var(--error-500);
 }
 
 .btn-delete:hover {
-  background: #c82333;
+  background: var(--error-700);
   transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Responsive Design */
