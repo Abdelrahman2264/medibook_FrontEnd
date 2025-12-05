@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, AfterViewInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -41,6 +41,9 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
   currentRole: string = 'User';
   isSidebarOpen: boolean = true;
   roleLoaded: boolean = false;
+  isMobileView: boolean = false;
+  sidebarExpandedMobile: boolean = false;
+  
   private routerSubscription?: Subscription;
   private sidebarSubscription?: Subscription;
   private roleSubscription?: Subscription;
@@ -56,6 +59,9 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    // Check if mobile initially
+    this.checkMobileView();
+    
     // First try to get from storage (for immediate display)
     this.currentUser = this.authService.getCurrentUser();
     this.setActiveMenuByRoute();
@@ -103,6 +109,10 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.roleLoaded) {
           this.updateMenuItems();
         }
+        // Close mobile sidebar on navigation
+        if (this.isMobileView && this.sidebarExpandedMobile) {
+          this.closeMobileSidebar();
+        }
       });
 
     // Subscribe to sidebar state changes
@@ -124,6 +134,42 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.roleSubscription) {
       this.roleSubscription.unsubscribe();
+    }
+    // Clean up body style
+    document.body.style.overflow = '';
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    this.checkMobileView();
+  }
+
+  checkMobileView() {
+    const wasMobile = this.isMobileView;
+    this.isMobileView = window.innerWidth <= 768;
+    
+    // If switching from mobile to desktop and sidebar is expanded, close it
+    if (wasMobile && !this.isMobileView && this.sidebarExpandedMobile) {
+      this.sidebarExpandedMobile = false;
+      document.body.style.overflow = '';
+    }
+    
+    this.cdr.detectChanges();
+  }
+
+  getSidebarClasses(): any {
+    return {
+      'sidebar': true,
+      'sidebar-collapsed': !this.isSidebarOpen && !this.isMobileView,
+      'sidebar-expanded-mobile': this.sidebarExpandedMobile && this.isMobileView
+    };
+  }
+
+  closeMobileSidebar() {
+    if (this.isMobileView && this.sidebarExpandedMobile) {
+      this.sidebarExpandedMobile = false;
+      document.body.style.overflow = '';
+      this.cdr.detectChanges();
     }
   }
 
@@ -344,6 +390,11 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
       // Regular navigation for other quick actions
       this.router.navigate([item.route]);
     }
+    
+    // Close mobile sidebar if open
+    if (this.isMobileView && this.sidebarExpandedMobile) {
+      this.closeMobileSidebar();
+    }
   }
 
   signOut() {
@@ -399,10 +450,20 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   toggleSidebar(): void {
-    this.sidebarService.toggleSidebar();
+    if (this.isMobileView) {
+      this.sidebarExpandedMobile = !this.sidebarExpandedMobile;
+      // Toggle body scroll when sidebar is expanded on mobile
+      document.body.style.overflow = this.sidebarExpandedMobile ? 'hidden' : '';
+    } else {
+      this.sidebarService.toggleSidebar();
+    }
+    this.cdr.detectChanges();
   }
 
   getSidebarIcon(): string {
+    if (this.isMobileView) {
+      return this.sidebarExpandedMobile ? 'fa-times' : 'fa-bars';
+    }
     return this.isSidebarOpen ? 'fa-chevron-left' : 'fa-chevron-right';
   }
 
@@ -443,6 +504,3 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 100);
   }
 }
-
-
-
