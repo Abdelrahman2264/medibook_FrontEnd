@@ -196,6 +196,8 @@
 
 .status-badge {
   position: absolute;
+  bottom: 0px;
+  left: 0px;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -205,6 +207,7 @@
   gap: 5px;
   background: var(--bg-tertiary);
   box-shadow: var(--shadow-sm);
+  z-index: 10;
 }
 
 .status-badge.active {

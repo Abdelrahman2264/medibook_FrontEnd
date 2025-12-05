@@ -316,12 +316,12 @@
 }
 
 .activate-btn {
-  background: var(--surface-03);
-  color: var(--text-secondary);
+  background: var(--success-600) ;
+  color: var(--text-primary);
 }
 
 .activate-btn.active {
-  background: var(--error-50);
+  background: var(--error-50) ;
   color: var(--error-700);
 }
 

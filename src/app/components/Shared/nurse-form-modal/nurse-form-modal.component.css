@@ -16,9 +16,11 @@
   background: var(--bg-card);
   border-radius: 12px;
   width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 1000px;
+  max-height: 95vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   box-shadow: var(--shadow-lg);
   animation: slideIn 0.3s ease-out;
 }
@@ -48,6 +50,7 @@
   background: linear-gradient(135deg, var(--primary-400), var(--primary-700));
   color: var(--text-inverse);
   border-radius: 12px 12px 0 0;
+  flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -83,6 +86,37 @@
 
 .modal-body {
   padding: 30px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-light) transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background-color: var(--border-light);
+  border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background-color: var(--border-medium);
 }
 
 .error-message {
@@ -105,11 +139,20 @@
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -135,10 +178,35 @@
   color: var(--text-primary);
 }
 
+.form-control::placeholder {
+  color: #9ca3af;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.form-control::-webkit-input-placeholder {
+  color: #9ca3af;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.form-control::-moz-placeholder {
+  color: #9ca3af;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.form-control:-ms-input-placeholder {
+  color: #9ca3af;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
 .form-control:focus {
   outline: none;
-  border-color: var(--primary-400);
-  box-shadow: 0 0 0 3px var(--focus-ring);
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(20, 186, 246, 0.15);
+  background: var(--bg-primary);
 }
 
 .form-control:disabled {
@@ -176,10 +244,11 @@ textarea.form-control {
 }
 
 .text-muted {
-  color: var(--text-tertiary);
+  color: var(--primary-600) !important;
   font-size: 0.8em;
   margin-top: 4px;
   display: block;
+  font-weight: 500;
 }
 
 /* Image Upload Styles */
@@ -276,9 +345,11 @@ textarea.form-control {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  padding: 20px 0 0 0;
+  padding: 20px 30px;
   border-top: 1px solid var(--border-light);
-  margin-top: 20px;
+  margin-top: auto;
+  flex-shrink: 0;
+  background: var(--bg-card);
 }
 
 .btn-cancel, .btn-save {

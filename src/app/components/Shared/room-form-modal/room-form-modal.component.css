@@ -146,6 +146,14 @@
   font-size: 0.9rem;
 }
 
+.text-muted {
+  color: var(--primary-600);
+  font-size: 0.8em;
+  margin-top: 4px;
+  display: block;
+  font-weight: 500;
+}
+
 /* Modal Footer */
 .modal-footer {
   display: flex;

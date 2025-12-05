@@ -391,7 +391,7 @@
 /* Member Since */
 .member-since {
   margin: 20px 0 0 0;
-  color: var(--text-tertiary);
+  color: var(--success-700) !important ;
   font-size: 0.9rem;
   display: flex;
   align-items: center;

@@ -82,8 +82,8 @@
 }
 
 .mission-icon {
-  font-size: 3rem;
   margin-bottom: 1.5rem;
+  color: var(--primary-600);
 }
 
 .mission-card h3 {
@@ -103,7 +103,7 @@
 /* Features Section */
 .features-section {
   padding: 80px 0;
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
 }
 
 .section-title {
@@ -127,7 +127,7 @@
 .feature-card {
   text-align: center;
   padding: 30px 20px;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   border-radius: 10px;
   box-shadow: 0 3px 15px rgba(144, 217, 243, 0.2);
   border: 2px solid transparent;
@@ -153,8 +153,8 @@
 }
 
 .feature-icon {
-  font-size: 2.5rem;
   margin-bottom: 1rem;
+  color: var(--primary-600);
 }
 
 .feature-card h4 {
@@ -202,21 +202,21 @@
   color: #e3f2fd;
 }
 
-/* Team Section */
-.team-section {
+/* Services Section */
+.services-section {
   padding: 80px 0;
   background: var(--bg-secondary);
 }
 
-.team-grid {
+.services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 30px;
 }
 
-.team-card {
+.service-card {
   background: var(--bg-primary);
-  padding: 40px 20px;
+  padding: 40px 30px;
   border-radius: 15px;
   text-align: center;
   box-shadow: 0 5px 20px rgba(144, 217, 243, 0.2);
@@ -226,7 +226,7 @@
   overflow: hidden;
 }
 
-.team-card::before {
+.service-card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -236,45 +236,55 @@
   background: linear-gradient(135deg, var(--secondary-600) 0%, var(--primary-600) 100%);
 }
 
-.team-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(144, 217, 243, 0.3);
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(144, 217, 243, 0.3);
   border-color: var(--primary-600);
 }
 
-.team-avatar img,
-.team-avatar-img {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  margin: 0 auto 20px;
-  border: 3px solid var(--primary-300);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-  background: #fff;
+.service-icon {
+  margin-bottom: 1.5rem;
+  color: var(--primary-600);
 }
 
-
-.team-card h4 {
+.service-card h3 {
   background-clip: text;
   color: transparent;
   background-image: linear-gradient(135deg, var(--secondary-600), var(--primary-600) 70% 100%);
-  margin-bottom: 0.5rem;
-  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
-.team-card p {
+.service-card p {
   color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
 }
 
-.team-role {
-  background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(135deg, var(--secondary-500), var(--primary-500) 70% 100%);
-  font-weight: 500;
+.service-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.service-features li {
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+  padding-left: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.service-features li:last-child {
+  margin-bottom: 0;
+}
+
+.service-features li i {
+  color: var(--primary-600);
+  font-size: 0.9rem;
 }
 
 .container {
@@ -300,8 +310,16 @@
   .mission-grid,
   .features-grid,
   .stats-grid,
-  .team-grid {
+  .services-grid {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+  
+  .service-card {
+    padding: 30px 20px;
+  }
+  
+  .services-grid {
+    grid-template-columns: 1fr;
   }
 }

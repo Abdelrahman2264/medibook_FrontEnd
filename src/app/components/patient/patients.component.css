@@ -318,7 +318,7 @@
 }
 
 .status-badge.inactive {
-  background:  var(--error-600);
+  background:  var(--error-100) !important;
   color: var(--error-700);
 }
 

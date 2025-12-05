@@ -152,6 +152,14 @@
   font-size: 0.9rem;
 }
 
+.text-muted {
+  color: var(--primary-600) !important;
+  font-size: 0.8em;
+  margin-top: 4px;
+  display: block;
+  font-weight: 500;
+}
+
 /* Image Upload */
 .image-upload-container {
   border: 2px dashed var(--border-light);

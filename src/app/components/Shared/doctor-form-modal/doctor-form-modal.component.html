@@ -60,70 +60,95 @@
             </div>
           </div>
           
-          <div class="form-group">
-            <label>Email <span class="required">*</span></label>
-            <input 
-              type="email" 
-              [(ngModel)]="doctorForm.email" 
-              name="email"
-              class="form-control"
-              [class.error-input]="fieldErrors.email && (submitted || touchedFields.has('email'))"
-              placeholder="doctor@example.com"
-              (blur)="onFieldBlur('email')"
-              (input)="onFieldInput('email')"
-              required
-              [disabled]="isLoading || isEmailValidating"
-            />
-            <div class="field-error" *ngIf="fieldErrors.email && (submitted || touchedFields.has('email'))">
-              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.email }}
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email <span class="required">*</span></label>
+              <input 
+                type="email" 
+                [(ngModel)]="doctorForm.email" 
+                name="email"
+                class="form-control"
+                [class.error-input]="fieldErrors.email && (submitted || touchedFields.has('email'))"
+                placeholder="doctor@example.com"
+                (blur)="onFieldBlur('email')"
+                (input)="onFieldInput('email')"
+                required
+                [disabled]="isLoading || isEmailValidating"
+              />
+              <div class="field-error" *ngIf="fieldErrors.email && (submitted || touchedFields.has('email'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.email }}
+              </div>
+              <small class="text-muted">Must be unique across all doctors</small>
+              <div *ngIf="isEmailValidating" class="validating-indicator">
+                <i class="fas fa-spinner fa-spin"></i> Checking email availability...
+              </div>
             </div>
-            <small class="text-muted">Must be unique across all doctors</small>
-            <div *ngIf="isEmailValidating" class="validating-indicator">
-              <i class="fas fa-spinner fa-spin"></i> Checking email availability...
+            
+            <div class="form-group">
+              <label>Password <span class="required">*</span></label>
+              <input 
+                type="password" 
+                [(ngModel)]="doctorForm.password" 
+                name="password"
+                class="form-control"
+                [class.error-input]="fieldErrors.password && (submitted || touchedFields.has('password'))"
+                placeholder="Enter password"
+                (blur)="onFieldBlur('password')"
+                (input)="onFieldInput('password')"
+                required
+                [disabled]="isLoading"
+              />
+              <div class="field-error" *ngIf="fieldErrors.password && (submitted || touchedFields.has('password'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.password }}
+              </div>
+              <small class="text-muted">At least 8 characters with uppercase, lowercase, number, and special character</small>
             </div>
           </div>
           
-          <div class="form-group">
-            <label>Password <span class="required">*</span></label>
-            <input 
-              type="password" 
-              [(ngModel)]="doctorForm.password" 
-              name="password"
-              class="form-control"
-              [class.error-input]="fieldErrors.password && (submitted || touchedFields.has('password'))"
-              placeholder="Enter password"
-              (blur)="onFieldBlur('password')"
-              (input)="onFieldInput('password')"
-              required
-              [disabled]="isLoading"
-            />
-            <div class="field-error" *ngIf="fieldErrors.password && (submitted || touchedFields.has('password'))">
-              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.password }}
+          <div class="form-row">
+            <div class="form-group">
+              <label>Mobile Phone <span class="required">*</span></label>
+              <input 
+                type="tel" 
+                [(ngModel)]="doctorForm.mobilePhone" 
+                name="mobilePhone"
+                class="form-control"
+                [class.error-input]="fieldErrors.mobilePhone && (submitted || touchedFields.has('mobilePhone'))"
+                placeholder="01012345678"
+                (blur)="onFieldBlur('mobilePhone')"
+                (input)="onFieldInput('mobilePhone')"
+                required
+                maxlength="50"
+                [disabled]="isLoading || isPhoneValidating"
+              />
+              <div class="field-error" *ngIf="fieldErrors.mobilePhone && (submitted || touchedFields.has('mobilePhone'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mobilePhone }}
+              </div>
+              <small class="text-muted">Must be unique across all doctors</small>
+              <div *ngIf="isPhoneValidating" class="validating-indicator">
+                <i class="fas fa-spinner fa-spin"></i> Checking phone availability...
+              </div>
             </div>
-            <small class="text-muted">At least 8 characters with uppercase, lowercase, number, and special character</small>
-          </div>
-          
-          <div class="form-group">
-            <label>Mobile Phone <span class="required">*</span></label>
-            <input 
-              type="tel" 
-              [(ngModel)]="doctorForm.mobilePhone" 
-              name="mobilePhone"
-              class="form-control"
-              [class.error-input]="fieldErrors.mobilePhone && (submitted || touchedFields.has('mobilePhone'))"
-              placeholder="01012345678"
-              (blur)="onFieldBlur('mobilePhone')"
-              (input)="onFieldInput('mobilePhone')"
-              required
-              maxlength="50"
-              [disabled]="isLoading || isPhoneValidating"
-            />
-            <div class="field-error" *ngIf="fieldErrors.mobilePhone && (submitted || touchedFields.has('mobilePhone'))">
-              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.mobilePhone }}
-            </div>
-            <small class="text-muted">Must be unique across all doctors</small>
-            <div *ngIf="isPhoneValidating" class="validating-indicator">
-              <i class="fas fa-spinner fa-spin"></i> Checking phone availability...
+            
+            <div class="form-group">
+              <label>Date of Birth <span class="required">*</span></label>
+              <input 
+                type="date" 
+                [(ngModel)]="doctorForm.dateOfBirth" 
+                name="dateOfBirth"
+                class="form-control"
+                [class.error-input]="fieldErrors.dateOfBirth && (submitted || touchedFields.has('dateOfBirth'))"
+                (blur)="onFieldBlur('dateOfBirth')"
+                (change)="onFieldInput('dateOfBirth')"
+                required
+                [disabled]="isLoading"
+                [max]="getMaxDate()"
+                [min]="getMinDate()"
+              />
+              <div class="field-error" *ngIf="fieldErrors.dateOfBirth && (submitted || touchedFields.has('dateOfBirth'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.dateOfBirth }}
+              </div>
+              <small class="text-muted">Must be at least 21 years old</small>
             </div>
           </div>
           
@@ -173,65 +198,46 @@
             </div>
           </div>
           
-          <div class="form-group">
-            <label>Date of Birth <span class="required">*</span></label>
-            <input 
-              type="date" 
-              [(ngModel)]="doctorForm.dateOfBirth" 
-              name="dateOfBirth"
-              class="form-control"
-              [class.error-input]="fieldErrors.dateOfBirth && (submitted || touchedFields.has('dateOfBirth'))"
-              (blur)="onFieldBlur('dateOfBirth')"
-              (change)="onFieldInput('dateOfBirth')"
-              required
-              [disabled]="isLoading"
-              [max]="getMaxDate()"
-              [min]="getMinDate()"
-            />
-            <div class="field-error" *ngIf="fieldErrors.dateOfBirth && (submitted || touchedFields.has('dateOfBirth'))">
-              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.dateOfBirth }}
+          <div class="form-row">
+            <div class="form-group">
+              <label>Specialization <span class="required">*</span></label>
+              <select 
+                [(ngModel)]="doctorForm.specialization" 
+                name="specialization"
+                class="form-control"
+                [class.error-input]="fieldErrors.specialization && (submitted || touchedFields.has('specialization'))"
+                (blur)="onFieldBlur('specialization')"
+                (change)="onFieldInput('specialization')"
+                required
+                [disabled]="isLoading"
+              >
+                <option value="">Select Specialization</option>
+                <option *ngFor="let specialty of specialties" [value]="specialty">
+                  {{ specialty }}
+                </option>
+              </select>
+              <div class="field-error" *ngIf="fieldErrors.specialization && (submitted || touchedFields.has('specialization'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.specialization }}
+              </div>
             </div>
-            <small class="text-muted">Must be at least 21 years old</small>
-          </div>
-          
-          <div class="form-group">
-            <label>Specialization <span class="required">*</span></label>
-            <select 
-              [(ngModel)]="doctorForm.specialization" 
-              name="specialization"
-              class="form-control"
-              [class.error-input]="fieldErrors.specialization && (submitted || touchedFields.has('specialization'))"
-              (blur)="onFieldBlur('specialization')"
-              (change)="onFieldInput('specialization')"
-              required
-              [disabled]="isLoading"
-            >
-              <option value="">Select Specialization</option>
-              <option *ngFor="let specialty of specialties" [value]="specialty">
-                {{ specialty }}
-              </option>
-            </select>
-            <div class="field-error" *ngIf="fieldErrors.specialization && (submitted || touchedFields.has('specialization'))">
-              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.specialization }}
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label>Type <span class="required">*</span></label>
-            <input 
-              type="text" 
-              [(ngModel)]="doctorForm.type" 
-              name="type"
-              class="form-control"
-              [class.error-input]="fieldErrors.type && (submitted || touchedFields.has('type'))"
-              placeholder="e.g., General Practitioner, Specialist"
-              (blur)="onFieldBlur('type')"
-              (input)="onFieldInput('type')"
-              required
-              [disabled]="isLoading"
-            />
-            <div class="field-error" *ngIf="fieldErrors.type && (submitted || touchedFields.has('type'))">
-              <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.type }}
+            
+            <div class="form-group">
+              <label>Type <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [(ngModel)]="doctorForm.type" 
+                name="type"
+                class="form-control"
+                [class.error-input]="fieldErrors.type && (submitted || touchedFields.has('type'))"
+                placeholder="e.g., General Practitioner, Specialist"
+                (blur)="onFieldBlur('type')"
+                (input)="onFieldInput('type')"
+                required
+                [disabled]="isLoading"
+              />
+              <div class="field-error" *ngIf="fieldErrors.type && (submitted || touchedFields.has('type'))">
+                <i class="fas fa-exclamation-circle"></i> {{ fieldErrors.type }}
+              </div>
             </div>
           </div>
           

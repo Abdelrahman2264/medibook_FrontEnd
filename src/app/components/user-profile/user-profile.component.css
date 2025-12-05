@@ -161,7 +161,7 @@
 .status-badge {
   position: absolute;
   bottom: 0px;
-  right: 0px;
+  left: 0px;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 12px;
@@ -171,14 +171,13 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  z-index: 10;
 }
 
 .status-badge.active {
   background: rgba(76, 175, 80, 0.9);
   color: var(--text-inverse);
-  transform: translateY(10px);
 }
-
 
 .status-badge.inactive {
   background: rgba(244, 67, 54, 0.9);

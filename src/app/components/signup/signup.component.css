@@ -338,10 +338,11 @@
 }
 
 .text-muted {
-  color: var(--text-tertiary, #999);
+  color: var(--primary-600);
   font-size: 0.8em;
   margin-top: 4px;
   display: block;
+  font-weight: 500;
 }
 
 /* Modal Styles */
@@ -853,7 +854,8 @@
 .password-requirements {
   margin-top: 0.5rem;
   font-size: 0.8rem;
-  color: var(--text-tertiary);
+  color: var(--primary-600);
+  font-weight: 500;
 }
 
 .password-requirements small {
