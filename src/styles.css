@@ -468,3 +468,6 @@ body {
 
 
 
+.field-error{
+  color: var(--primary-500);
+}

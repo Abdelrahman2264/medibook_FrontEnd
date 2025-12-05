@@ -290,97 +290,93 @@
 
             <div class="form-group text-center">
               <label class="fs-6 fw-medium text-light-emphasis">Marital Status <span class="required-asterisk">*</span></label>
-              <div class="radio-group marital-status-group">
-                <div class="radio-row">
-                  <input
-                    type="radio"
-                    name="mitrialStatus"
-                    value="single"
-                    [(ngModel)]="userData.mitrialStatus"
-                    class="btn-check"
-                    id="Sg"
-                    (change)="onFieldInput('mitrialStatus')"
-                    required
-                  />
-                  <label
-                    class="btn btn-outline-secondary fw-semibold d-flex flex-column justify-content-center text-center"
-                    for="Sg"
-                  >
-                    <span class="fa-stack fa-lg align-self-center">
-                      <i class="fa-solid fa-circle fa-stack-2x"></i>
-                      <i class="icon1 fa-solid fa-user fa-beat fa-stack-1x fa-sm fa-inverse"></i>
-                    </span>
-                    <span class="fs-6">Single</span>
-                  </label>
-                  <input
-                    type="radio"
-                    name="mitrialStatus"
-                    value="married"
-                    [(ngModel)]="userData.mitrialStatus"
-                    class="btn-check"
-                    id="Mg"
-                    (change)="onFieldInput('mitrialStatus')"
-                    required
-                  />
-                  <label
-                    class="btn btn-outline-primary fw-semibold d-flex flex-column justify-content-center text-center"
-                    for="Mg"
-                  >
-                    <span class="fa-stack fa-lg align-self-center">
-                      <i class="fa-solid fa-circle fa-stack-2x"></i>
-                      <i
-                        class="icon2 fa-solid fa-people-arrows fa-beat fa-stack-1x fa-sm fa-inverse"
-                      ></i>
-                    </span>
-                    <span class="fs-6">Married</span>
-                  </label>
-                </div>
-                <div class="radio-row">
-                  <input
-                    type="radio"
-                    name="mitrialStatus"
-                    value="divorced"
-                    [(ngModel)]="userData.mitrialStatus"
-                    class="btn-check"
-                    id="Dv"
-                    (change)="onFieldInput('mitrialStatus')"
-                    required
-                  />
-                  <label
-                    class="btn btn-outline-warning fw-semibold d-flex flex-column justify-content-center text-center"
-                    for="Dv"
-                  >
-                    <span class="fa-stack fa-lg align-self-center">
-                      <i class="fa-solid fa-circle fa-stack-2x"></i>
-                      <i
-                        class="icon3 fa-solid fa-heart-crack fa-beat fa-stack-1x fa-sm fa-inverse"
-                      ></i>
-                    </span>
-                    <span class="fs-6">Divorced</span>
-                  </label>
-                  <input
-                    type="radio"
-                    name="mitrialStatus"
-                    value="widowed"
-                    [(ngModel)]="userData.mitrialStatus"
-                    class="btn-check"
-                    id="Wd"
-                    (change)="onFieldInput('mitrialStatus')"
-                    required
-                  />
-                  <label
-                    class="btn btn-outline-danger fw-semibold d-flex flex-column justify-content-center text-center"
-                    for="Wd"
-                  >
-                    <span class="fa-stack fa-lg align-self-center">
-                      <i class="fa-solid fa-circle fa-stack-2x"></i>
-                      <i
-                        class="icon4 fa-solid fa-heart fa-beat fa-stack-1x fa-sm fa-inverse"
-                      ></i>
-                    </span>
-                    <span class="fs-6">Widowed</span>
-                  </label>
-                </div>
+              <div class="radio-group">
+                <input
+                  type="radio"
+                  name="mitrialStatus"
+                  value="single"
+                  [(ngModel)]="userData.mitrialStatus"
+                  class="btn-check"
+                  id="Sg"
+                  (change)="onFieldInput('mitrialStatus')"
+                  required
+                />
+                <label
+                  class="btn btn-outline-secondary fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="Sg"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i class="icon1 fa-solid fa-user fa-beat fa-stack-1x fa-sm fa-inverse"></i>
+                  </span>
+                  <span class="fs-6">Single</span>
+                </label>
+                <input
+                  type="radio"
+                  name="mitrialStatus"
+                  value="married"
+                  [(ngModel)]="userData.mitrialStatus"
+                  class="btn-check"
+                  id="Mg"
+                  (change)="onFieldInput('mitrialStatus')"
+                  required
+                />
+                <label
+                  class="btn btn-outline-primary fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="Mg"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i
+                      class="icon2 fa-solid fa-people-arrows fa-beat fa-stack-1x fa-sm fa-inverse"
+                    ></i>
+                  </span>
+                  <span class="fs-6">Married</span>
+                </label>
+                <input
+                  type="radio"
+                  name="mitrialStatus"
+                  value="divorced"
+                  [(ngModel)]="userData.mitrialStatus"
+                  class="btn-check"
+                  id="Dv"
+                  (change)="onFieldInput('mitrialStatus')"
+                  required
+                />
+                <label
+                  class="btn btn-outline-warning fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="Dv"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i
+                      class="icon3 fa-solid fa-heart-crack fa-beat fa-stack-1x fa-sm fa-inverse"
+                    ></i>
+                  </span>
+                  <span class="fs-6">Divorced</span>
+                </label>
+                <input
+                  type="radio"
+                  name="mitrialStatus"
+                  value="widowed"
+                  [(ngModel)]="userData.mitrialStatus"
+                  class="btn-check"
+                  id="Wd"
+                  (change)="onFieldInput('mitrialStatus')"
+                  required
+                />
+                <label
+                  class="btn btn-outline-danger fw-semibold d-flex flex-column justify-content-center text-center"
+                  for="Wd"
+                >
+                  <span class="fa-stack fa-lg align-self-center">
+                    <i class="fa-solid fa-circle fa-stack-2x"></i>
+                    <i
+                      class="icon4 fa-solid fa-heart fa-beat fa-stack-1x fa-sm fa-inverse"
+                    ></i>
+                  </span>
+                  <span class="fs-6">Widowed</span>
+                </label>
               </div>
             </div>
           </div>

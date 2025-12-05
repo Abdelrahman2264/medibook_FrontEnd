@@ -1,56 +1,110 @@
-<footer class="footer ">
+<footer class="footer">
   <div class="footer-content">
+    <!-- Brand Section -->
     <div class="footer-brand">
       <div class="logo-container">
-        <div class="logo-icon"></div>
-        <h2 class="brand-name">MediBook</h2>
+        <i class="fas fa-stethoscope logo-icon"></i>
+        <h2 class="brand-name">MediBook Pro</h2>
       </div>
-      <p class="brand-tagline">Your Health, Our Priority</p>
+      <p class="brand-tagline">Your Health, Our Priority - Advanced Healthcare Management</p>
+      <p class="footer-description">
+        Providing exceptional healthcare services with cutting-edge technology and compassionate care.
+      </p>
     </div>
     
+    <!-- Links Sections -->
     <div class="footer-links">
+      <!-- Quick Links -->
       <div class="footer-section">
         <h4>Quick Links</h4>
         <ul>
-          <li><a routerLink="/">Home</a></li> 
-          <li><a routerLink="/about">About</a></li> 
-          <li><a routerLink="/appointments">Doctors</a></li> 
-          <li><a routerLink="/contact">Contact Us</a></li> 
+          <li>
+            <a routerLink="/home">
+              <i class="fas fa-home"></i> Home
+            </a>
+          </li>
+          <li>
+            <a routerLink="/about">
+              <i class="fas fa-info-circle"></i> About Us
+            </a>
+          </li>
+          <li>
+            <a routerLink="/appointments">
+              <i class="fas fa-calendar-check"></i> Appointments
+            </a>
+          </li>
+          <li>
+            <a routerLink="/contact">
+              <i class="fas fa-envelope"></i> Contact
+            </a>
+          </li>
         </ul>
       </div>
       
+      <!-- Services -->
       <div class="footer-section">
-        <h4>Specialties</h4>
+        <h4>Our Services</h4>
         <ul>
-          <li><a href="#">Cardiology</a></li>
-          <li><a href="#">Dermatology</a></li>
-          <li><a href="#">Pediatrics</a></li>
-          <li><a href="#">Dentistry</a></li>
+          <li>
+            <a routerLink="/doctors">
+              <i class="fas fa-user-md"></i> Specialist Doctors
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-heartbeat"></i> Cardiology
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-brain"></i> Neurology
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-tooth"></i> Dentistry
+            </a>
+          </li>
         </ul>
       </div>
       
+      <!-- Contact Info -->
       <div class="footer-section">
         <h4>Contact Info</h4>
         <div class="contact-info">
-          <p>📍 Cairo, Egypt</p>
-          <p>📞 +20 123 456 7890</p>
-          <p>✉️ info@medibook.com</p>
+          <p>
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Cairo, Egypt - Medical District</span>
+          </p>
+          <p>
+            <i class="fas fa-phone"></i>
+            <span>+20 123 456 7890</span>
+          </p>
+          <p>
+            <i class="fas fa-envelope"></i>
+            <span>info@medibookpro.com</span>
+          </p>
+          <p>
+            <i class="fas fa-clock"></i>
+            <span>24/7 Emergency Services</span>
+          </p>
         </div>
       </div>
 
-      <div class="footer-section ">
-        <h4 class="text-center">Follow Us</h4>
-        <div class="social-links  ">
-          <a href="https://www.facebook.com/" class="social-link facebook"target="_blank">
+      <!-- Social Media -->
+      <div class="footer-section">
+        <h4>Follow Us</h4>
+        <div class="social-links">
+          <a href="https://www.facebook.com/" class="social-link facebook" target="_blank" title="Facebook">
             <i class="fab fa-facebook-f"></i>
           </a>
-          <a href="https://x.com/" class="social-link twitter"target="_blank">
+          <a href="https://x.com/" class="social-link twitter" target="_blank" title="Twitter">
             <i class="fab fa-twitter"></i>
           </a>
-          <a href="https://www.instagram.com/" class="social-link instagram"target="_blank">
+          <a href="https://www.instagram.com/" class="social-link instagram" target="_blank" title="Instagram">
             <i class="fab fa-instagram"></i>
           </a>
-          <a href="https://www.linkedin.com/" class="social-link linkedin" target="_blank">
+          <a href="https://www.linkedin.com/" class="social-link linkedin" target="_blank" title="LinkedIn">
             <i class="fab fa-linkedin-in"></i>
           </a>
         </div>
@@ -58,7 +112,8 @@
     </div>
   </div>
   
+  <!-- Copyright -->
   <div class="footer-bottom">
-    <p>&copy; {{currentYear}} MediBook. All rights reserved.</p>
+    <p>&copy; {{currentYear}} MediBook Pro. All rights reserved. | Designed with <i class="fas fa-heart" style="color: #ff4757;"></i> for better healthcare</p>
   </div>
 </footer>

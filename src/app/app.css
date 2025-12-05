@@ -1,25 +1,44 @@
 .content-with-sidebar {
-  margin-left: 300px;
-  padding-top: 0;
+  margin-left: 280px;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
   min-height: 100vh;
   transition: margin-left 0.3s ease;
+  width: calc(100% - 280px);
 }
 
 .content-with-header {
   margin-left: 0;
   padding-top: 0;
+  padding: 0 !important;
 }
 
 /* Sidebar collapsed state */
 .content-with-sidebar.sidebar-collapsed {
   margin-left: 80px;
+  width: calc(100% - 80px);
 }
 
 @media (max-width: 768px) {
   .content-with-sidebar {
     margin-left: 0;
     padding-top: 0;
+    width: 100%;
   }
+}
+
+/* Remove all whitespace between sidebar and content */
+.content-with-sidebar > * {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Ensure router outlet has no spacing */
+.content-with-sidebar router-outlet + * {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Notification Container */

@@ -2,9 +2,9 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../services/auth.service';
-import { UserService } from '../../../services/user.service';
-import { VerificationModalComponent } from './verification-modal.component';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { VerificationModalComponent } from '../Shared/verification-modal/verification-modal.component';
 
 @Component({
   selector: 'app-signup',
@@ -263,13 +263,36 @@ export class SignupComponent {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        this.errorMessage = 'Please select a valid image file (JPEG, PNG, GIF)';
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.errorMessage = 'Image size should be less than 5MB';
+        return;
+      }
+      
       // Convert to base64 for API
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.profileImagePreview = e.target.result;
         this.userData.profileImage = e.target.result; // Base64 string
+        this.errorMessage = ''; // Clear any previous errors
       };
       reader.readAsDataURL(file);
+    }
+  }
+
+  removeImage() {
+    this.profileImagePreview = '';
+    this.userData.profileImage = '';
+    // Reset file input
+    const fileInput = document.getElementById('profileImage') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
     }
   }
 

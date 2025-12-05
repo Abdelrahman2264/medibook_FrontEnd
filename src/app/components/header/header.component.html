@@ -37,8 +37,22 @@
                type="button">
                <i [class]="isDarkTheme ? 'fas fa-sun' : 'fas fa-moon'"></i>
             </button>
-            <button class="btn btn-primary py-3 py-lg-2 px-4 rounded-3 fw-bold wx-max"routerLink="/signin">Sign in</button>
-            <button class="btn btn-outline-primary py-3 py-lg-2 px-4 rounded-3 fw-bold wx-max"routerLink="/signup">Sign up</button>
+            
+            <!-- Show Sign In/Sign Up when not authenticated -->
+            <ng-container *ngIf="!isAuthenticated">
+              <button class="btn btn-primary py-3 py-lg-2 px-4 rounded-3 fw-bold wx-max" routerLink="/signin">Sign in</button>
+              <button class="btn btn-outline-primary py-3 py-lg-2 px-4 rounded-3 fw-bold wx-max" routerLink="/signup">Sign up</button>
+            </ng-container>
+            
+            <!-- Show Sign Out/Profile when authenticated -->
+            <ng-container *ngIf="isAuthenticated">
+              <button class="btn btn-outline-primary py-3 py-lg-2 px-4 rounded-3 fw-bold wx-max" (click)="goToProfile()" type="button">
+                <i class="fas fa-user me-2"></i>Profile
+              </button>
+              <button class="btn btn-primary py-3 py-lg-2 px-4 rounded-3 fw-bold wx-max" (click)="signOut()" type="button">
+                <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+              </button>
+            </ng-container>
          </div>
       </div>
    </div>

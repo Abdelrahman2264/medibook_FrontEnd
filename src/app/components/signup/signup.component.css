@@ -1,7 +1,7 @@
 .signup-page {
-  min-height: 200vh;
+  min-height: 150vh;
   background-image: linear-gradient(rgba(var(--primary-600-rgb), 0.3)),
-    url(../../../../assets/images/health-still-life-with-copy-space.jpg);
+    url(../../../assets/images/health-still-life-with-copy-space.jpg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -14,7 +14,7 @@
 
 .signup-container {
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  max-width: 1000px;
+  max-width: 1200px;
   overflow: hidden;
   box-shadow: 0 0 20px 5px rgba(var(--primary-600-rgb), 0.695);
 }
@@ -751,28 +751,6 @@
 }
 .radio-group .btn-check:checked + label .icon1 {
     color: var(--secondary-600)!important;
-}
-
-/* Marital Status - Two per row */
-.marital-status-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.marital-status-group .radio-row {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.marital-status-group .radio-row .btn {
-  flex: 1;
-  --bs-btn-padding-x: 1.5rem;
-  --bs-btn-border-radius: .8rem;
-  --bs-btn-border-width: 2px;
 }
 
 /* Image Upload */

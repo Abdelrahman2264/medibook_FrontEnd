@@ -9,7 +9,7 @@ import { PatientsService } from '../../services/patients.service';
 import { AdminsService } from '../../services/admins.service';
 import { DoctorsService } from '../../services/doctors.service';
 import { NursesService } from '../../services/nurses.service';
-import { ForgetPasswordModalComponent } from './forget-password-modal.component';
+import { ForgetPasswordModalComponent } from '../Shared/forget-password/forget-password-modal.component';
 
 @Component({
   selector: 'app-signin',

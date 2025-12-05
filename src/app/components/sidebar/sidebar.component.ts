@@ -47,6 +47,7 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
   private routerSubscription?: Subscription;
   private sidebarSubscription?: Subscription;
   private roleSubscription?: Subscription;
+  private authSubscription?: Subscription;
 
   constructor(
     private router: Router,
@@ -80,12 +81,36 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
       if (role && !this.roleLoaded) {
         // Role is now loaded - update menu items only when role is available
         this.roleLoaded = true;
+        this.currentRole = role;
         this.updateMenuItems();
         // Preload data in background based on role
         this.preloadDataByRole();
+        // Force change detection multiple times to ensure UI updates
         this.cdr.detectChanges();
+        setTimeout(() => {
+          this.cdr.detectChanges();
+        }, 0);
+        setTimeout(() => {
+          this.cdr.detectChanges();
+        }, 100);
       } else if (role && this.roleLoaded) {
         // Role changed, update menu items
+        if (this.currentRole !== role) {
+          this.currentRole = role;
+          this.updateMenuItems();
+          // Force change detection multiple times to ensure UI updates
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.cdr.detectChanges();
+          }, 0);
+          setTimeout(() => {
+            this.cdr.detectChanges();
+          }, 100);
+        }
+      } else if (!role && this.roleLoaded) {
+        // Role cleared (user logged out)
+        this.roleLoaded = false;
+        this.currentRole = 'User';
         this.updateMenuItems();
         this.cdr.detectChanges();
       }
@@ -108,12 +133,29 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
         // Also update menu items in case authentication state changed
         if (this.roleLoaded) {
           this.updateMenuItems();
+          this.cdr.detectChanges();
         }
         // Close mobile sidebar on navigation
         if (this.isMobileView && this.sidebarExpandedMobile) {
           this.closeMobileSidebar();
         }
       });
+    
+    // Subscribe to auth changes to refresh menu
+    this.authSubscription = this.authService.token$.subscribe(() => {
+      if (this.authService.isAuthenticated()) {
+        // User logged in - refresh role and menu
+        setTimeout(() => {
+          this.forceRefreshMenu();
+        }, 500);
+      } else {
+        // User logged out - clear menu
+        this.roleLoaded = false;
+        this.currentRole = 'User';
+        this.updateMenuItems();
+        this.cdr.detectChanges();
+      }
+    });
 
     // Subscribe to sidebar state changes
     this.sidebarSubscription = this.sidebarService.isOpen$.subscribe(isOpen => {
@@ -134,6 +176,9 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.roleSubscription) {
       this.roleSubscription.unsubscribe();
+    }
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
     }
     // Clean up body style
     document.body.style.overflow = '';
@@ -294,10 +339,16 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
           const newRole = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
           if (this.currentRole !== newRole) {
             this.currentRole = newRole;
+            this.roleLoaded = true;
+            // Update menu items when role changes
+            this.updateMenuItems();
             // Use setTimeout to avoid change detection error
             setTimeout(() => {
               this.cdr.detectChanges();
             }, 0);
+            setTimeout(() => {
+              this.cdr.detectChanges();
+            }, 100);
           }
         }
       },
@@ -310,14 +361,37 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewInit {
             const newRole = roleFromUser.charAt(0).toUpperCase() + roleFromUser.slice(1).toLowerCase();
             if (this.currentRole !== newRole) {
               this.currentRole = newRole;
+              this.roleLoaded = true;
+              this.updateMenuItems();
               setTimeout(() => {
                 this.cdr.detectChanges();
               }, 0);
+              setTimeout(() => {
+                this.cdr.detectChanges();
+              }, 100);
             }
           }
         }
       }
     });
+  }
+
+  /**
+   * Force refresh sidebar menu items - call this when role changes
+   */
+  forceRefreshMenu() {
+    // Refresh role from service
+    this.roleService.refresh();
+    // Update menu items
+    this.updateMenuItems();
+    // Force change detection
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    }, 0);
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    }, 100);
   }
 
   ngAfterViewInit() {

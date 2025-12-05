@@ -41,6 +41,7 @@ export class App implements OnInit, OnDestroy {
   isAuthenticated = false;
   showHeader = false;
   showSidebar = false;
+  showFooter = false;
   isSidebarCollapsed = false;
   
   // Real-time notifications
@@ -188,11 +189,14 @@ export class App implements OnInit, OnDestroy {
       return currentRoute === route || currentRoute.startsWith(route + '/');
     });
 
-    // Show header for public routes (but NOT for auth routes)
-    this.showHeader = !isAuthRoute && (!this.isAuthenticated || isPublicRoute);
+    // Show header for public routes AND auth routes (signin/signup)
+    this.showHeader = isPublicRoute || isAuthRoute || (!this.isAuthenticated);
     
     // Show sidebar for authenticated users on protected routes
     this.showSidebar = this.isAuthenticated && !isPublicRoute && !isAuthRoute;
+    
+    // Show footer for public routes but NOT for auth routes (signin/signup)
+    this.showFooter = isPublicRoute && !isAuthRoute;
   }
 
 }

@@ -153,7 +153,7 @@ export const routes: Routes = [
   {
     path: 'signup',
     loadComponent: () =>
-      import('./components/signin/signup/signup.component')
+      import('./components/signup/signup.component')
         .then(m => m.SignupComponent),
     canActivate: [guestGuard]
   },

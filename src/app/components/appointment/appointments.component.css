@@ -743,13 +743,15 @@
 .close-btn {
   background: none;
   border: none;
-  font-size: 1.5rem;
   color: var(--text-tertiary);
   cursor: pointer;
   padding: 5px 10px;
   transition: color 0.3s;
 }
 
+.field-error{
+  color: var(--primary-500);
+}
 .close-btn:hover:not(:disabled) {
   color: var(--error-500);
 }
