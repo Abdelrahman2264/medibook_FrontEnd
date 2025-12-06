@@ -193,17 +193,32 @@ export class DoctorsComponent extends BaseRoleAwareComponent implements OnInit {
   }
 
   // UI Helper Methods
-  getSpecialtyIcon(specialization: string): string {
-    switch (specialization?.toLowerCase()) {
-      case 'cardiology': return 'fas fa-heartbeat';
-      case 'neurology': return 'fas fa-brain';
-      case 'pediatrics': return 'fas fa-baby';
-      case 'dentistry': return 'fas fa-tooth';
-      case 'orthopedics': return 'fas fa-bone';
-      case 'dermatology': return 'fas fa-allergies';
-      default: return 'fas fa-user-md';
-    }
+getSpecialtyIcon(specialization: string): string {
+  switch (specialization?.toLowerCase()) {
+    case 'cardiology': return 'fas fa-heartbeat';
+    case 'neurology': return 'fas fa-brain';
+    case 'pediatrics': return 'fas fa-baby';
+    case 'dentistry': return 'fas fa-tooth';
+    case 'orthopedics': return 'fas fa-bone';
+    case 'dermatology': return 'fas fa-allergies';
+    case 'gynecology': return 'fas fa-female';
+    case 'ophthalmology': return 'fas fa-eye';
+    case 'psychiatry': return 'fas fa-brain';
+    case 'gastroenterology': return 'fas fa-stomach';
+    case 'endocrinology': return 'fas fa-weight';
+    case 'urology': return 'fas fa-bladder';
+    case 'nephrology': return 'fas fa-kidney';
+    case 'pulmonology': return 'fas fa-lungs';
+    case 'rheumatology': return 'fas fa-hand-holding-medical';
+    case 'hematology': return 'fas fa-tint';
+    case 'oncology': return 'fas fa-ribbon';
+    case 'ent': return 'fas fa-ear-listen'; // Ear, Nose, Throat
+    case 'general surgery': return 'fas fa-scalpel';
+    case 'emergency medicine': return 'fas fa-ambulance';
+    default: return 'fas fa-user-md';
   }
+}
+
 
   getCardColor(specialization: string, index: number): string {
     return index % 2 === 0 ? '#e6ccff' : '#f2f2f2'; 

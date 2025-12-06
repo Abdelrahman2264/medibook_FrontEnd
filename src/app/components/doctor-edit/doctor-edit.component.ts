@@ -41,14 +41,28 @@ export class DoctorEditComponent implements OnInit {
   };
 
   profileImagePreview: string = '';
-  specialties: string[] = [
-    'Cardiology',
-    'Dermatology',
-    'Neurology',
-    'Pediatrics',
-    'Orthopedics',
-    'Dentistry'
-  ];
+specialties: string[] = [
+  'Cardiology',
+  'Dermatology',
+  'Neurology',
+  'Pediatrics',
+  'Orthopedics',
+  'Dentistry',
+  'Gynecology',
+  'Ophthalmology',
+  'Psychiatry',
+  'Gastroenterology',
+  'Endocrinology',
+  'Urology',
+  'Nephrology',
+  'Pulmonology',
+  'Rheumatology',
+  'Hematology',
+  'Oncology',
+  'ENT', // Ear, Nose, Throat
+  'General Surgery',
+  'Emergency Medicine'
+];
 
   constructor(
     private route: ActivatedRoute,

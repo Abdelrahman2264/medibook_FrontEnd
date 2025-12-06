@@ -21,17 +21,42 @@ export class Rooms implements OnInit {
 
   rooms: Room[] = [];
   statuses: string[] = ['Active', 'Inactive'];
-  roomTypes: string[] = [
-    'Single Room',
-    'Double Room',
-    'Suite Room',
-    'ICU Room',
-    'Operation Room',
-    'Emergency Room',
-    'Maternity Room',
-    'Pediatric Room'
-  ];
-  
+roomTypes: string[] = [
+  'Single Room',
+  'Double Room',
+  'Suite Room',
+  'ICU Room',
+  'Operation Room',
+  'Emergency Room',
+  'Maternity Room',
+  'Pediatric Room',
+  'Consultation Room',
+  'Examination Room',
+  'Procedure Room',
+  'Treatment Room',
+  'Laboratory Room',
+  'Blood Collection Room',
+  'Radiology Room',
+  'Ultrasound Room',
+  'X-Ray Room',
+  'MRI Room',
+  'CT Scan Room',
+  'ECG Room',
+  'Isolation Room',
+  'Recovery Room',
+  'VIP Room',
+  'Ward Room',
+  'Semi-Private Room',
+  'NICU Room',
+  'PICU Room',
+  'Oncology Room',
+  'Dialysis Room',
+  'Physiotherapy Room',
+  'Dental Room',
+  'Ophthalmology Room',
+  'ENT Room'
+];
+
   // Loading and error states
   isLoading: boolean = false;
   errorMessage: string = '';
