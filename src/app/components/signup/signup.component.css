@@ -10,6 +10,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  margin-top: 5rem;
 }
 
 .signup-container {
@@ -237,12 +238,13 @@
 
 /* Image Upload Styles */
 .image-upload-container {
-  border: 2px dashed var(--border-light, #e0e0e0);
+  border: 2px dashed #e0e0e0;
   border-radius: 8px;
   padding: 20px;
+  padding-bottom: 10px;
   text-align: center;
   transition: border-color 0.3s;
-  background: var(--bg-secondary, #f5f5f5);
+  background: var(--primary-100);
   position: relative;
 }
 
@@ -257,11 +259,14 @@
 .image-preview {
   position: relative;
   display: inline-block;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  
 }
 
 .image-preview img {
-  width: 120px;
-  height: 120px;
+  
   border-radius: 8px;
   object-fit: cover;
   border: 2px solid var(--border-light, #e0e0e0);
@@ -306,13 +311,13 @@
 
 .image-placeholder i {
   font-size: 3rem;
-  color: var(--text-tertiary, #999);
+  color: var(--gray-400);
 }
 
 .image-placeholder p {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--text-tertiary, #999);
+  color: var(--gray-400);
 }
 
 .upload-label {
@@ -736,10 +741,9 @@
   }
 }
 .radio-group {
-  display: flex;
-  flex-direction: row;
+  
   margin-top: 0.5rem;
-  column-gap: 0.5rem;
+ 
 }
 .radio-group .btn {
   --bs-btn-padding-x: 2rem;
@@ -752,6 +756,15 @@
 }
 .radio-group .btn-check:checked + label .icon1 {
     color: var(--secondary-600)!important;
+}
+.radio-group .btn-check:checked + label .icon3 {
+    color: #ffc107 !important;
+}
+.radio-group .btn-check:checked + label .icon4 {
+    color: #dc3545 !important;
+}
+.btn-check:checked + .btn{
+  color: white !important;
 }
 
 /* Image Upload */
