@@ -218,6 +218,7 @@
 .error-input {
   border-color: var(--error-500) !important;
   background-color: var(--error-50) !important;
+  color: #9ca3af;
 }
 
 .error-input:focus {
@@ -310,7 +311,7 @@ textarea.form-control {
 }
 
 .image-placeholder {
-  color: var(--text-tertiary);
+  color:  #9ca3af;
 }
 
 .image-placeholder i {

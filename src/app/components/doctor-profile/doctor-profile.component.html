@@ -209,9 +209,7 @@
           <i [class]="doctor.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
           {{ doctor.isActive ? 'Deactivate Account' : 'Activate Account' }}
         </button>
-        <button *ngIf="canAssignAppointment && roleLoaded" class="btn btn-info" (click)="assignAppointment()">
-          <i class="fas fa-calendar-plus"></i> Assign Appointment
-        </button>
+
         <button class="btn btn-secondary" (click)="goBack()">
           <i class="fas fa-arrow-left"></i> Back to List
         </button>

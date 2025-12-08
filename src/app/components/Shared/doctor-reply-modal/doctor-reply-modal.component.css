@@ -164,6 +164,7 @@
 .error-input {
   border-color: var(--error-500) !important;
   background-color: var(--error-50) !important;
+  color: #9ca3af;
 }
 
 .error-input:focus {
