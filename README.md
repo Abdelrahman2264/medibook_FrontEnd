@@ -1,59 +1,204 @@
-# MedibookFrontEnd
+# 🌐 Medibook Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.0.
+**Medibook Frontend** is a modern, responsive web application built with **Angular** and **TypeScript**, designed to work seamlessly with the **Medibook API** backend. It provides an intuitive user interface for patients, doctors, nurses, and administrators to manage healthcare operations efficiently.
 
-## Development server
+---
 
-To start a local development server, run:
+## 📑 Table of Contents
+
+* Overview
+* Technology Stack
+* Features
+* System Requirements
+* Project Setup
+* Development Server
+* Code Scaffolding
+* Build
+* Testing
+* Backend Integration
+* Project Structure
+* License
+
+---
+
+## 📌 Overview
+
+The Medibook Frontend serves as the client-side application for the Medibook healthcare system. It communicates with the backend via RESTful APIs and provides role-based user experiences with secure authentication and real-time data updates.
+
+---
+
+## 🧰 Technology Stack
+
+| Layer            | Technology            |
+| ---------------- | --------------------- |
+| Framework        | Angular 21            |
+| Language         | TypeScript            |
+| Styling          | CSS / SCSS            |
+| State Management | Angular Services      |
+| HTTP Client      | Angular HttpClient    |
+| Authentication   | JWT (via Backend API) |
+| Tooling          | Angular CLI           |
+
+---
+
+## ✨ Features
+
+* User authentication (JWT-based)
+* Role-based dashboards (Admin / Doctor / Nurse / Patient)
+* Appointment booking & management
+* Doctor & nurse listings
+* Feedback & reviews system
+* Notifications center
+* Responsive UI for desktop & mobile
+* Secure API communication
+
+---
+
+## ⚙️ System Requirements
+
+* Node.js **v18+** (recommended)
+* npm **v9+** or yarn
+* Angular CLI **v21.0.0**
+* Modern web browser (Chrome, Edge, Firefox)
+
+---
+
+## 🚀 Project Setup
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone <frontend-repository-url>
+cd MedibookFrontEnd
+```
+
+### 2️⃣ Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+## 🖥️ Development Server
+
+Start the local development server:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open your browser and navigate to:
 
-## Code scaffolding
+```
+http://localhost:4200/
+```
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+The application will automatically reload when you modify any source file.
+
+---
+
+## 🧩 Code Scaffolding
+
+Angular CLI provides powerful scaffolding tools.
+
+Generate a new component:
 
 ```bash
 ng generate component component-name
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Other schematics include:
+
+* components
+* directives
+* pipes
+* services
+* guards
+
+To view all options:
 
 ```bash
 ng generate --help
 ```
 
-## Building
+---
 
-To build the project run:
+## 🏗️ Build
+
+To build the project for production:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Build artifacts will be stored in the `dist/` directory. The production build is optimized for performance and speed.
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 🧪 Testing
+
+### Unit Tests
+
+Run unit tests using **Karma**:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+### End-to-End Tests
 
 ```bash
 ng e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Angular CLI does not include an e2e framework by default. You may integrate tools such as **Cypress** or **Playwright**.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 🔗 Backend Integration
+
+The frontend communicates with the **Medibook API** backend via HTTP requests.
+
+Typical configuration is located in:
+
+* `environment.ts`
+* `environment.production.ts`
+
+Example:
+
+```ts
+export const environment = {
+  production: false,
+  apiUrl: 'https://localhost:7281/api'
+};
+```
+
+---
+
+## 📁 Project Structure (Simplified)
+
+```
+src/
+ ├── app/
+ │   ├── components/
+ │   ├── services/
+ │   ├── guards/
+ │   ├── models/
+ │   └── pages/
+ ├── assets/
+ ├── environments/
+ └── styles/
+```
+
+---
+
+## 📄 License
+
+This frontend application is licensed and maintained by:
+
+**© Abdelrahman Khalaf**
+
+All rights reserved.
+
+Unauthorized copying, modification, distribution, or use of this software is strictly prohibited without prior written permission from the author.
